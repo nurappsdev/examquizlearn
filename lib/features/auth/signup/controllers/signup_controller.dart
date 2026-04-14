@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/routes/app_routes.dart';
+
 class SignupController extends GetxController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -16,6 +18,7 @@ class SignupController extends GetxController {
   }
 
   void signup(GlobalKey<FormState> formKey) {
+    Get.offAllNamed(AppRoutes.personalInfo);
     if (formKey.currentState!.validate()) {
       if (!isAgree.value) {
         Get.snackbar("Error", "Please agree with Terms & Privacy Policy", 
@@ -26,7 +29,7 @@ class SignupController extends GetxController {
       // Perform sign up logic
       Future.delayed(const Duration(seconds: 2), () {
         isLoading.value = false;
-        // Get.offAllNamed(AppRoutes.home);
+         Get.offAllNamed(AppRoutes.personalInfo);
       });
     }
   }

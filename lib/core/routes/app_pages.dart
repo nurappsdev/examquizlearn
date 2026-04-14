@@ -12,6 +12,8 @@ import '../../features/auth/otp/bindings/otp_binding.dart';
 import '../../features/auth/otp/views/otp_view.dart';
 import '../../features/auth/reset_password/bindings/reset_password_binding.dart';
 import '../../features/auth/reset_password/views/reset_password_view.dart';
+import '../../features/profile/personal_info/bindings/personal_info_binding.dart';
+import '../../features/profile/personal_info/views/personal_info_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -52,6 +54,12 @@ class AppPages {
       page: () => const ResetPasswordView(),
       transition: Transition.topLevel,
       binding: ResetPasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.personalInfo,
+      page: () => const PersonalInfoView(),
+      transition: Transition.topLevel,
+      binding: PersonalInfoBinding(),
     ),
   ];
 }
