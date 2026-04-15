@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/routes/app_routes.dart';
+
 class SigninController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -13,7 +15,7 @@ class SigninController extends GetxController {
       // Perform sign in logic
       Future.delayed(const Duration(seconds: 2), () {
         isLoading.value = false;
-        // Get.offAllNamed(AppRoutes.home);
+         Get.offAllNamed(AppRoutes.main);
       });
     }
   }

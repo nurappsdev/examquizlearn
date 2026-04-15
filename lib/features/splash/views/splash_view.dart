@@ -12,9 +12,7 @@ class SplashView extends GetView<SplashController> {
 
   @override
   Widget build(BuildContext context) {
-    // Explicitly access controller to ensure it's initialized
-   controller.navigateToNext();
-    
+    controller.navigateToNext();
     return Scaffold(
       backgroundColor: AppColors.blackColor,
       body: Center(

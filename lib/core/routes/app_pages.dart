@@ -14,6 +14,12 @@ import '../../features/auth/reset_password/bindings/reset_password_binding.dart'
 import '../../features/auth/reset_password/views/reset_password_view.dart';
 import '../../features/profile/personal_info/bindings/personal_info_binding.dart';
 import '../../features/profile/personal_info/views/personal_info_view.dart';
+import '../../features/main/bindings/main_binding.dart';
+import '../../features/main/views/main_view.dart';
+import '../../features/home/bindings/home_binding.dart';
+import '../../features/home/views/home_view.dart';
+import '../../features/carpentry/bindings/carpentry_binding.dart';
+import '../../features/carpentry/views/carpentry_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -60,6 +66,24 @@ class AppPages {
       page: () => const PersonalInfoView(),
       transition: Transition.topLevel,
       binding: PersonalInfoBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.main,
+      page: () => const MainView(),
+      transition: Transition.topLevel,
+      binding: MainBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.home,
+      page: () => const HomeView(),
+      transition: Transition.topLevel,
+      binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.carpentry,
+      page: () => const CarpentryView(),
+      transition: Transition.topLevel,
+      binding: CarpentryBinding(),
     ),
   ];
 }

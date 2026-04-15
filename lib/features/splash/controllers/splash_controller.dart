@@ -12,7 +12,7 @@ class SplashController extends GetxController {
   void navigateToNext() async {
     print("Starting 3s delay...");
     await Future.delayed(const Duration(seconds: 3));
-    print("Navigating to Sign In...");
+    print("Navigating to Main...");
     Get.offAllNamed(AppRoutes.signin);
   }
 }
