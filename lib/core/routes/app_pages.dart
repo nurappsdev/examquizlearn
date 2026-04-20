@@ -11,7 +11,6 @@ import '../../features/auth/verification/views/verification_view.dart';
 import '../../features/auth/otp/bindings/otp_binding.dart';
 import '../../features/auth/otp/views/otp_view.dart';
 import '../../features/auth/reset_password/bindings/reset_password_binding.dart';
-import '../../features/auth/reset_password/views/reset_password_view.dart';
 import '../../features/profile/personal_info/bindings/personal_info_binding.dart';
 import '../../features/profile/personal_info/views/personal_info_view.dart';
 import '../../features/main/bindings/main_binding.dart';
@@ -19,7 +18,13 @@ import '../../features/main/views/main_view.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/home/views/home_view.dart';
 import '../../features/carpentry/bindings/carpentry_binding.dart';
-import '../../features/carpentry/views/carpentry_view.dart';
+import '../../features/carpentry/views/carpentry_alternative_view.dart';
+import '../../features/quiz/bindings/quiz_binding.dart';
+import '../../features/quiz/views/quiz_view.dart';
+import '../../features/quiz/views/quiz_info_view.dart';
+import '../../features/quiz/views/quiz_result_view.dart';
+import '../../features/educational_content/views/tutorial_list_view.dart';
+import '../../features/educational_content/views/video_play_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -57,9 +62,9 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.resetPassword,
-      page: () => const ResetPasswordView(),
+      page: () => const SigninView(),
       transition: Transition.topLevel,
-      binding: ResetPasswordBinding(),
+      binding: SigninBinding(),
     ),
     GetPage(
       name: AppRoutes.personalInfo,
@@ -81,9 +86,42 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.carpentry,
-      page: () => const CarpentryView(),
+      page: () => const CarpentryAlternativeView(),
       transition: Transition.topLevel,
       binding: CarpentryBinding(),
     ),
+    GetPage(
+      name: AppRoutes.carpentryAlternative,
+      page: () => const CarpentryAlternativeView(),
+      transition: Transition.topLevel,
+      binding: CarpentryBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.quiz,
+      page: () => const QuizView(),
+      transition: Transition.topLevel,
+      binding: QuizBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.quizInfo,
+      page: () => const QuizInfoView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.quizResult,
+      page: () => const QuizResultView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.tutorialList,
+      page: () => const TutorialListView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.videoPlay,
+      page: () => const VideoPlayView(),
+      transition: Transition.topLevel,
+    ),
   ];
 }
+

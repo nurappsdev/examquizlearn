@@ -13,8 +13,6 @@ class VerificationView extends GetView<VerificationController> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return Scaffold(
       backgroundColor: AppColors.blackColor,
       appBar: AppBar(
@@ -36,7 +34,7 @@ class VerificationView extends GetView<VerificationController> {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: formKey,
+            key: controller.formKey,
             child: Column(
               children: [
                 SizedBox(height: 20.h),
@@ -79,7 +77,7 @@ class VerificationView extends GetView<VerificationController> {
                       color: AppColors.greenColor,
                       allBorderRadius: BorderRadius.circular(30.r),
                       loading: controller.isLoading.value,
-                      onpress: () => controller.sendOTP(formKey),
+                      onpress: () => controller.sendOTP(),
                     )),
               ],
             ),

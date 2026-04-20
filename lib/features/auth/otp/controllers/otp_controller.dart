@@ -35,6 +35,7 @@ class OtpController extends GetxController {
 
   void verify() {
     if (otpController.text.length == 6) {
+      FocusManager.instance.primaryFocus?.unfocus();
       isLoading.value = true;
       // Perform OTP verification logic
       Future.delayed(const Duration(seconds: 2), () {
@@ -57,7 +58,7 @@ class OtpController extends GetxController {
   @override
   void onClose() {
     _timer?.cancel();
-    otpController.dispose();
+    // otpController.dispose();
     super.onClose();
   }
 }

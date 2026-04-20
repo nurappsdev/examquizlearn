@@ -27,6 +27,7 @@ class AppImages {
   static const String contactImg = "$path/contactImg.png";
   static const String profileCoverIcon = "$path/profileCoverIcon.png";
   static const String starImg = "$path/starImg.png";
+  static const String rafiki = "$path/rafiki.png";
 
 
 }

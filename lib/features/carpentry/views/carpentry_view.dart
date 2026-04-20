@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../controllers/carpentry_controller.dart';
@@ -117,19 +118,22 @@ class CarpentryView extends GetView<CarpentryController> {
                   color: Colors.white.withOpacity(0.5),
                 ),
                 SizedBox(height: 15.h),
-                Container(
-                  width: double.infinity,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xff17A15D)),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: const Center(
-                    child: CustomText(
-                      text: "Get Started",
-                      fontsize: 14,
-                      color: Color(0xff17A15D),
-                      fontWeight: FontWeight.w500,
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.quiz),
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xff17A15D)),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: const Center(
+                      child: CustomText(
+                        text: "Get Started",
+                        fontsize: 14,
+                        color: Color(0xff17A15D),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),

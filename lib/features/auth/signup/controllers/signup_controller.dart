@@ -9,6 +9,7 @@ class SignupController extends GetxController {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   
   var isAgree = false.obs;
   var isLoading = false.obs;
@@ -17,30 +18,30 @@ class SignupController extends GetxController {
     isAgree.value = value ?? false;
   }
 
-  void signup(GlobalKey<FormState> formKey) {
-    Get.offAllNamed(AppRoutes.personalInfo);
+  void signup() {
     if (formKey.currentState!.validate()) {
       if (!isAgree.value) {
         Get.snackbar("Error", "Please agree with Terms & Privacy Policy", 
             backgroundColor: Colors.red, colorText: Colors.white);
         return;
       }
+      FocusManager.instance.primaryFocus?.unfocus();
       isLoading.value = true;
       // Perform sign up logic
       Future.delayed(const Duration(seconds: 2), () {
         isLoading.value = false;
-         Get.offAllNamed(AppRoutes.personalInfo);
+        Get.offAllNamed(AppRoutes.personalInfo);
       });
     }
   }
 
   @override
   void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    // nameController.dispose();
+    // emailController.dispose();
+    // phoneController.dispose();
+    // passwordController.dispose();
+    // confirmPasswordController.dispose();
     super.onClose();
   }
 }

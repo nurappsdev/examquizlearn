@@ -304,7 +304,15 @@ class HomeView extends GetView<HomeController> {
           ),
           SizedBox(height: 15.h),
           GestureDetector(
-            onTap: title == "Carpentry" ? () => Get.toNamed(AppRoutes.carpentry) : null,
+            onTap: title == "Carpentry"
+                ? () {
+                    if (controller.selectedCategoryIndex == 0) {
+                      Get.toNamed(AppRoutes.quiz);
+                    } else {
+                      Get.toNamed(AppRoutes.carpentryAlternative);
+                    }
+                  }
+                : null,
             child: Container(
               width: double.infinity,
               height: 45.h,

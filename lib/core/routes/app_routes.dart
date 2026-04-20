@@ -9,4 +9,10 @@ class AppRoutes {
   static const String home = '/home';
   static const String main = '/main';
   static const String carpentry = '/carpentry';
+  static const String carpentryAlternative = '/carpentry-alternative';
+  static const String quiz = '/quiz';
+  static const String quizInfo = '/quiz-info';
+  static const String quizResult = '/quiz-result';
+  static const String tutorialList = '/tutorial-list';
+  static const String videoPlay = '/video-play';
 }

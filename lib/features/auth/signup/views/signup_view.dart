@@ -14,15 +14,13 @@ class SignupView extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return Scaffold(
       backgroundColor: AppColors.blackColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: formKey,
+            key: controller.formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -198,7 +196,7 @@ class SignupView extends GetView<SignupController> {
                   color: AppColors.greenColor,
                   allBorderRadius: BorderRadius.circular(30.r),
                   loading: controller.isLoading.value,
-                  onpress: () => controller.signup(formKey),
+                  onpress: () => controller.signup(),
                 )),
                 SizedBox(height: 30.h),
                 // Footer

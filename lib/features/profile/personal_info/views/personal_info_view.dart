@@ -1,3 +1,4 @@
+import 'package:examtest/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -55,7 +56,11 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                         color: AppColors.whiteColor,
                         size: 20.sp,
                       ),
-                      onPressed: () => Get.back(),
+                      onPressed: () {
+                        Get.back();
+                        debugPrint("Navigating to sign up");
+                        Get.toNamed(AppRoutes.signup);
+                      },
                     ),
                   ),
                   SizedBox(height: 20.h),

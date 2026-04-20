@@ -4,11 +4,13 @@ import '../../../../core/routes/app_routes.dart';
 
 class VerificationController extends GetxController {
   final emailController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   
   var isLoading = false.obs;
 
-  void sendOTP(GlobalKey<FormState> formKey) {
+  void sendOTP() {
     if (formKey.currentState!.validate()) {
+      FocusManager.instance.primaryFocus?.unfocus();
       isLoading.value = true;
       // Perform send OTP logic
       Future.delayed(const Duration(seconds: 2), () {
@@ -20,7 +22,7 @@ class VerificationController extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
+    // emailController.dispose();
     super.onClose();
   }
 }
