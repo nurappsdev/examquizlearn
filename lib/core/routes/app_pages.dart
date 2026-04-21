@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import '../../features/educational_content/bindings/educational_content_binding.dart';
+import '../../features/educational_content/views/text_content_list_view.dart';
+import '../../features/educational_content/views/text_content_detail_view.dart';
 import 'app_routes.dart';
 import '../../features/splash/bindings/splash_binding.dart';
 import '../../features/splash/views/splash_view.dart';
@@ -25,6 +28,11 @@ import '../../features/quiz/views/quiz_info_view.dart';
 import '../../features/quiz/views/quiz_result_view.dart';
 import '../../features/educational_content/views/tutorial_list_view.dart';
 import '../../features/educational_content/views/video_play_view.dart';
+import '../../features/profile/bindings/profile_binding.dart';
+import '../../features/profile/views/profile_view.dart';
+import '../../features/profile/views/profile_info_view.dart';
+import '../../features/profile/edit_profile/bindings/edit_profile_binding.dart';
+import '../../features/profile/edit_profile/views/edit_profile_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -121,6 +129,39 @@ class AppPages {
       name: AppRoutes.videoPlay,
       page: () => const VideoPlayView(),
       transition: Transition.topLevel,
+    ),
+
+    GetPage(
+      name: AppRoutes.textContentList,
+      page: () => const TextContentListView(),
+      transition: Transition.topLevel,
+      binding: EducationalContentBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.textContentDetail,
+      page: () => const TextContentDetailView(),
+      transition: Transition.topLevel,
+    ),
+
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileView(),
+      transition: Transition.topLevel,
+      binding: ProfileBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.profileInfo,
+      page: () => const ProfileInfoView(),
+      transition: Transition.topLevel,
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.editProfile,
+      page: () => const EditProfileView(),
+      transition: Transition.topLevel,
+      binding: EditProfileBinding(),
     ),
   ];
 }

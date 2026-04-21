@@ -15,4 +15,9 @@ class AppRoutes {
   static const String quizResult = '/quiz-result';
   static const String tutorialList = '/tutorial-list';
   static const String videoPlay = '/video-play';
+  static const String textContentList = '/text-content-list';
+  static const String textContentDetail = '/text-content-detail';
+  static const String profile = '/profile';
+  static const String profileInfo = '/profile-info';
+  static const String editProfile = '/edit-profile';
 }

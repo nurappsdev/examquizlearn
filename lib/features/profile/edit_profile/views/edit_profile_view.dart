@@ -1,20 +1,20 @@
-import 'package:examtest/core/routes/app_routes.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../core/widgets/custom_button_common.dart';
 import '../../../../core/widgets/custom_text_field.dart';
-import '../controllers/personal_info_controller.dart';
+import '../controllers/edit_profile_controller.dart';
 
-class PersonalInfoView extends StatefulWidget {
-  const PersonalInfoView({super.key});
+class EditProfileView extends StatefulWidget {
+  const EditProfileView({super.key});
 
   @override
-  State<PersonalInfoView> createState() => _PersonalInfoViewState();
+  State<EditProfileView> createState() => _EditProfileViewState();
 }
 
-class _PersonalInfoViewState extends State<PersonalInfoView> {
+class _EditProfileViewState extends State<EditProfileView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _openDropdown = '';
 
@@ -32,49 +32,146 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
 
   @override
   Widget build(BuildContext context) {
-    final PersonalInfoController controller = Get.find();
+    final EditProfileController controller = Get.find();
 
     return GestureDetector(
       onTap: _closeDropdowns,
       child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            'Edit Profile',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 20.h),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: Icon(
-                        Icons.arrow_back_ios,
-                        color: AppColors.whiteColor,
-                        size: 20.sp,
+                  // Profile image with camera icon
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Obx(() => Container(
+                        width: 100.r,
+                        height: 100.r,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
+                          image: controller.imagePath.value.isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(File(controller.imagePath.value)),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: controller.imagePath.value.isEmpty
+                            ? Icon(
+                                Icons.person_outline,
+                                size: 60.r,
+                                color: Colors.white,
+                              )
+                            : null,
+                      )),
+                      Positioned(
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: controller.pickImage,
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E1E1E),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+                            ),
+                            child: Icon(
+                              Icons.camera_alt_outlined,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        Get.back();
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  Center(
-                    child: Image.asset(
-                      AppImages.logo,
-                      height: 180.h,
-                    ),
+                    ],
                   ),
                   SizedBox(height: 40.h),
+                  CustomTextField(
+                    controller: controller.nameController,
+                    hintText: 'Name',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: Icon(
+                        Icons.person_outline,
+                        color: AppColors.whiteColor.withOpacity(0.7),
+                        size: 20.sp,
+                      ),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                  ),
+                  SizedBox(height: 16.h),
+                  CustomTextField(
+                    controller: controller.emailController,
+                    hintText: 'Enter E-mail',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: Icon(
+                        Icons.email_outlined,
+                        color: AppColors.whiteColor.withOpacity(0.7),
+                        size: 20.sp,
+                      ),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                  ),
+                  SizedBox(height: 16.h),
+                  CustomTextField(
+                    controller: controller.phoneController,
+                    hintText: 'Phone number',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: Icon(
+                        Icons.phone_outlined,
+                        color: AppColors.whiteColor.withOpacity(0.7),
+                        size: 20.sp,
+                      ),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                  ),
+                  SizedBox(height: 16.h),
                   CustomTextField(
                     controller: controller.dateOfBirthController,
                     hintText: 'Date of birth',
                     readOnly: true,
                     prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
+                      padding: EdgeInsets.all(12.r),
                       child: Icon(
                         Icons.calendar_today_outlined,
                         color: AppColors.whiteColor.withOpacity(0.7),
@@ -112,12 +209,6 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                     textColor: AppColors.whiteColor,
                     hinTextColor: AppColors.whiteColor.withOpacity(0.5),
                     borderRadio: 12,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Date of birth is required';
-                      }
-                      return null;
-                    },
                   ),
                   SizedBox(height: 16.h),
                   Obx(() => _buildDropdown(
@@ -130,18 +221,9 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       )),
                   SizedBox(height: 16.h),
                   Obx(() => _buildDropdown(
-                        key: 'employment',
-                        hintText: 'Employment status',
-                        icon: Icons.badge_outlined,
-                        value: controller.selectedEmploymentStatus.value,
-                        items: controller.employmentStatusOptions,
-                        onChanged: controller.selectEmploymentStatus,
-                      )),
-                  SizedBox(height: 16.h),
-                  Obx(() => _buildDropdown(
                         key: 'education',
                         hintText: 'Education',
-                        icon: Icons.school_outlined,
+                        icon: Icons.book_outlined,
                         value: controller.selectedEducation.value,
                         items: controller.educationOptions,
                         onChanged: controller.selectEducation,
@@ -151,27 +233,9 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                     controller: controller.universityNameController,
                     hintText: 'University name',
                     prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
+                      padding: EdgeInsets.all(12.r),
                       child: Icon(
-                        Icons.business_outlined,
-                        color: AppColors.whiteColor.withOpacity(0.7),
-                        size: 20.sp,
-                      ),
-                    ),
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
-                    borderRadio: 12,
-                  ),
-                  SizedBox(height: 16.h),
-                  CustomTextField(
-                    controller: controller.linkedinProfileController,
-                    hintText: 'Linkedin profile link',
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
-                      child: Icon(
-                        Icons.link_outlined,
+                        Icons.school_outlined,
                         color: AppColors.whiteColor.withOpacity(0.7),
                         size: 20.sp,
                       ),
@@ -184,13 +248,13 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   ),
                   SizedBox(height: 60.h),
                   Obx(() => CustomButtonCommon(
-                        title: 'Save and continue',
+                        title: 'Save changes',
                         color: AppColors.greenColor,
                         allBorderRadius: BorderRadius.circular(30.r),
                         loading: controller.isLoading.value,
                         onpress: () {
                           _closeDropdowns();
-                          controller.saveAndContinue(_formKey);
+                          controller.saveChanges(_formKey);
                         },
                       )),
                   SizedBox(height: 30.h),
@@ -247,7 +311,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       color: value.isEmpty
                           ? AppColors.whiteColor.withOpacity(0.5)
                           : AppColors.whiteColor,
-                      fontSize: 11.sp,
+                      fontSize: 14.sp,
                       fontFamily: 'Poppins',
                     ),
                   ),
@@ -297,7 +361,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                               color: isSelected
                                   ? AppColors.greenColor
                                   : AppColors.whiteColor,
-                              fontSize: 12.sp,
+                              fontSize: 14.sp,
                               fontFamily: 'Poppins',
                             ),
                           ),

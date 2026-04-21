@@ -11,44 +11,41 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h),
-              _buildHeader(),
-              SizedBox(height: 30.h),
-              _buildProgressCard(),
-              SizedBox(height: 30.h),
-              const CustomText(
-                text: "Select a category",
-                fontsize: 18,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-              SizedBox(height: 15.h),
-              _buildCategorySelector(),
-              SizedBox(height: 20.h),
-              _buildCategoryCard(
-                title: "Carpentry",
-                subtitle: "We shop and deliver your essentials quickly and reliably",
-                progress: 0.56,
-                image: "assets/images/logo.png", // Placeholder
-              ),
-              SizedBox(height: 15.h),
-              _buildCategoryCard(
-                title: "OSHA",
-                subtitle: "We shop and deliver your essentials quickly and reliably",
-                progress: 0.56,
-                image: "assets/images/logo.png", // Placeholder
-              ),
-              SizedBox(height: 100.h), // Space for bottom bar
-            ],
+    final HomeController controller = Get.find<HomeController>();
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20.h),
+          _buildHeader(),
+          SizedBox(height: 30.h),
+          _buildProgressCard(),
+          SizedBox(height: 30.h),
+          const CustomText(
+            text: "Select a category",
+            fontsize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
           ),
-        ),
+          SizedBox(height: 15.h),
+          _buildCategorySelector(),
+          SizedBox(height: 20.h),
+          _buildCategoryCard(
+            title: "Carpentry",
+            subtitle: "We shop and deliver your essentials quickly and reliably",
+            progress: 0.56,
+            image: "assets/images/logo.png", // Placeholder
+          ),
+          SizedBox(height: 15.h),
+          _buildCategoryCard(
+            title: "OSHA",
+            subtitle: "We shop and deliver your essentials quickly and reliably",
+            progress: 0.56,
+            image: "assets/images/logo.png", // Placeholder
+          ),
+          SizedBox(height: 100.h), // Space for bottom bar
+        ],
       ),
     );
   }

@@ -6,116 +6,124 @@ import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../controllers/educational_content_controller.dart';
 
-class EducationalContentView extends GetView<EducationalContentController> {
+class EducationalContentView extends StatelessWidget {
   const EducationalContentView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-
-        title: const CustomText(
-          text: "Educational content",
-          fontsize: 16,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-          children: [
-            SizedBox(height: 20.h),
-            // Custom Toggle/Tab Bar
-            Container(
-              height: 56.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30.r),
-              ),
-              child: Obx(() => Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => controller.changeTab(0),
-                          child: Container(
-                            margin: EdgeInsets.all(4.r),
-                            decoration: BoxDecoration(
+    final EducationalContentController controller = Get.find<EducationalContentController>();
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Column(
+        children: [
+          SizedBox(height: 20.h),
+          const Center(
+            child: CustomText(
+              text: "Educational content",
+              fontsize: 16,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 20.h),
+          // Custom Toggle/Tab Bar
+          Container(
+            height: 56.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30.r),
+            ),
+            child: Obx(() => Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => controller.changeTab(0),
+                        child: Container(
+                          margin: EdgeInsets.all(4.r),
+                          decoration: BoxDecoration(
+                            color: controller.selectedTab.value == 0
+                                ? const Color(0xff204F9D)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(26.r),
+                          ),
+                          child: Center(
+                            child: CustomText(
+                              text: "Tutorial",
+                              fontsize: 16,
+                              fontWeight: FontWeight.w500,
                               color: controller.selectedTab.value == 0
-                                  ? const Color(0xff204F9D)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(26.r),
-                            ),
-                            child: Center(
-                              child: CustomText(
-                                text: "Tutorial",
-                                fontsize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: controller.selectedTab.value == 0
-                                    ? Colors.white
-                                    : const Color(0xff204F9D),
-                              ),
+                                  ? Colors.white
+                                  : const Color(0xff204F9D),
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => controller.changeTab(1),
-                          child: Container(
-                            margin: EdgeInsets.all(4.r),
-                            decoration: BoxDecoration(
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => controller.changeTab(1),
+                        child: Container(
+                          margin: EdgeInsets.all(4.r),
+                          decoration: BoxDecoration(
+                            color: controller.selectedTab.value == 1
+                                ? const Color(0xff204F9D)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(26.r),
+                          ),
+                          child: Center(
+                            child: CustomText(
+                              text: "Text content",
+                              fontsize: 16,
+                              fontWeight: FontWeight.w500,
                               color: controller.selectedTab.value == 1
-                                  ? const Color(0xff204F9D)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(26.r),
-                            ),
-                            child: Center(
-                              child: CustomText(
-                                text: "Text content",
-                                fontsize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: controller.selectedTab.value == 1
-                                    ? Colors.white
-                                    : const Color(0xff204F9D),
-                              ),
+                                  ? Colors.white
+                                  : const Color(0xff204F9D),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  )),
-            ),
-            SizedBox(height: 30.h),
-            // Content List
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildContentCard(
-                    title: "Carpentry",
-                    description: "We shop and deliver your essentials quickly and reliably",
-                    totalTutorials: 23,
-                    icon: Icons.construction, // Placeholder for Carpentry icon
-                    onTap: () => Get.toNamed(AppRoutes.tutorialList),
-                  ),
-                  SizedBox(height: 20.h),
-                  _buildContentCard(
-                    title: "OSHA",
-                    description: "We shop and deliver your essentials quickly and reliably",
-                    totalTutorials: 23,
-                    icon: Icons.roofing, // Placeholder for OSHA icon
-                    onTap: () => Get.toNamed(AppRoutes.tutorialList),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                    ),
+                  ],
+                )),
+          ),
+          SizedBox(height: 30.h),
+          // Content List
+          Expanded(
+            child: Obx(() => ListView(
+                  padding: EdgeInsets.only(bottom: 20.h),
+                  children: [
+                    _buildContentCard(
+                      title: "Carpentry",
+                      description:
+                          "We shop and deliver your essentials quickly and reliably",
+                      totalTutorials: 23,
+                      icon: Icons.construction,
+                      buttonText: controller.selectedTab.value == 0
+                          ? "View all tutorial"
+                          : "View all Text content",
+                      onTap: () => controller.selectedTab.value == 0
+                          ? Get.toNamed(AppRoutes.tutorialList)
+                          : Get.toNamed(AppRoutes.textContentList),
+                    ),
+                    SizedBox(height: 20.h),
+                    _buildContentCard(
+                      title: "OSHA",
+                      description:
+                          "We shop and deliver your essentials quickly and reliably",
+                      totalTutorials: 23,
+                      icon: Icons.roofing,
+                      buttonText: controller.selectedTab.value == 0
+                          ? "View all tutorial"
+                          : "View all Text content",
+                      onTap: () => controller.selectedTab.value == 0
+                          ? Get.toNamed(AppRoutes.tutorialList)
+                          : Get.toNamed(AppRoutes.textContentList),
+                    ),
+                  ],
+                )),
+          ),
+        ],
       ),
     );
   }
@@ -125,6 +133,7 @@ class EducationalContentView extends GetView<EducationalContentController> {
     required String description,
     required int totalTutorials,
     required IconData icon,
+    required String buttonText,
     required VoidCallback onTap,
   }) {
     return Container(
@@ -184,9 +193,9 @@ class EducationalContentView extends GetView<EducationalContentController> {
                       color: AppColors.greenColor,
                       borderRadius: BorderRadius.circular(100.r),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: CustomText(
-                        text: "View all tutorial",
+                        text: buttonText,
                         fontsize: 12,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
