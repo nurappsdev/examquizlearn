@@ -63,22 +63,22 @@ class ProfileView extends StatelessWidget {
               _buildMenuItem(
                 icon: Icons.badge_outlined,
                 title: 'Personal Information',
-                onTap: () => Get.toNamed(AppRoutes.personalInfo),
+                onTap: () => Get.toNamed(AppRoutes.profileInfoProfile),
               ),
               _buildMenuItem(
                 icon: Icons.workspace_premium_outlined,
                 title: 'Subscription',
-                onTap: () {},
+                onTap: () => Get.toNamed(AppRoutes.subscriptionScreen),
               ),
               _buildMenuItem(
                 icon: Icons.support_agent_outlined,
                 title: 'Admin Support',
-                onTap: () {},
+                onTap: () => Get.toNamed(AppRoutes.adminSupport),
               ),
               _buildMenuItem(
                 icon: Icons.settings_outlined,
                 title: 'Settings',
-                onTap: () {},
+                onTap: () => Get.toNamed(AppRoutes.settings),
               ),
               _buildMenuItem(
                 icon: Icons.logout_outlined,

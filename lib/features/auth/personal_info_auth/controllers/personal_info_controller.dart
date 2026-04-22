@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PersonalInfoProfileController extends GetxController {
+class PersonalInfoController extends GetxController {
   final dateOfBirthController = TextEditingController();
   final universityNameController = TextEditingController();
   final linkedinProfileController = TextEditingController();

@@ -29,5 +29,7 @@ class AppImages {
   static const String starImg = "$path/starImg.png";
   static const String rafiki = "$path/rafiki.png";
   static const String contentPic = "$path/contentPic.png";
+  static const String crownPic = "$path/crown.png";
+  static const String supportPic = "$path/support.png";
 
 }

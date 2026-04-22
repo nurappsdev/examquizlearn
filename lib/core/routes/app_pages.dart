@@ -1,8 +1,21 @@
 import 'package:get/get.dart';
+import '../../features/auth/personal_info_auth/bindings/personal_info_binding.dart';
+import '../../features/auth/personal_info_auth/views/personal_info_view.dart';
 import '../../features/educational_content/bindings/educational_content_binding.dart';
 import '../../features/educational_content/views/text_content_list_view.dart';
 import '../../features/educational_content/views/text_content_detail_view.dart';
-import 'app_routes.dart';
+import '../../features/profile/subscription/bindings/subscription_binding.dart';
+import '../../features/profile/subscription/views/manage_subscription_view.dart';
+import '../../features/profile/subscription/views/subscription_view.dart';
+import '../routes/app_routes.dart';
+import '../themes/light_theme.dart';
+import '../../features/profile/views/add_bio_view.dart';
+import '../../features/profile/views/add_contact_info_view.dart';
+import '../../features/profile/views/add_education_view.dart';
+import '../../features/profile/views/admin_support_view.dart';
+import '../../features/profile/views/change_password_view.dart';
+import '../../features/profile/views/html_content_view.dart';
+import '../../features/profile/views/settings_view.dart';
 import '../../features/splash/bindings/splash_binding.dart';
 import '../../features/splash/views/splash_view.dart';
 import '../../features/auth/signin/bindings/signin_binding.dart';
@@ -163,6 +176,79 @@ class AppPages {
       transition: Transition.topLevel,
       binding: EditProfileBinding(),
     ),
-  ];
-}
+    GetPage(
+      name: AppRoutes.subscriptionScreen,
+      page: () => SubscriptionScreen(),
+      transition: Transition.topLevel,
+      binding: SubscriptionBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.manageSubscription,
+      page: () => const ManageSubscriptionView(),
+      transition: Transition.topLevel,
+      binding: SubscriptionBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.adminSupport,
+      page: () => const AdminSupportView(),
+      transition: Transition.topLevel,
+    ),
 
+    GetPage(
+      name: AppRoutes.profileInfoProfile,
+      page: () =>  PersonalInfoViewProfile(),
+      transition: Transition.topLevel,
+      binding: PersonalInfoProfileBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.settings,
+      page: () => const SettingsView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.changePassword,
+      page: () => const ChangePasswordView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.aboutUs,
+      page: () => const HtmlContentView(
+        title: 'About us',
+        htmlContent: 'Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.<br><br>Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.<br><br>Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.',
+      ),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.privacyPolicy,
+      page: () => const HtmlContentView(
+        title: 'Privacy Policy',
+        htmlContent: '<h1>Privacy Policy</h1><p>Your privacy is important to us...</p>',
+      ),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.termsOfService,
+      page: () => const HtmlContentView(
+        title: 'Terms of service',
+        htmlContent: '<h1>Terms of Service</h1><p>By using our app, you agree to...</p>',
+      ),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.addBio,
+      page: () => const AddBioView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.addContactInfo,
+      page: () => const AddContactInfoView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.addEducation,
+      page: () => const AddEducationView(),
+      transition: Transition.topLevel,
+    ),
+    ];
+    }

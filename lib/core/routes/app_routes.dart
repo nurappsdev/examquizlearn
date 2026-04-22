@@ -19,5 +19,17 @@ class AppRoutes {
   static const String textContentDetail = '/text-content-detail';
   static const String profile = '/profile';
   static const String profileInfo = '/profile-info';
+  static const String profileInfoProfile = '/profileInfoProfile';
   static const String editProfile = '/edit-profile';
+  static const String subscriptionScreen = '/subscriptionScreen';
+  static const String manageSubscription = '/manageSubscription';
+  static const String adminSupport = '/admin-support';
+  static const String settings = '/settings';
+  static const String changePassword = '/change-password';
+  static const String aboutUs = '/about-us';
+  static const String privacyPolicy = '/privacy-policy';
+  static const String termsOfService = '/terms-of-service';
+  static const String addBio = '/add-bio';
+  static const String addContactInfo = '/add-contact-info';
+  static const String addEducation = '/add-education';
 }
