@@ -1,3 +1,4 @@
+import 'package:examtest/features/auth/reset_password/views/reset_password_view.dart';
 import 'package:get/get.dart';
 import '../../features/auth/personal_info_auth/bindings/personal_info_binding.dart';
 import '../../features/auth/personal_info_auth/views/personal_info_view.dart';
@@ -83,7 +84,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.resetPassword,
-      page: () => const SigninView(),
+      page: () => const ResetPasswordView(),
       transition: Transition.topLevel,
       binding: SigninBinding(),
     ),
