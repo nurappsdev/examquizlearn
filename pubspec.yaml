@@ -44,6 +44,7 @@ dependencies:
   image_picker: ^1.1.2
   url_launcher: ^6.3.2
   flutter_widget_from_html: ^0.17.2
+  mime_type: ^1.0.1
 
 dev_dependencies:
   flutter_test:

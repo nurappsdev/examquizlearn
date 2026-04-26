@@ -1,4 +1,3 @@
-import 'package:examtest/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,6 +36,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
     return GestureDetector(
       onTap: _closeDropdowns,
       child: Scaffold(
+        backgroundColor: AppColors.blackColor,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -57,18 +57,12 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                         size: 20.sp,
                       ),
                       onPressed: () {
-                        Get.toNamed(AppRoutes.signup,preventDuplicates: false);
                         Get.back();
                       },
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  Center(
-                    child: Image.asset(
-                      AppImages.logo,
-                      height: 180.h,
-                    ),
-                  ),
+                  Center(child: Image.asset(AppImages.logo, height: 180.h)),
                   SizedBox(height: 40.h),
                   CustomTextField(
                     controller: controller.dateOfBirthController,
@@ -78,7 +72,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       padding: EdgeInsets.all(8.r),
                       child: Icon(
                         Icons.calendar_today_outlined,
-                        color: AppColors.whiteColor.withOpacity(0.7),
+                        color: AppColors.whiteColor.withValues(alpha: 0.7),
                         size: 20.sp,
                       ),
                     ),
@@ -104,14 +98,16 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                         },
                       );
                       if (picked != null) {
+                        final month = picked.month.toString().padLeft(2, '0');
+                        final day = picked.day.toString().padLeft(2, '0');
                         controller.dateOfBirthController.text =
-                        '${picked.day}/${picked.month}/${picked.year}';
+                            '${picked.year}-$month-$day';
                       }
                     },
                     filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    borderColor: AppColors.whiteColor.withValues(alpha: 0.3),
                     textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    hinTextColor: AppColors.whiteColor.withValues(alpha: 0.5),
                     borderRadio: 12,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -121,32 +117,51 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                     },
                   ),
                   SizedBox(height: 16.h),
-                  Obx(() => _buildDropdown(
-                    key: 'gender',
-                    hintText: 'Gender',
-                    icon: Icons.male_outlined,
-                    value: controller.selectedGender.value,
-                    items: controller.genderOptions,
-                    onChanged: controller.selectGender,
-                  )),
+                  Obx(
+                    () => _buildDropdown(
+                      key: 'gender',
+                      hintText: 'Gender',
+                      icon: Icons.male_outlined,
+                      value: controller.selectedGender.value,
+                      items: controller.genderOptions,
+                      onChanged: controller.selectGender,
+                    ),
+                  ),
                   SizedBox(height: 16.h),
-                  Obx(() => _buildDropdown(
-                    key: 'employment',
-                    hintText: 'Employment status',
-                    icon: Icons.badge_outlined,
-                    value: controller.selectedEmploymentStatus.value,
-                    items: controller.employmentStatusOptions,
-                    onChanged: controller.selectEmploymentStatus,
-                  )),
+                  CustomTextField(
+                    controller: controller.employmentController,
+                    hintText: 'Employment',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(
+                        Icons.badge_outlined,
+                        color: AppColors.whiteColor.withValues(alpha: 0.7),
+                        size: 20.sp,
+                      ),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withValues(alpha: 0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withValues(alpha: 0.5),
+                    borderRadio: 12,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Employment is required';
+                      }
+                      return null;
+                    },
+                  ),
                   SizedBox(height: 16.h),
-                  Obx(() => _buildDropdown(
-                    key: 'education',
-                    hintText: 'Education',
-                    icon: Icons.school_outlined,
-                    value: controller.selectedEducation.value,
-                    items: controller.educationOptions,
-                    onChanged: controller.selectEducation,
-                  )),
+                  Obx(
+                    () => _buildDropdown(
+                      key: 'education',
+                      hintText: 'Education',
+                      icon: Icons.school_outlined,
+                      value: controller.selectedEducation.value,
+                      items: controller.educationOptions,
+                      onChanged: controller.selectEducation,
+                    ),
+                  ),
                   SizedBox(height: 16.h),
                   CustomTextField(
                     controller: controller.universityNameController,
@@ -155,15 +170,21 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       padding: EdgeInsets.all(8.r),
                       child: Icon(
                         Icons.business_outlined,
-                        color: AppColors.whiteColor.withOpacity(0.7),
+                        color: AppColors.whiteColor.withValues(alpha: 0.7),
                         size: 20.sp,
                       ),
                     ),
                     filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    borderColor: AppColors.whiteColor.withValues(alpha: 0.3),
                     textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    hinTextColor: AppColors.whiteColor.withValues(alpha: 0.5),
                     borderRadio: 12,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'University name is required';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 16.h),
                   CustomTextField(
@@ -173,27 +194,39 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       padding: EdgeInsets.all(8.r),
                       child: Icon(
                         Icons.link_outlined,
-                        color: AppColors.whiteColor.withOpacity(0.7),
+                        color: AppColors.whiteColor.withValues(alpha: 0.7),
                         size: 20.sp,
                       ),
                     ),
                     filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    borderColor: AppColors.whiteColor.withValues(alpha: 0.3),
                     textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    hinTextColor: AppColors.whiteColor.withValues(alpha: 0.5),
                     borderRadio: 12,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Linkedin profile link is required';
+                      }
+                      final uri = Uri.tryParse(value.trim());
+                      if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+                        return 'Enter a valid Linkedin profile link';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 60.h),
-                  Obx(() => CustomButtonCommon(
-                    title: 'Save and continue',
-                    color: AppColors.greenColor,
-                    allBorderRadius: BorderRadius.circular(30.r),
-                    loading: controller.isLoading.value,
-                    onpress: () {
-                      _closeDropdowns();
-                      controller.saveAndContinue(_formKey);
-                    },
-                  )),
+                  Obx(
+                    () => CustomButtonCommon(
+                      title: 'Save and continue',
+                      color: AppColors.greenColor,
+                      allBorderRadius: BorderRadius.circular(30.r),
+                      loading: controller.isLoading.value,
+                      onpress: () {
+                        _closeDropdowns();
+                        controller.saveAndContinue(_formKey);
+                      },
+                    ),
+                  ),
                   SizedBox(height: 30.h),
                 ],
               ),
@@ -221,15 +254,12 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
         GestureDetector(
           onTap: () => _toggleDropdown(key),
           child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 20.w,
-              vertical: 14.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: AppColors.whiteColor.withOpacity(0.3),
+                color: AppColors.whiteColor.withValues(alpha: 0.3),
                 width: 0.8,
               ),
             ),
@@ -237,7 +267,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
               children: [
                 Icon(
                   icon,
-                  color: AppColors.whiteColor.withOpacity(0.7),
+                  color: AppColors.whiteColor.withValues(alpha: 0.7),
                   size: 20.sp,
                 ),
                 SizedBox(width: 12.w),
@@ -246,7 +276,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                     value.isEmpty ? hintText : value,
                     style: TextStyle(
                       color: value.isEmpty
-                          ? AppColors.whiteColor.withOpacity(0.5)
+                          ? AppColors.whiteColor.withValues(alpha: 0.5)
                           : AppColors.whiteColor,
                       fontSize: 11.sp,
                       fontFamily: 'Poppins',
@@ -257,7 +287,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   isOpen
                       ? Icons.keyboard_arrow_up_outlined
                       : Icons.keyboard_arrow_down_outlined,
-                  color: AppColors.whiteColor.withOpacity(0.7),
+                  color: AppColors.whiteColor.withValues(alpha: 0.7),
                   size: 20.sp,
                 ),
               ],
@@ -272,7 +302,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: AppColors.whiteColor.withOpacity(0.3),
+                color: AppColors.whiteColor.withValues(alpha: 0.3),
                 width: 0.8,
               ),
             ),

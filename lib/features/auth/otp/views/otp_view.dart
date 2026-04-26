@@ -18,7 +18,11 @@ class OtpView extends GetView<OtpController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.whiteColor, size: 20.sp),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.whiteColor,
+            size: 20.sp,
+          ),
           onPressed: () => Get.back(),
         ),
         title: CustomText(
@@ -35,18 +39,13 @@ class OtpView extends GetView<OtpController> {
           child: Column(
             children: [
               SizedBox(height: 20.h),
-              Center(
-                child: Image.asset(
-                  AppImages.logo,
-                  height: 180.h,
-                ),
-              ),
+              Center(child: Image.asset(AppImages.logo, height: 180.h)),
               SizedBox(height: 60.h),
               CustomPinCodeTextField(
                 textEditingController: controller.otpController,
                 textColor: AppColors.whiteColor,
-                activeColor: AppColors.whiteColor.withOpacity(0.3),
-                inactiveColor: AppColors.whiteColor.withOpacity(0.3),
+                activeColor: AppColors.whiteColor.withValues(alpha: 0.3),
+                inactiveColor: AppColors.whiteColor.withValues(alpha: 0.3),
                 selectedColor: AppColors.whiteColor,
                 activeFillColor: Colors.transparent,
                 inactiveFillColor: Colors.transparent,
@@ -56,36 +55,48 @@ class OtpView extends GetView<OtpController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   CustomText(
+                  CustomText(
                     text: AppString.dontGetCode,
                     fontsize: 14.sp,
                     color: AppColors.whiteColor,
                   ),
-                  Obx(() => GestureDetector(
-                    onTap: controller.secondsRemaining.value == 0 ? controller.resendCode : null,
-                    child: RichText(
-                      text: TextSpan(
-                        text: "Resend in ",
-                        style: TextStyle(color: AppColors.redColor, fontSize: 14.sp),
-                        children: [
-                          TextSpan(
-                            text: controller.timeString,
-                            style: TextStyle(color: AppColors.whiteColor, fontSize: 14.sp),
+                  Obx(
+                    () => GestureDetector(
+                      onTap: controller.secondsRemaining.value == 0
+                          ? controller.resendCode
+                          : null,
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Resend in ",
+                          style: TextStyle(
+                            color: AppColors.redColor,
+                            fontSize: 14.sp,
                           ),
-                        ],
+                          children: [
+                            TextSpan(
+                              text: controller.timeString,
+                              style: TextStyle(
+                                color: AppColors.whiteColor,
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
               SizedBox(height: 100.h),
-              Obx(() => CustomButtonCommon(
-                    title: AppString.verifyButton,
-                    color: AppColors.greenColor,
-                    allBorderRadius: BorderRadius.circular(30.r),
-                    loading: controller.isLoading.value,
-                    onpress: () => controller.verify(),
-                  )),
+              Obx(
+                () => CustomButtonCommon(
+                  title: AppString.verifyButton,
+                  color: AppColors.greenColor,
+                  allBorderRadius: BorderRadius.circular(30.r),
+                  loading: controller.isLoading.value,
+                  onpress: () => controller.verify(),
+                ),
+              ),
             ],
           ),
         ),

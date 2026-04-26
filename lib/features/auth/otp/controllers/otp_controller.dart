@@ -1,19 +1,29 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helpers/helpers.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/service/api_client.dart';
+import '../../../../core/service/api_constants.dart';
+import '../../../../core/utils/app_constant.dart';
 
 class OtpController extends GetxController {
   final otpController = TextEditingController();
-  
+
   var isLoading = false.obs;
   var secondsRemaining = 83.obs; // 01:23 as in image
   Timer? _timer;
+  String screenType = '';
 
   @override
   void onInit() {
     super.onInit();
+    final arguments = Get.arguments;
+    if (arguments is Map && arguments['screenType'] != null) {
+      screenType = arguments['screenType'].toString();
+    }
     startTimer();
   }
 
@@ -33,20 +43,20 @@ class OtpController extends GetxController {
     return '${minutes.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')} s';
   }
 
-  void verify() {
-    if (otpController.text.length == 6) {
-      FocusManager.instance.primaryFocus?.unfocus();
-      isLoading.value = true;
-      // Perform OTP verification logic
-      Future.delayed(const Duration(seconds: 2), () {
-        isLoading.value = false;
-        // Navigate to Reset Password or Home
-        Get.offAllNamed(AppRoutes.resetPassword);
-      });
-    } else {
-      Get.snackbar("Error", "Please enter a 6-digit OTP", 
-          backgroundColor: Colors.red, colorText: Colors.white);
+  Future<void> verify() async {
+    final otpCode = otpController.text.trim();
+    if (otpCode.length != 6) {
+      Get.snackbar(
+        "Error",
+        "Please enter a 6-digit OTP",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
     }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    await verfyEmail(otpCode, screenType: screenType);
   }
 
   void resendCode() {
@@ -60,5 +70,49 @@ class OtpController extends GetxController {
     _timer?.cancel();
     // otpController.dispose();
     super.onClose();
+  }
+
+  ///===============Verify Email================<>
+  RxBool verfyLoading = false.obs;
+
+  verfyEmail(String otpCode, {String screenType = ''}) async {
+    isLoading(true);
+    verfyLoading(true);
+    String bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $bearerToken',
+    };
+    var body = {"code": otpCode};
+
+    var response = await ApiClient.postData(
+      ApiConstants.verifyEmailEndPoint,
+      jsonEncode(body),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (screenType == 'forgot') {
+        Get.toNamed(AppRoutes.resetPassword);
+      } else {
+        Get.offAllNamed(AppRoutes.signin);
+      }
+    } else if (response.statusCode == 1) {
+      ToastMessageHelper.errorMessageShowToster(
+        response.statusText ?? 'Server error. Please try later',
+      );
+    } else {
+      ToastMessageHelper.errorMessageShowToster(_errorMessage(response.body));
+    }
+    isLoading(false);
+    verfyLoading(false);
+  }
+
+  String _errorMessage(dynamic body) {
+    if (body is Map && body['message'] != null) {
+      return body['message'].toString();
+    }
+
+    return 'OTP verification failed. Please try again.';
   }
 }
