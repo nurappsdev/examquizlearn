@@ -86,7 +86,7 @@ class AppPages {
       name: AppRoutes.resetPassword,
       page: () => const ResetPasswordView(),
       transition: Transition.topLevel,
-      binding: SigninBinding(),
+      binding: ResetPasswordBinding(),
     ),
     GetPage(
       name: AppRoutes.personalInfo,

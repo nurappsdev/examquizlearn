@@ -47,7 +47,7 @@ class SigninView extends GetView<SigninController> {
                   controller: controller.emailController,
                   hintText: AppString.enterYourEmail,
                   prefixIcon: Padding(
-                    padding:  EdgeInsets.all(8.r),
+                    padding: EdgeInsets.all(8.r),
                     child: Icon(
                       Icons.mail_outline,
                       color: AppColors.whiteColor.withOpacity(0.7),
@@ -75,7 +75,7 @@ class SigninView extends GetView<SigninController> {
                   hintText: AppString.enterYourPass,
                   isPassword: true,
                   prefixIcon: Padding(
-                    padding:  EdgeInsets.all(8.r),
+                    padding: EdgeInsets.all(8.r),
                     child: Icon(
                       Icons.vpn_key_outlined,
                       color: AppColors.whiteColor.withOpacity(0.7),
@@ -114,7 +114,7 @@ class SigninView extends GetView<SigninController> {
                       color: AppColors.greenColor,
                       allBorderRadius: BorderRadius.circular(30.r),
                       loading: controller.isLoading.value,
-                      onpress: () => controller.signin(),
+                      onpress: () => controller.signIn(),
                     )),
                 SizedBox(height: 30.h),
                 Row(

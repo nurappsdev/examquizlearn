@@ -1,18 +1,24 @@
 import 'package:get/get.dart';
+import '../../../core/helpers/prefs_helper.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/utils/app_constant.dart';
 
 class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print("SplashController initialized");
     navigateToNext();
   }
 
-  void navigateToNext() async {
-    print("Starting 3s delay...");
+  Future<void> navigateToNext() async {
     await Future.delayed(const Duration(seconds: 3));
-    print("Navigating to Main...");
-    Get.offAllNamed(AppRoutes.signin);
+
+    final token = await PrefsHelper.getString(AppConstants.bearerToken);
+
+    if (token.trim().isNotEmpty) {
+      Get.offAllNamed(AppRoutes.main);
+    } else {
+      Get.offAllNamed(AppRoutes.signin);
+    }
   }
 }

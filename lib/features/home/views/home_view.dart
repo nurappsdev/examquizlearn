@@ -1,6 +1,8 @@
+import 'package:examtest/core/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/helpers/prefs_helper.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
@@ -11,6 +13,9 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+     debugPrint("token${PrefsHelper.getString(
+      AppConstants.bearerToken,
+    )}");
     final HomeController controller = Get.find<HomeController>();
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
