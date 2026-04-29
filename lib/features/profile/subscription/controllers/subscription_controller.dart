@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 
 import '../../../../core/service/api_client.dart';
@@ -117,10 +119,18 @@ class SubscriptionController extends GetxController {
   final _isLoading = false.obs;
   final _errorMessage = ''.obs;
   final _plans = <SubscriptionPlan>[].obs;
+  final _checkoutLoadingPlanId = ''.obs;
+  final _checkoutErrorMessage = ''.obs;
+  final _checkoutUrl = ''.obs;
+  final _selectedCheckoutPlanId = ''.obs;
 
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
   List<SubscriptionPlan> get plans => _plans.toList(growable: false);
+  String get checkoutLoadingPlanId => _checkoutLoadingPlanId.value;
+  String get checkoutErrorMessage => _checkoutErrorMessage.value;
+  String get checkoutUrl => _checkoutUrl.value;
+  String get selectedCheckoutPlanId => _selectedCheckoutPlanId.value;
 
   @override
   void onInit() {
@@ -151,6 +161,51 @@ class SubscriptionController extends GetxController {
           'Failed to load subscription plans. Please try again.';
     } finally {
       _isLoading.value = false;
+    }
+  }
+
+  Future<void> createCheckoutSession(SubscriptionPlan plan) async {
+    if (plan.id.isEmpty) {
+      _selectedCheckoutPlanId.value = plan.id;
+      _checkoutUrl.value = '';
+      _checkoutErrorMessage.value =
+          'This plan is missing an ID. Please refresh and try again.';
+      return;
+    }
+
+    _selectedCheckoutPlanId.value = plan.id;
+    _checkoutLoadingPlanId.value = plan.id;
+    _checkoutErrorMessage.value = '';
+    _checkoutUrl.value = '';
+
+    try {
+      final body = jsonEncode({'planId': plan.id});
+      final response = await ApiClient.postData(
+        ApiConstants.subscriptionCheckoutEndPoint,
+        body,
+      );
+
+      if (!_isSuccess(response)) {
+        _checkoutErrorMessage.value = _responseMessage(
+          response.body,
+          fallback: 'Failed to create checkout session. Please try again.',
+        );
+        return;
+      }
+
+      final checkoutUrl = _extractCheckoutUrl(response.body);
+      if (checkoutUrl.isEmpty) {
+        _checkoutErrorMessage.value =
+            'Checkout session was created but no checkout URL was returned.';
+        return;
+      }
+
+      _checkoutUrl.value = checkoutUrl;
+    } catch (_) {
+      _checkoutErrorMessage.value =
+          'Failed to create checkout session. Please try again.';
+    } finally {
+      _checkoutLoadingPlanId.value = '';
     }
   }
 
@@ -193,5 +248,18 @@ class SubscriptionController extends GetxController {
     }
 
     return fallback;
+  }
+
+  String _extractCheckoutUrl(dynamic body) {
+    if (body is! Map) {
+      return '';
+    }
+
+    final data = body['data'];
+    if (data is Map && data['url'] is String) {
+      return data['url'].toString().trim();
+    }
+
+    return '';
   }
 }

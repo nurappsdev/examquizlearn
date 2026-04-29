@@ -31,4 +31,5 @@ class ApiConstants {
       "/learning-topics?page=1&limit=10";
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
+  static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
 }
