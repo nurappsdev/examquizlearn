@@ -93,7 +93,21 @@ class OtpController extends GetxController {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (screenType == 'forgot') {
-        Get.toNamed(AppRoutes.resetPassword);
+        final resetPasswordToken = _resetPasswordTokenFromResponse(
+          response.body,
+        );
+
+        if (resetPasswordToken.isNotEmpty) {
+          await PrefsHelper.setString(
+            AppConstants.resetPasswordToken,
+            resetPasswordToken,
+          );
+        }
+
+        Get.toNamed(
+          AppRoutes.resetPassword,
+          arguments: {'resetPasswordToken': resetPasswordToken},
+        );
       } else {
         Get.offAllNamed(AppRoutes.signin);
       }
@@ -114,5 +128,28 @@ class OtpController extends GetxController {
     }
 
     return 'OTP verification failed. Please try again.';
+  }
+
+  String _resetPasswordTokenFromResponse(dynamic body) {
+    if (body is! Map) {
+      return '';
+    }
+
+    final data = body['data'];
+    final token =
+        body['resetPasswordToken'] ??
+        body['passwordResetToken'] ??
+        body['token'] ??
+        (data is Map
+            ? data['resetPasswordToken'] ??
+                  data['passwordResetToken'] ??
+                  data['token']
+            : null);
+
+    if (token == null) {
+      return '';
+    }
+
+    return token.toString().trim();
   }
 }

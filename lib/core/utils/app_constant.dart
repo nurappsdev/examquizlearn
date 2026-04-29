@@ -3,6 +3,7 @@ class AppConstants {
   static const String role = "role";
   // static String roleMock = 'roleMock';
   static String bearerToken = 'accessToken';
+  static String resetPasswordToken = 'resetPasswordToken';
 
   static String email = 'email';
   static String isHotDeals = 'true';

@@ -1,7 +1,4 @@
-
 class ApiConstants {
-
-
   static const String baseUrl = "https://iftek7500.merinasib.shop/api/v1";
   static const String imageBaseUrl = "https://api.drop-dr.com/uploads/";
   static const String socketBaseUrl = "https://api.drop-dr.com";
@@ -12,7 +9,8 @@ class ApiConstants {
 
   /// client key
   ///AIzaSyAxaYzHRBhydkW_TwUGHeRYSUV2iCc_uuk
-  static const String mapAPIEndPoint = "AIzaSyAxaYzHRBhydkW_TwUGHeRYSUV2iCc_uuk";
+  static const String mapAPIEndPoint =
+      "AIzaSyAxaYzHRBhydkW_TwUGHeRYSUV2iCc_uuk";
 
   // from maqmun bro
   //static const String mapAPIEndPoint = "AIzaSyBTNR1NWw7LcTsEJTTogqVZ39tgY--eD5U";
@@ -20,12 +18,13 @@ class ApiConstants {
   /// amader key
   //static const String mapAPIEndPoint = "AIzaSyA-Iri6x5mzNv45XO3a-Ew3z4nvF4CdYo0";
 
-
   static const String signUpEndPoint = "/auth/register";
   static const String signInEndPoint = "/auth/login";
   static const String accountDelete = "/users/delete";
   static const String verifyEmailEndPoint = "/auth/verify-email";
-  static const String updateMoreInformationEndPoint = "/employee/update-employee-profile";
+  static const String updateMoreInformationEndPoint =
+      "/employee/update-employee-profile";
   static const String forgotPasswordPoint = "/auth/forgot-password";
+  static const String resetPasswordEndPoint = "/auth/reset-password";
   static const String notification = "/notification";
 }
