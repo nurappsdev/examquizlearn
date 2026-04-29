@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/service/api_client.dart';
 import '../../../../core/service/api_constants.dart';
+import '../../../../core/widgets/payment_webview.dart';
 
 class SubscriptionPlan {
   const SubscriptionPlan({
@@ -201,6 +202,16 @@ class SubscriptionController extends GetxController {
       }
 
       _checkoutUrl.value = checkoutUrl;
+
+      // Navigate to PaymentWebView
+      final result = await Get.to(() => PaymentWebView(url: checkoutUrl));
+
+      if (result == 'success') {
+        // Handle success (e.g., refresh user data, show success message)
+        fetchPlans(); // Refresh plans to see updated status if any
+      } else if (result == 'cancel') {
+        _checkoutErrorMessage.value = 'Payment was cancelled.';
+      }
     } catch (_) {
       _checkoutErrorMessage.value =
           'Failed to create checkout session. Please try again.';

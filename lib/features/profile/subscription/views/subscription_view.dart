@@ -203,11 +203,6 @@ class _PlanCard extends StatelessWidget {
               color: Colors.redAccent,
             ),
           ],
-          if (controller.selectedCheckoutPlanId == plan.id &&
-              controller.checkoutUrl.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            _CheckoutUrlBox(url: controller.checkoutUrl),
-          ],
         ],
       ),
     );
@@ -259,51 +254,6 @@ class _SubscribeButton extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
         ),
-      ),
-    );
-  }
-}
-
-class _CheckoutUrlBox extends StatelessWidget {
-  const _CheckoutUrlBox({required this.url});
-
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: const Color(0xff161616),
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.greenColor.withValues(alpha: 0.45)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.link, color: AppColors.greenColor, size: 18.sp),
-              SizedBox(width: 8.w),
-              CustomText(
-                text: 'Checkout URL',
-                color: Colors.white,
-                fontsize: 13.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          SelectableText(
-            url,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 12.sp,
-              height: 1.35,
-            ),
-          ),
-        ],
       ),
     );
   }
