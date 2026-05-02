@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/routes/app_routes.dart';
+import '../../../core/service/api_constants.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../../main/controllers/main_controller.dart';
 import '../controllers/home_controller.dart';
+import '../model/home_view_model.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -19,46 +21,63 @@ class HomeView extends GetView<HomeController> {
     return Obx(() {
       final topics = mainController.learningTopics;
       final progress = mainController.topicProgress;
+      final isSearching = mainController.learningTopicSearchTerm.isNotEmpty;
+      final isRefreshingTopics = mainController.isRefreshingLearningTopics;
+      final isLoadingMoreTopics = mainController.isLoadingMoreLearningTopics;
+      final isLearningSelected = controller.selectedCategoryIndex == 0;
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20.h),
-            _buildHeader(),
-            SizedBox(height: 30.h),
-            _buildProgressCard(progress),
-            SizedBox(height: 30.h),
-            const CustomText(
-              text: "Select a category",
-              fontsize: 18,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
-            SizedBox(height: 15.h),
-            _buildCategorySelector(controller),
-            SizedBox(height: 20.h),
-            if (topics.isEmpty)
-              _buildEmptyTopicsCard()
-            else
-              ...topics.map((topic) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 15.h),
-                  child: _buildCategoryCard(
-                    title: _stringValue(topic, ['title', 'name']),
-                    subtitle: _stringValue(topic, ['description', 'subtitle']),
-                    progress: _topicProgress(topic),
-                    imageUrl: _stringValue(topic, [
-                      'iconUrl',
-                      'imageUrl',
-                      'image',
-                    ]),
-                  ),
-                );
-              }),
-            SizedBox(height: 100.h),
-          ],
+      return NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          final metrics = notification.metrics;
+          if (metrics.pixels >= metrics.maxScrollExtent - 240.h) {
+            mainController.loadNextLearningTopicsPage();
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              _buildHeader(),
+              SizedBox(height: 30.h),
+              _buildProgressCard(progress),
+              SizedBox(height: 30.h),
+              const CustomText(
+                text: "Select a category",
+                fontsize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+              SizedBox(height: 15.h),
+              _buildCategorySelector(controller),
+              SizedBox(height: 20.h),
+              if (isLearningSelected) ...[
+                _buildTopicSearchField(controller),
+                SizedBox(height: 20.h),
+              ],
+              if (isRefreshingTopics)
+                _buildTopicsLoader()
+              else if (topics.isEmpty)
+                _buildEmptyTopicsCard(
+                  isLearning: isLearningSelected,
+                  isSearching: isLearningSelected && isSearching,
+                )
+              else
+                ...topics.map((topic) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 15.h),
+                    child: _buildCategoryCard(
+                      topic: topic,
+                      isLearning: isLearningSelected,
+                    ),
+                  );
+                }),
+              if (isLoadingMoreTopics) _buildLoadMoreIndicator(),
+              SizedBox(height: 100.h),
+            ],
+          ),
         ),
       );
     });
@@ -247,7 +266,85 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildEmptyTopicsCard() {
+  Widget _buildTopicSearchField(HomeController controller) {
+    return Obx(() {
+      final hasSearchTerm = controller.topicSearchTerm.isNotEmpty;
+
+      return TextField(
+        controller: controller.topicSearchController,
+        onChanged: controller.updateTopicSearchTerm,
+        textInputAction: TextInputAction.search,
+        style: TextStyle(color: Colors.white, fontSize: 14.sp),
+        cursorColor: AppColors.greenColor,
+        decoration: InputDecoration(
+          hintText: 'Search topics',
+          hintStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.55),
+            fontSize: 14.sp,
+          ),
+          filled: true,
+          fillColor: const Color(0xff222222),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Colors.white.withValues(alpha: 0.7),
+            size: 22.r,
+          ),
+          suffixIcon: hasSearchTerm
+              ? IconButton(
+                  onPressed: controller.clearTopicSearch,
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white.withValues(alpha: 0.7),
+                    size: 20.r,
+                  ),
+                )
+              : null,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 18.w,
+            vertical: 14.h,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24.r),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24.r),
+            borderSide: const BorderSide(color: AppColors.greenColor),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildTopicsLoader() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 32.h),
+      child: const Center(
+        child: CircularProgressIndicator(color: AppColors.greenColor),
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreIndicator() {
+    return Padding(
+      padding: EdgeInsets.only(top: 4.h, bottom: 18.h),
+      child: Center(
+        child: SizedBox(
+          width: 24.r,
+          height: 24.r,
+          child: const CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: AppColors.greenColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyTopicsCard({
+    required bool isLearning,
+    required bool isSearching,
+  }) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
@@ -264,7 +361,11 @@ class HomeView extends GetView<HomeController> {
           ),
           SizedBox(height: 12.h),
           CustomText(
-            text: 'No learning topics are available right now.',
+            text: isSearching
+                ? 'No topics found for your search.'
+                : isLearning
+                ? 'No learning topics are available right now.'
+                : 'No tests are available right now.',
             fontsize: 14.sp,
             color: Colors.white.withValues(alpha: 0.8),
             maxline: 2,
@@ -275,11 +376,13 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildCategoryCard({
-    required String title,
-    required String subtitle,
-    required double progress,
-    required String imageUrl,
+    required HomeViewModel topic,
+    required bool isLearning,
   }) {
+    final title = topic.displayTitle;
+    final subtitle = topic.displayDescription;
+    final progress = topic.progress;
+    final imageUrl = topic.displayIconUrl;
     final progressValue = progress.clamp(0.0, 1.0).toDouble();
 
     return Container(
@@ -317,6 +420,8 @@ class HomeView extends GetView<HomeController> {
                       textAlign: TextAlign.start,
                       maxline: 3,
                     ),
+                    SizedBox(height: 12.h),
+                    _buildTopicStats(topic, isLearning: isLearning),
                     SizedBox(height: 15.h),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10.r),
@@ -371,8 +476,46 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
+  Widget _buildTopicStats(HomeViewModel topic, {required bool isLearning}) {
+    final stats = isLearning
+        ? [
+            _TopicStat('Quizzes', topic.quizCount),
+            _TopicStat('Progress', topic.userProgressCount),
+            _TopicStat('Started', topic.startedCount),
+            _TopicStat('Completed', topic.completedCount),
+          ]
+        : [
+            _TopicStat('Quizzes', topic.quizCount),
+            _TopicStat('Attempts', topic.quizAttemptCount),
+          ];
+
+    return Wrap(
+      spacing: 8.w,
+      runSpacing: 8.h,
+      children: stats.map(_buildTopicStatChip).toList(),
+    );
+  }
+
+  Widget _buildTopicStatChip(_TopicStat stat) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: CustomText(
+        text: '${stat.label}: ${stat.value ?? 0}',
+        fontsize: 10,
+        color: Colors.white.withValues(alpha: 0.8),
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
   Widget _buildTopicImage(String imageUrl) {
-    final hasNetworkImage = imageUrl.startsWith('http');
+    final resolvedImageUrl = _resolveTopicImageUrl(imageUrl);
+    final hasNetworkImage = resolvedImageUrl.isNotEmpty;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(18.r),
@@ -382,7 +525,7 @@ class HomeView extends GetView<HomeController> {
         color: const Color(0xff333333),
         child: hasNetworkImage
             ? Image.network(
-                imageUrl,
+                resolvedImageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => _topicFallbackIcon(),
               )
@@ -395,15 +538,20 @@ class HomeView extends GetView<HomeController> {
     return Icon(Icons.school_outlined, color: Colors.grey, size: 40.r);
   }
 
-  String _stringValue(Map<String, dynamic> source, List<String> keys) {
-    for (final key in keys) {
-      final value = source[key];
-      if (value is String && value.trim().isNotEmpty) {
-        return value.trim();
-      }
+  String _resolveTopicImageUrl(String imageUrl) {
+    final value = imageUrl.trim();
+    if (value.isEmpty) {
+      return '';
+    }
+    if (value.startsWith('http')) {
+      return value;
     }
 
-    return '';
+    final baseUrl = ApiConstants.imageBaseUrl.endsWith('/')
+        ? ApiConstants.imageBaseUrl
+        : '${ApiConstants.imageBaseUrl}/';
+    final relativePath = value.startsWith('/') ? value.substring(1) : value;
+    return '$baseUrl$relativePath';
   }
 
   int _intValue(Map<String, dynamic>? source, String key) {
@@ -416,18 +564,6 @@ class HomeView extends GetView<HomeController> {
     }
     if (value is String) {
       return int.tryParse(value) ?? 0;
-    }
-
-    return 0;
-  }
-
-  double _topicProgress(Map<String, dynamic> topic) {
-    for (final key in ['progressPct', 'progress', 'completionPercentage']) {
-      final value = topic[key];
-      final parsed = _doubleValue(value);
-      if (parsed != null) {
-        return parsed > 1 ? parsed / 100 : parsed;
-      }
     }
 
     return 0;
@@ -448,4 +584,11 @@ class HomeView extends GetView<HomeController> {
 
     return null;
   }
+}
+
+class _TopicStat {
+  const _TopicStat(this.label, this.value);
+
+  final String label;
+  final int? value;
 }

@@ -1,6 +1,7 @@
 class ApiConstants {
   static const String baseUrl = "https://iftek7500.merinasib.shop/api/v1";
-  static const String imageBaseUrl = "https://api.drop-dr.com/uploads/";
+  static const String imageBaseUrl =
+      "https://iftek9000.merinasib.shop/naileditquizapp/";
   static const String socketBaseUrl = "https://api.drop-dr.com";
 
   // static const String baseUrl = "https://health-mamun.sarv.live/api/v1";
@@ -27,8 +28,8 @@ class ApiConstants {
   static const String forgotPasswordPoint = "/auth/forgot-password";
   static const String resetPasswordEndPoint = "/auth/reset-password";
   static const String notification = "/notification";
-  static const String learningTopicsEndPoint =
-      "/learning-topics?page=1&limit=10";
+  static const int learningTopicsPageLimit = 10;
+  static const String learningTopicsEndPoint = "/learning-topics";
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
