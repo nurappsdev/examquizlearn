@@ -449,10 +449,7 @@ class HomeView extends GetView<HomeController> {
           GestureDetector(
             onTap: () {
               if (controller.selectedCategoryIndex == 0) {
-                Get.toNamed(
-                  AppRoutes.quiz,
-                  arguments: {"topicId": topic.id, "topicName": topic.title},
-                );
+                controller.startLearningQuiz(topic.id.toString()); // ✅
               } else {
                 Get.toNamed(
                   AppRoutes.carpentryAlternative,

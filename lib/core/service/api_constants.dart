@@ -42,4 +42,8 @@ class ApiConstants {
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
+
+
+  static String learningQuizStartEndPoint(String topicId) =>
+      '/learning-quizzes/topic/$topicId/start';
 }
