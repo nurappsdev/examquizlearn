@@ -29,16 +29,14 @@ class MainView extends GetView<MainController> {
             );
           }
 
-          switch (controller.currentIndex) {
-            case 0:
-              return const HomeView();
-            case 1:
-              return const EducationalContentView();
-            case 2:
-              return const ProfileView();
-            default:
-              return const HomeView();
-          }
+          return IndexedStack(
+            index: controller.currentIndex,
+            children: const [
+              HomeView(),
+              EducationalContentView(),
+              ProfileView(),
+            ],
+          );
         }),
       ),
       bottomNavigationBar: Obx(() {

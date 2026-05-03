@@ -46,4 +46,6 @@ class ApiConstants {
 
   static String learningQuizStartEndPoint(String topicId) =>
       '/learning-quizzes/topic/$topicId/start';
+  static String learningQuizSubmitEndPoint(String topicId) =>
+      '/learning-quizzes/topic/$topicId/submit';
 }

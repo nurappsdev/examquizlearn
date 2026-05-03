@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helpers/toast_message_helper.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/service/api_client.dart';
 import '../../../core/service/api_constants.dart';
+import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text.dart';
 import '../model/quiz_question_model.dart' as quiz_model;
 
 class QuizController extends GetxController {
@@ -24,6 +27,9 @@ class QuizController extends GetxController {
   final errorMessage = "".obs;
   final questions = <quiz_model.TestExamQuizModel>[].obs;
   final attemptId = "".obs;
+
+  final isLearningQuiz = false.obs;
+  final learningQuizResult = <String, dynamic>{}.obs;
 
   final userAnswers = <int>[].obs;
   final currentOptionsList = <quiz_model.Option>[].obs;
@@ -50,6 +56,43 @@ class QuizController extends GetxController {
           arguments["title"]?.toString() ??
           arguments["topicName"]?.toString() ??
           "Quiz";
+      attemptId.value = arguments["attemptId"]?.toString() ?? "";
+
+      if (arguments.containsKey("questions")) {
+        isLearningQuiz.value = true;
+        final dynamic questionList = arguments["questions"];
+        
+        if (questionList is List) {
+          final List<quiz_model.TestExamQuizModel> parsedQuestions = [];
+          for (var e in questionList) {
+            if (e is Map<String, dynamic>) {
+              if (e.containsKey('question')) {
+                // Wrapped format (like exam quiz)
+                parsedQuestions.add(quiz_model.TestExamQuizModel.fromJson(e));
+              } else {
+                // Raw question format
+                parsedQuestions.add(quiz_model.TestExamQuizModel(
+                  id: e['_id']?.toString() ?? e['id']?.toString(),
+                  questionId: e['_id']?.toString() ?? e['id']?.toString(),
+                  question: quiz_model.Question.fromJson(e),
+                ));
+              }
+            }
+          }
+          questions.assignAll(parsedQuestions);
+        }
+        
+        totalSteps.value = questions.length;
+        currentStep.value = questions.isEmpty ? 0 : 1;
+        selectedAnswerIndex.value = -1;
+        userAnswers.assignAll(List.filled(questions.length, -1));
+        _updateDifficulty();
+        _updateCurrentOptions();
+        
+        if (questions.isNotEmpty) {
+          startTimer();
+        }
+      }
 
       final parsedTimeLimit = int.tryParse(
         arguments["timeLimitSec"]?.toString() ?? "",
@@ -124,6 +167,9 @@ class QuizController extends GetxController {
     });
   }
 
+  int get currentCorrectAnswerIndex =>
+      _correctAnswerIndexForQuestion(currentStep.value - 1);
+
   String get timerText {
     final minutes = remainingSeconds.value ~/ 60;
     final seconds = remainingSeconds.value % 60;
@@ -179,15 +225,76 @@ class QuizController extends GetxController {
     }
 
     _saveCurrentAnswer();
-    await submitAnswer();
-
-    if (currentStep.value < totalSteps.value) {
-      currentStep.value++;
-      selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
-      _updateDifficulty();
-      _updateCurrentOptions();
+    
+    if (isLearningQuiz.value) {
+       if (currentStep.value < totalSteps.value) {
+          currentStep.value++;
+          selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
+          _updateDifficulty();
+          _updateCurrentOptions();
+        } else {
+          await submitLearningQuiz();
+        }
     } else {
-      await finishQuiz();
+      await submitAnswer();
+
+      if (currentStep.value < totalSteps.value) {
+        currentStep.value++;
+        selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
+        _updateDifficulty();
+        _updateCurrentOptions();
+      } else {
+        await finishQuiz();
+      }
+    }
+  }
+
+  Future<void> submitLearningQuiz() async {
+    if (topicId.value.isEmpty || questions.isEmpty) return;
+
+    _timer?.cancel(); // Stop timer immediately on submission
+    List<Map<String, dynamic>> answers = [];
+    for (int i = 0; i < questions.length; i++) {
+      final question = questions[i];
+      final answerIndex = userAnswers[i];
+      if (answerIndex != -1) {
+        final options = List<quiz_model.Option>.from(
+          question.question?.options ?? const [],
+        );
+        options.sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
+        
+        if (answerIndex < options.length) {
+          final selectedOptionId = options[answerIndex].id;
+          answers.add({
+            "questionId": question.question?.id ?? question.id,
+            "selectedOptionIds": [selectedOptionId]
+          });
+        }
+      }
+    }
+
+    isSubmittingQuiz.value = true;
+    try {
+      final response = await ApiClient.postData(
+        ApiConstants.learningQuizSubmitEndPoint(topicId.value),
+        jsonEncode({"answers": answers}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.body != null && response.body['data'] != null) {
+          learningQuizResult.value = response.body['data'];
+          _hasOpenedResult = true;
+          Get.toNamed(AppRoutes.quizResult);
+        }
+      } else {
+        ToastMessageHelper.errorMessageShowToster(
+          response.statusText ?? "Failed to submit learning quiz",
+        );
+      }
+    } catch (e) {
+      ToastMessageHelper.errorMessageShowToster("An error occurred: $e");
+    } finally {
+      isSubmittingQuiz.value = false;
     }
   }
 
@@ -204,6 +311,97 @@ class QuizController extends GetxController {
   void selectAnswer(int index) {
     selectedAnswerIndex.value = index;
     _saveCurrentAnswer();
+
+    if (isLearningQuiz.value && index != -1) {
+      final correctIndex = _correctAnswerIndexForQuestion(currentStep.value - 1);
+      if (index != correctIndex) {
+        _showExplanationDialog();
+      }
+    }
+  }
+
+  void _showExplanationDialog() {
+    final question = currentQuestion?.question;
+    if (question == null) return;
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xff1A1A1A),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: const Color(0xffBD0000), size: 28.r),
+                    SizedBox(width: 12.w),
+                    const CustomText(
+                      text: "Incorrect Answer",
+                      fontsize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                if (question.rationale != null &&
+                    question.rationale!.isNotEmpty) ...[
+                  const CustomText(
+                    text: "Rationale:",
+                    fontsize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff17BE57),
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomText(
+                    text: question.rationale!,
+                    fontsize: 13,
+                    color: const Color(0xffD7D4D4),
+                    textAlign: TextAlign.start,
+                    maxline: 10,
+                  ),
+                  SizedBox(height: 20.h),
+                ],
+                if (question.trapExplanation != null &&
+                    question.trapExplanation!.isNotEmpty) ...[
+                  const CustomText(
+                    text: "Trap Explanation:",
+                    fontsize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xffFFC107),
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomText(
+                    text: question.trapExplanation!,
+                    fontsize: 13,
+                    color: const Color(0xffD7D4D4),
+                    textAlign: TextAlign.start,
+                    maxline: 10,
+                  ),
+                  SizedBox(height: 20.h),
+                ],
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    title: "Got it",
+                    onpress: () => Get.back(),
+                    color: const Color(0xff17BE57),
+                    titlecolor: Colors.white,
+                    height: 45.h,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> finishQuiz() async {
@@ -221,6 +419,11 @@ class QuizController extends GetxController {
   }
 
   Future<void> submitQuiz() async {
+    if (isLearningQuiz.value) {
+      Get.offAllNamed(AppRoutes.main);
+      return;
+    }
+
     if (attemptId.value.isEmpty) {
       Get.offAllNamed(AppRoutes.main);
       return;
@@ -385,10 +588,20 @@ class QuizController extends GetxController {
   }
 
   double get scorePercentage {
+    if (isLearningQuiz.value && learningQuizResult.isNotEmpty) {
+      return (learningQuizResult['score'] ?? 0).toDouble();
+    }
     if (questions.isEmpty) {
       return 0;
     }
     return (correctAnswersCount / questions.length) * 100;
+  }
+
+  bool get isPassed {
+    if (isLearningQuiz.value && learningQuizResult.isNotEmpty) {
+      return learningQuizResult['passed'] ?? false;
+    }
+    return scorePercentage >= 70;
   }
 
   String get accuracyText => "${scorePercentage.toStringAsFixed(0)}%";

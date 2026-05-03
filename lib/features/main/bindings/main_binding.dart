@@ -8,8 +8,8 @@ class MainBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<MainController>(() => MainController());
-    Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<EducationalContentController>(() => EducationalContentController());
-    Get.lazyPut<ProfileController>(() => ProfileController());
+    Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
+    Get.lazyPut<EducationalContentController>(() => EducationalContentController(), fenix: true);
+    Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);
   }
 }

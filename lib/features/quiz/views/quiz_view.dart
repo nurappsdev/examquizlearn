@@ -174,15 +174,28 @@ class QuizView extends GetView<QuizController> {
                         return Obx(() {
                           final isThisSelected =
                               controller.selectedAnswerIndex.value == index;
-                          final borderColor = isThisSelected
-                              ? const Color(0xff17BE57)
-                              : const Color(0xff333333);
-                          final indicatorColor = isThisSelected
-                              ? const Color(0xff17BE57)
-                              : Colors.transparent;
+                          final isLearning = controller.isLearningQuiz.value;
+                          final correctIndex = controller.currentCorrectAnswerIndex;
+                          final hasAnswered = controller.selectedAnswerIndex.value != -1;
+
+                          Color borderColor = const Color(0xff333333);
+                          Color indicatorColor = Colors.transparent;
+
+                          if (isLearning && hasAnswered) {
+                            if (index == correctIndex) {
+                              borderColor = const Color(0xff17BE57); // Green
+                              indicatorColor = const Color(0xff17BE57);
+                            } else if (isThisSelected) {
+                              borderColor = const Color(0xffBD0000); // Red
+                              indicatorColor = const Color(0xffBD0000);
+                            }
+                          } else if (isThisSelected) {
+                            borderColor = const Color(0xff17BE57);
+                            indicatorColor = const Color(0xff17BE57);
+                          }
 
                           return GestureDetector(
-                            onTap: () => controller.selectAnswer(index),
+                            onTap: hasAnswered ? null : () => controller.selectAnswer(index),
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 13.w,
@@ -206,9 +219,9 @@ class QuizView extends GetView<QuizController> {
                                       ),
                                       color: indicatorColor,
                                     ),
-                                    child: isThisSelected
-                                        ? const Icon(
-                                      Icons.check,
+                                    child: (isThisSelected || (isLearning && hasAnswered && index == correctIndex))
+                                        ? Icon(
+                                      (isLearning && hasAnswered && index != correctIndex && isThisSelected) ? Icons.close : Icons.check,
                                       size: 16,
                                       color: Colors.white,
                                     )
@@ -254,7 +267,7 @@ class QuizView extends GetView<QuizController> {
                             title:
                             controller.currentStep.value ==
                                 controller.totalSteps.value
-                                ? "Finish"
+                                ? (controller.isLearningQuiz.value ? "Submit" : "Finish")
                                 : "Next",
                             loading: controller.isSubmittingAnswer.value || controller.isSubmittingQuiz.value,
                             onpress: controller.selectedAnswerIndex.value == -1

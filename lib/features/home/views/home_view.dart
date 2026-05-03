@@ -270,7 +270,7 @@ class HomeView extends GetView<HomeController> {
     return Obx(() {
       final hasSearchTerm = controller.topicSearchTerm.isNotEmpty;
 
-      return TextField(
+      return TextFormField(
         controller: controller.topicSearchController,
         onChanged: controller.updateTopicSearchTerm,
         textInputAction: TextInputAction.search,

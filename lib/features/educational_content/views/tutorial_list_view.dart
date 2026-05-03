@@ -20,7 +20,7 @@ class TutorialListView extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: const CustomText(
-          text: "Educational content",
+          text: "Tutorials & Blogs",
           fontsize: 16,
           fontWeight: FontWeight.w400,
           color: Colors.white,

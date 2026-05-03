@@ -52,7 +52,7 @@ class QuizResultView extends GetView<QuizController> {
             SizedBox(height: 12.h),
             Obx(
               () => CustomText(
-                text: controller.scorePercentage >= 70
+                text: controller.isPassed
                     ? "Excellent work ! You have met the minimum threshold of 70% for this simulation"
                     : "Keep practicing ! You need 70% to pass this simulation",
                 fontsize: 14,
@@ -93,11 +93,109 @@ class QuizResultView extends GetView<QuizController> {
                 color: const Color(0xffD7D4D4),
               ),
             ),
+            Obx(() {
+              if (controller.isLearningQuiz.value &&
+                  controller.learningQuizResult.isNotEmpty) {
+                final answers =
+                    controller.learningQuizResult['answers'] as List?;
+                if (answers != null && answers.isNotEmpty) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 32.h),
+                      const CustomText(
+                        text: "Rationales",
+                        fontsize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 16.h),
+                      ...answers.map((answer) => _buildRationaleItem(answer)),
+                    ],
+                  );
+                }
+              }
+              return const SizedBox.shrink();
+            }),
             SizedBox(height: 24.h),
             _buildNextSteps(),
             SizedBox(height: 40.h),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRationaleItem(dynamic answer) {
+    if (answer is! Map<String, dynamic>) return const SizedBox.shrink();
+
+    final isCorrect = answer['isCorrect'] ?? false;
+    final rationale = answer['rationale'] ?? "";
+    final questionId = answer['questionId'];
+
+    final question = controller.questions.firstWhereOrNull(
+        (q) => q.question?.id == questionId || q.id == questionId);
+    final questionContent = question?.question?.content ?? "Question";
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: const Color(0xff1A1A1A),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: isCorrect
+              ? const Color(0xff19D160).withValues(alpha: 0.3)
+              : const Color(0xffBD0000).withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: questionContent,
+            fontsize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+            textAlign: TextAlign.start,
+            maxline: 5,
+          ),
+          SizedBox(height: 12.h),
+          Row(
+            children: [
+              Icon(
+                isCorrect ? Icons.check_circle : Icons.cancel,
+                color: isCorrect ? const Color(0xff19D160) : const Color(0xffBD0000),
+                size: 20.r,
+              ),
+              SizedBox(width: 8.w),
+              CustomText(
+                text: isCorrect ? "Correct" : "Incorrect",
+                fontsize: 12,
+                fontWeight: FontWeight.w500,
+                color: isCorrect ? const Color(0xff19D160) : const Color(0xffBD0000),
+              ),
+            ],
+          ),
+          if (rationale.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            const CustomText(
+              text: "Rationale:",
+              fontsize: 12,
+              fontWeight: FontWeight.bold,
+              color: Color(0xff17BE57),
+            ),
+            SizedBox(height: 4.h),
+            CustomText(
+              text: rationale,
+              fontsize: 12,
+              color: const Color(0xffD7D4D4),
+              textAlign: TextAlign.start,
+              maxline: 10,
+            ),
+          ],
+        ],
       ),
     );
   }
