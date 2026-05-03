@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/service/api_constants.dart';
 import '../../../core/utils/app_colors.dart';
+import '../../../core/widgets/custom_loader.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../controllers/educational_content_controller.dart';
 
@@ -11,7 +13,8 @@ class EducationalContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EducationalContentController controller = Get.find<EducationalContentController>();
+    final EducationalContentController controller =
+        Get.find<EducationalContentController>();
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -90,38 +93,40 @@ class EducationalContentView extends StatelessWidget {
           SizedBox(height: 30.h),
           // Content List
           Expanded(
-            child: Obx(() => ListView(
-                  padding: EdgeInsets.only(bottom: 20.h),
-                  children: [
-                    _buildContentCard(
-                      title: "Carpentry",
-                      description:
-                          "We shop and deliver your essentials quickly and reliably",
-                      totalTutorials: 23,
-                      icon: Icons.construction,
-                      buttonText: controller.selectedTab.value == 0
-                          ? "View all tutorial"
-                          : "View all Text content",
-                      onTap: () => controller.selectedTab.value == 0
-                          ? Get.toNamed(AppRoutes.tutorialList)
-                          : Get.toNamed(AppRoutes.textContentList),
-                    ),
-                    SizedBox(height: 20.h),
-                    _buildContentCard(
-                      title: "OSHA",
-                      description:
-                          "We shop and deliver your essentials quickly and reliably",
-                      totalTutorials: 23,
-                      icon: Icons.roofing,
-                      buttonText: controller.selectedTab.value == 0
-                          ? "View all tutorial"
-                          : "View all Text content",
-                      onTap: () => controller.selectedTab.value == 0
-                          ? Get.toNamed(AppRoutes.tutorialList)
-                          : Get.toNamed(AppRoutes.textContentList),
-                    ),
-                  ],
-                )),
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CustomLoader());
+              }
+              if (controller.topics.isEmpty) {
+                return const Center(
+                  child: CustomText(
+                    text: "No topics found",
+                    color: Colors.white,
+                  ),
+                );
+              }
+              return ListView.separated(
+                padding: EdgeInsets.only(bottom: 20.h),
+                itemCount: controller.topics.length,
+                separatorBuilder: (context, index) => SizedBox(height: 20.h),
+                itemBuilder: (context, index) {
+                  var topic = controller.topics[index];
+                  return _buildContentCard(
+                    title: topic.title ?? "",
+                    description: topic.description ?? "",
+                    totalTutorials: topic.quizCount ?? 0,
+                    iconUrl: topic.iconUrl ?? "",
+                    buttonText: controller.selectedTab.value == 0
+                        ? "View all tutorial"
+                        : "View all Text content",
+                    onTap: () => controller.selectedTab.value == 0
+                        ? Get.toNamed(AppRoutes.tutorialList, arguments: topic)
+                        : Get.toNamed(AppRoutes.textContentList,
+                            arguments: topic),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),
@@ -132,7 +137,7 @@ class EducationalContentView extends StatelessWidget {
     required String title,
     required String description,
     required int totalTutorials,
-    required IconData icon,
+    required String iconUrl,
     required String buttonText,
     required VoidCallback onTap,
   }) {
@@ -153,7 +158,17 @@ class EducationalContentView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.transparent,
             ),
-            child: Icon(icon, color: const Color(0xffE3A76F), size: 60.r),
+            child: iconUrl.isEmpty
+                ? Icon(Icons.construction,
+                    color: const Color(0xffE3A76F), size: 60.r)
+                : Image.network(
+                    "${ApiConstants.imageBaseUrl}$iconUrl",
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.construction,
+                        color: const Color(0xffE3A76F),
+                        size: 60.r),
+                  ),
           ),
           SizedBox(width: 16.w),
           Expanded(

@@ -139,11 +139,13 @@ class AppPages {
       name: AppRoutes.tutorialList,
       page: () => const TutorialListView(),
       transition: Transition.topLevel,
+      binding: EducationalContentBinding(),
     ),
     GetPage(
       name: AppRoutes.videoPlay,
       page: () => const VideoPlayView(),
       transition: Transition.topLevel,
+      binding: EducationalContentBinding(),
     ),
 
     GetPage(

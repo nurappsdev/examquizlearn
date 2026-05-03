@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
-import '../../../core/utils/app_image.dart';
+import '../../../core/service/api_constants.dart';
+import '../../../core/widgets/custom_loader.dart';
 import '../../../core/widgets/custom_text.dart';
-import '../../../core/widgets/custom_bottom_bar.dart';
+import '../controllers/tutorial_list_controller.dart';
+import '../model/learning_material_model.dart';
 
 class TextContentListView extends StatelessWidget {
   const TextContentListView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TutorialListController controller =
+        Get.find<TutorialListController>();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -20,35 +24,59 @@ class TextContentListView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => Get.back(),
         ),
-        title: const CustomText(
-          text: "Carpentry content",
+        title: CustomText(
+          text: "${controller.topic.title} content",
           fontsize: 18,
           fontWeight: FontWeight.w400,
           color: Colors.white,
         ),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        itemCount: 5,
-        separatorBuilder: (context, index) => SizedBox(height: 16.h),
-        itemBuilder: (context, index) {
-          return _buildTextContentCard(
-            title: "Titles here",
-            subtitle: "Transform your look with expert cuts, styling, and personalized service at our premier salon, designed for your ultimate satisfaction.",
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CustomLoader());
+        }
+        if (controller.materials.isEmpty) {
+          return const Center(
+            child: CustomText(
+              text: "No text content found",
+              color: Colors.white,
+            ),
           );
-        },
-      ),
-      // bottomNavigationBar: const CustomBottomBar(),
+        }
+        return ListView.separated(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          itemCount: controller.materials.length,
+          separatorBuilder: (context, index) => SizedBox(height: 16.h),
+          itemBuilder: (context, index) {
+            var material = controller.materials[index];
+            return _buildTextContentCard(
+              material: material,
+              controller: controller,
+            );
+          },
+        );
+      }),
     );
   }
 
   Widget _buildTextContentCard({
-    required String title,
-    required String subtitle,
+    required LearningMaterialModel material,
+    required TutorialListController controller,
   }) {
+    String? imageUrl = material.contentData?.url;
+    if (imageUrl != null && !imageUrl.startsWith("http")) {
+      imageUrl = "${ApiConstants.imageBaseUrl}$imageUrl";
+    }
+
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.textContentDetail),
+      onTap: () async {
+        if (material.id != null) {
+          bool canStart = await controller.startMaterial(material.id!);
+          if (!canStart) return;
+        }
+        Get.toNamed(AppRoutes.textContentDetail, arguments: material);
+      },
       child: Container(
         width: double.infinity,
         height: 150.h,
@@ -62,18 +90,27 @@ class TextContentListView extends StatelessWidget {
             // Left Side: Image
             ClipRRect(
               borderRadius: BorderRadius.horizontal(left: Radius.circular(24.r)),
-              child: Image.asset(
-                AppImages.contentPic,
-                height: double.infinity,
-                width: 110.w,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 130.w,
-                  height: double.infinity,
-                  color: const Color(0xff333333),
-                  child: const Center(child: Icon(Icons.image, color: Colors.white)),
-                ),
-              ),
+              child: imageUrl != null && imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      height: double.infinity,
+                      width: 110.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 110.w,
+                        height: double.infinity,
+                        color: const Color(0xff333333),
+                        child: const Center(
+                            child: Icon(Icons.image, color: Colors.white)),
+                      ),
+                    )
+                  : Container(
+                      width: 110.w,
+                      height: double.infinity,
+                      color: const Color(0xff333333),
+                      child: const Center(
+                          child: Icon(Icons.image, color: Colors.white)),
+                    ),
             ),
             // Right Side: Text Content
             Expanded(
@@ -83,16 +120,17 @@ class TextContentListView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      text: title,
+                      text: material.contentData?.title ?? "Untitled",
                       fontsize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       textAlign: TextAlign.start,
+                      maxline: 1,
                     ),
                     SizedBox(height: 4.h),
                     Expanded(
                       child: CustomText(
-                        text: subtitle,
+                        text: material.contentData?.text ?? "",
                         fontsize: 11,
                         fontWeight: FontWeight.w400,
                         color: Colors.white.withOpacity(0.7),
@@ -107,7 +145,8 @@ class TextContentListView extends StatelessWidget {
                       height: 36.h,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.r),
-                        border: Border.all(color: const Color(0xff19D160), width: 1),
+                        border:
+                            Border.all(color: const Color(0xff19D160), width: 1),
                       ),
                       child: const Center(
                         child: CustomText(
