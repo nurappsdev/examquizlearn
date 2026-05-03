@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helpers/toast_message_helper.dart';
@@ -18,10 +19,14 @@ class QuizController extends GetxController {
   final topicId = "".obs;
   final quizTitle = "Quiz".obs;
   final isLoading = false.obs;
+  final isSubmittingAnswer = false.obs;
+  final isSubmittingQuiz = false.obs;
   final errorMessage = "".obs;
   final questions = <quiz_model.TestExamQuizModel>[].obs;
+  final attemptId = "".obs;
 
   final userAnswers = <int>[].obs;
+  final currentOptionsList = <quiz_model.Option>[].obs;
 
   final remainingSeconds = (10 * 60).obs;
   final initialSeconds = (10 * 60).obs;
@@ -88,6 +93,7 @@ class QuizController extends GetxController {
         selectedAnswerIndex.value = -1;
         userAnswers.assignAll(List.filled(questions.length, -1));
         _updateDifficulty();
+        _updateCurrentOptions();
 
         if (questions.isNotEmpty) {
           startTimer();
@@ -153,25 +159,35 @@ class QuizController extends GetxController {
     return options;
   }
 
+  void _updateCurrentOptions() {
+    final options = List<quiz_model.Option>.from(
+      currentQuestion?.question?.options ?? const [],
+    );
+    options.sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
+    currentOptionsList.assignAll(options);
+  }
+
   @override
   void onClose() {
     _timer?.cancel();
     super.onClose();
   }
 
-  void nextStep() {
+  Future<void> nextStep() async {
     if (selectedAnswerIndex.value == -1 || questions.isEmpty) {
       return;
     }
 
     _saveCurrentAnswer();
+    await submitAnswer();
 
     if (currentStep.value < totalSteps.value) {
       currentStep.value++;
       selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
       _updateDifficulty();
+      _updateCurrentOptions();
     } else {
-      finishQuiz();
+      await finishQuiz();
     }
   }
 
@@ -181,6 +197,7 @@ class QuizController extends GetxController {
       currentStep.value--;
       selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
       _updateDifficulty();
+      _updateCurrentOptions();
     }
   }
 
@@ -189,7 +206,7 @@ class QuizController extends GetxController {
     _saveCurrentAnswer();
   }
 
-  void finishQuiz() {
+  Future<void> finishQuiz() async {
     if (_hasOpenedResult) {
       return;
     }
@@ -198,8 +215,36 @@ class QuizController extends GetxController {
     if (selectedAnswerIndex.value != -1 && questions.isNotEmpty) {
       _saveCurrentAnswer();
     }
+    
     _hasOpenedResult = true;
     Get.toNamed(AppRoutes.quizResult);
+  }
+
+  Future<void> submitQuiz() async {
+    if (attemptId.value.isEmpty) {
+      Get.offAllNamed(AppRoutes.main);
+      return;
+    }
+
+    isSubmittingQuiz.value = true;
+    try {
+      final response = await ApiClient.postData(
+        ApiConstants.submitQuizAttemptEndPoint(attemptId.value),
+        jsonEncode({}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.offAllNamed(AppRoutes.main);
+      } else {
+        ToastMessageHelper.errorMessageShowToster(
+          response.statusText ?? "Failed to finalize quiz submission",
+        );
+      }
+    } catch (e) {
+      debugPrint("Error finalizing quiz submission: $e");
+    } finally {
+      isSubmittingQuiz.value = false;
+    }
   }
 
   void retryQuiz() {
@@ -208,6 +253,7 @@ class QuizController extends GetxController {
     selectedAnswerIndex.value = -1;
     userAnswers.assignAll(List.filled(questions.length, -1));
     _updateDifficulty();
+    _updateCurrentOptions();
     if (questions.isNotEmpty) {
       startTimer();
     }
@@ -239,6 +285,11 @@ class QuizController extends GetxController {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
+        // Save attemptId from response
+        if (response.body != null && response.body['data'] != null) {
+          attemptId.value = response.body['data']['attemptId']?.toString() ?? "";
+        }
+        
         getQuestions();
         Get.toNamed(AppRoutes.quiz, arguments: Get.arguments);
       } else {
@@ -250,6 +301,41 @@ class QuizController extends GetxController {
       ToastMessageHelper.errorMessageShowToster("An error occurred: $e");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> submitAnswer() async {
+    if (attemptId.value.isEmpty || currentQuestion == null || selectedAnswerIndex.value == -1) {
+      return;
+    }
+
+    final questionIdValue = currentQuestion?.question?.id;
+    final options = currentOptions;
+    final selectedOptionId = options[selectedAnswerIndex.value].id;
+
+    if (questionIdValue == null || selectedOptionId == null) return;
+
+    isSubmittingAnswer.value = true;
+    try {
+      final body = jsonEncode({
+        "questionId": questionIdValue,
+        "selectedOptionIds": [selectedOptionId]
+      });
+
+      final response = await ApiClient.postData(
+        ApiConstants.submitAnswerEndPoint(attemptId.value),
+        body,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        ToastMessageHelper.errorMessageShowToster(
+          response.statusText ?? "Failed to submit answer",
+        );
+      }
+    } catch (e) {
+      debugPrint("Error submitting answer: $e");
+    } finally {
+      isSubmittingAnswer.value = false;
     }
   }
 

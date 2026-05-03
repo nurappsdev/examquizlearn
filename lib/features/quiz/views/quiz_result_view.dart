@@ -315,12 +315,15 @@ class QuizResultView extends GetView<QuizController> {
             textAlign: TextAlign.start,
           ),
           SizedBox(height: 16.h),
-          CustomButton(
-            title: "Continue to next",
-            onpress: () {},
-            color: const Color(0xff19D160),
-            titlecolor: Colors.white,
-            height: 50.h,
+          Obx(
+            () => CustomButton(
+              title: "Continue to next",
+              loading: controller.isSubmittingQuiz.value,
+              onpress: () => controller.submitQuiz(),
+              color: const Color(0xff19D160),
+              titlecolor: Colors.white,
+              height: 50.h,
+            ),
           ),
           SizedBox(height: 12.h),
           CustomButton(

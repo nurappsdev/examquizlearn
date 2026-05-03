@@ -35,6 +35,10 @@ class ApiConstants {
       "$quizzesEndPoint/$quizId/questions";
   static String quizAttemptsEndPoint(String quizId) =>
       "$quizzesEndPoint/$quizId/attempts";
+  static String submitAnswerEndPoint(String attemptId) =>
+      "/quiz-attempts/$attemptId/answers";
+  static String submitQuizAttemptEndPoint(String attemptId) =>
+      "/quiz-attempts/$attemptId/submit";
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";

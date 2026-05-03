@@ -467,9 +467,9 @@ class HomeView extends GetView<HomeController> {
                 color: AppColors.greenColor,
                 borderRadius: BorderRadius.circular(25.r),
               ),
-              child: const Center(
+              child:  Center(
                 child: CustomText(
-                  text: "Details",
+                  text: controller.selectedCategoryIndex == 0? "Play Quiz": "Details",
                   fontsize: 14,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
