@@ -6,12 +6,27 @@ import '../../../core/utils/app_colors.dart';
 import '../../../core/utils/app_image.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../controllers/quiz_controller.dart';
 
-class QuizInfoView extends StatelessWidget {
+class QuizInfoView extends GetView<QuizController> {
   const QuizInfoView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final arguments = Get.arguments;
+    final Map<dynamic, dynamic> quizArguments = arguments is Map
+        ? arguments
+        : {"id": arguments};
+    final int timeLimitSec =
+        int.tryParse(quizArguments["timeLimitSec"]?.toString() ?? "") ?? 0;
+    final String title =
+        quizArguments["title"]?.toString().trim().isNotEmpty == true
+        ? quizArguments["title"].toString()
+        : "Need to know";
+    final String timedTestTitle = timeLimitSec > 0
+        ? "Timed test (${_formatDuration(timeLimitSec)})"
+        : "Timed test";
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -21,8 +36,8 @@ class QuizInfoView extends StatelessWidget {
           icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
           onPressed: () => Get.back(),
         ),
-        title: const CustomText(
-          text: "Need to know",
+        title: CustomText(
+          text: title,
           fontsize: 16,
           fontWeight: FontWeight.w400,
           color: Colors.white,
@@ -54,7 +69,7 @@ class QuizInfoView extends StatelessWidget {
             _buildInfoCard(
               icon: Icons.access_time_filled,
               iconColor: const Color(0xff19D160),
-              title: "Timed test (60 mins)",
+              title: timedTestTitle,
               subtitle:
                   "The timer starts the moment you click begin. Auto-submission occurs at 0:00.",
             ),
@@ -75,27 +90,38 @@ class QuizInfoView extends StatelessWidget {
                   "Receive a detailed performance breakdown across all technical categories.",
             ),
             SizedBox(height: 30.h),
-            Image.asset(
-              AppImages.rafiki,
-              height: 200.h,
-              fit: BoxFit.contain,
-            ),
+            Image.asset(AppImages.rafiki, height: 200.h, fit: BoxFit.contain),
             SizedBox(height: 30.h),
             _buildPrecisionSection(),
             SizedBox(height: 30.h),
-            CustomButton(
-              title: "Start exam",
-              onpress: () => Get.toNamed(AppRoutes.quiz),
-              color: AppColors.greenColor,
-              titlecolor: Colors.white,
-              bordercolor: Colors.transparent,
-              height: 50.h,
+            Obx(
+              () => CustomButton(
+                title: controller.isLoading.value ? "Starting..." : "Start exam",
+                onpress: controller.isLoading.value
+                    ? () {}
+                    : () => controller.startQuizAttempt(),
+                color: AppColors.greenColor,
+                titlecolor: Colors.white,
+                bordercolor: Colors.transparent,
+                height: 50.h,
+              ),
             ),
             SizedBox(height: 30.h),
           ],
         ),
       ),
     );
+  }
+
+  String _formatDuration(int totalSeconds) {
+    final int minutes = totalSeconds ~/ 60;
+    final int seconds = totalSeconds % 60;
+
+    if (seconds == 0) {
+      return "$minutes mins";
+    }
+
+    return "$minutes mins $seconds secs";
   }
 
   Widget _buildInfoCard({
@@ -116,7 +142,7 @@ class QuizInfoView extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(icon, color: iconColor, size: 24.r),
@@ -189,11 +215,7 @@ class QuizInfoView extends StatelessWidget {
           child: Icon(Icons.check, color: Colors.white, size: 12.r),
         ),
         SizedBox(width: 10.w),
-        CustomText(
-          text: text,
-          fontsize: 10,
-          color: const Color(0xffD7D4D4),
-        ),
+        CustomText(text: text, fontsize: 10, color: const Color(0xffD7D4D4)),
       ],
     );
   }

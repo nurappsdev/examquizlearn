@@ -1,4 +1,66 @@
 
+
+
+
+class TestExamCarpentryResponseModel {
+  final List<TestExamCarpentryModel>? data;
+  final PaginationModel? pagination;
+
+  TestExamCarpentryResponseModel({this.data, this.pagination});
+
+  factory TestExamCarpentryResponseModel.fromJson(Map<String, dynamic> json) =>
+      TestExamCarpentryResponseModel(
+        data: json["data"] == null
+            ? null
+            : List<TestExamCarpentryModel>.from(
+                json["data"].map((x) => TestExamCarpentryModel.fromJson(x))),
+        pagination: json["pagination"] == null
+            ? null
+            : PaginationModel.fromJson(json["pagination"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "pagination": pagination?.toJson(),
+      };
+}
+
+class PaginationModel {
+  final int? currentPage;
+  final int? totalItems;
+  final int? totalPages;
+  final int? nextPage;
+  final dynamic previousPage;
+  final int? itemsPerPage;
+
+  PaginationModel({
+    this.currentPage,
+    this.totalItems,
+    this.totalPages,
+    this.nextPage,
+    this.previousPage,
+    this.itemsPerPage,
+  });
+
+  factory PaginationModel.fromJson(Map<String, dynamic> json) => PaginationModel(
+        currentPage: json["currentPage"],
+        totalItems: json["totalItems"],
+        totalPages: json["totalPages"],
+        nextPage: json["nextPage"],
+        previousPage: json["previousPage"],
+        itemsPerPage: json["itemsPerPage"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "currentPage": currentPage,
+        "totalItems": totalItems,
+        "totalPages": totalPages,
+        "nextPage": nextPage,
+        "previousPage": previousPage,
+        "itemsPerPage": itemsPerPage,
+      };
+}
+
 class TestExamCarpentryModel {
   final String? id;
   final bool? isActive;

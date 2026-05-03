@@ -128,6 +128,7 @@ class AppPages {
       name: AppRoutes.quizInfo,
       page: () => const QuizInfoView(),
       transition: Transition.topLevel,
+      binding: QuizBinding(),
     ),
     GetPage(
       name: AppRoutes.quizResult,

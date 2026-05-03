@@ -27,10 +27,7 @@ class QuizResultView extends GetView<QuizController> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: () {},
-          ),
+
         ],
       ),
       body: SingleChildScrollView(
@@ -42,40 +39,60 @@ class QuizResultView extends GetView<QuizController> {
             SizedBox(height: 20.h),
             _buildStatusBadge(),
             SizedBox(height: 24.h),
-            const CustomText(
-              text: "Real Estate Demo Exam",
-              fontsize: 24,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-              textAlign: TextAlign.center,
+            Obx(
+              () => CustomText(
+                text: controller.quizTitle.value,
+                fontsize: 24,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                textAlign: TextAlign.center,
+                maxline: 2,
+              ),
             ),
             SizedBox(height: 12.h),
-            Obx(() => CustomText(
-              text: controller.scorePercentage >= 70 
-                  ? "Excellent work ! You have met the minimum threshold of 70% for the Real Estate Demo simulation"
-                  : "Keep practicing ! You need 70% to pass the Real Estate Demo simulation",
-              fontsize: 14,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xffD7D4D4),
-              textAlign: TextAlign.center,
-              maxline: 4,
-            )),
+            Obx(
+              () => CustomText(
+                text: controller.scorePercentage >= 70
+                    ? "Excellent work ! You have met the minimum threshold of 70% for this simulation"
+                    : "Keep practicing ! You need 70% to pass this simulation",
+                fontsize: 14,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xffD7D4D4),
+                textAlign: TextAlign.center,
+                maxline: 4,
+              ),
+            ),
             SizedBox(height: 30.h),
             _buildStatsRow(),
             SizedBox(height: 24.h),
-            Obx(() => _buildAnswerBreakdown(
-              title: "Correct answers",
-              count: "${controller.correctAnswersCount}",
-              description: "Total number of questions you answered correctly.",
-              color: const Color(0xff19D160),
-            )),
+            Obx(
+              () => _buildAnswerBreakdown(
+                title: "Correct answers",
+                count: "${controller.correctAnswersCount}",
+                description:
+                    "Total number of questions you answered correctly.",
+                color: const Color(0xff19D160),
+              ),
+            ),
             SizedBox(height: 16.h),
-            Obx(() => _buildAnswerBreakdown(
-              title: "Incorrect answers",
-              count: "${controller.incorrectAnswersCount}",
-              description: "Total number of questions you answered incorrectly.",
-              color: const Color(0xffBD0000),
-            )),
+            Obx(
+              () => _buildAnswerBreakdown(
+                title: "Incorrect answers",
+                count: "${controller.incorrectAnswersCount}",
+                description:
+                    "Total number of questions you answered incorrectly.",
+                color: const Color(0xffBD0000),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Obx(
+              () => _buildAnswerBreakdown(
+                title: "Unattempted answers",
+                count: "${controller.unattemptedCount}",
+                description: "Total number of questions you did not answer.",
+                color: const Color(0xffD7D4D4),
+              ),
+            ),
             SizedBox(height: 24.h),
             _buildNextSteps(),
             SizedBox(height: 40.h),
@@ -96,12 +113,14 @@ class QuizResultView extends GetView<QuizController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Obx(() => CustomText(
-            text: "${controller.scorePercentage.toInt()} %",
-            fontsize: 48,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xff19D160),
-          )),
+          Obx(
+            () => CustomText(
+              text: "${controller.scorePercentage.toInt()} %",
+              fontsize: 48,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xff19D160),
+            ),
+          ),
           const CustomText(
             text: "Overall score",
             fontsize: 14,
@@ -121,14 +140,19 @@ class QuizResultView extends GetView<QuizController> {
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(100.r),
-          border: Border.all(color: passed ? const Color(0xff47DA80) : Colors.red, width: 1.w),
+          border: Border.all(
+            color: passed ? const Color(0xff47DA80) : Colors.red,
+            width: 1.w,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(passed ? Icons.verified : Icons.error_outline, 
-                 color: passed ? const Color(0xff19D160) : Colors.red, 
-                 size: 24.r),
+            Icon(
+              passed ? Icons.verified : Icons.error_outline,
+              color: passed ? const Color(0xff19D160) : Colors.red,
+              size: 24.r,
+            ),
             SizedBox(width: 8.w),
             CustomText(
               text: passed ? "Passed" : "Failed",
@@ -146,21 +170,25 @@ class QuizResultView extends GetView<QuizController> {
     return Row(
       children: [
         Expanded(
-          child: _buildStatItem(
-            icon: Icons.access_time,
-            title: "Time spent",
-            value: "05 : 12 min",
-            valueColor: const Color(0xff19D160),
+          child: Obx(
+            () => _buildStatItem(
+              icon: Icons.access_time,
+              title: "Time spent",
+              value: controller.timeSpentText,
+              valueColor: const Color(0xff19D160),
+            ),
           ),
         ),
         SizedBox(width: 12.w),
         Expanded(
-          child: Obx(() => _buildStatItem(
-            icon: Icons.bar_chart,
-            title: "Accuracy",
-            value: controller.scorePercentage >= 80 ? "High" : (controller.scorePercentage >= 50 ? "Medium" : "Low"),
-            valueColor: const Color(0xff19D160),
-          )),
+          child: Obx(
+            () => _buildStatItem(
+              icon: Icons.bar_chart,
+              title: "Accuracy",
+              value: controller.accuracyText,
+              valueColor: const Color(0xff19D160),
+            ),
+          ),
         ),
       ],
     );
@@ -219,7 +247,7 @@ class QuizResultView extends GetView<QuizController> {
             width: 60.w,
             height: 60.w,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Center(
@@ -279,7 +307,8 @@ class QuizResultView extends GetView<QuizController> {
           ),
           SizedBox(height: 8.h),
           const CustomText(
-            text: "Review your answers or continue to the next module to further your real estate knowledge.",
+            text:
+                "Review your answers or continue to the next module to further your real estate knowledge.",
             fontsize: 10,
             fontWeight: FontWeight.w400,
             color: Color(0xffD7D4D4),
@@ -297,9 +326,7 @@ class QuizResultView extends GetView<QuizController> {
           CustomButton(
             title: "Retry quiz",
             onpress: () {
-              controller.currentStep.value = 1;
-              controller.selectedAnswerIndex.value = -1;
-              controller.userAnswers.value = List.filled(controller.questions.length, -1);
+              controller.retryQuiz();
               Get.back();
             },
             color: Colors.transparent,

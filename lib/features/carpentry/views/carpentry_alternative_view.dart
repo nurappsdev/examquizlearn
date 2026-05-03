@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../controllers/carpentry_controller.dart';
+import '../model/test_exam_carpentry_model.dart';
 
 class CarpentryAlternativeView extends GetView<CarpentryController> {
   const CarpentryAlternativeView({super.key});
@@ -19,11 +20,13 @@ class CarpentryAlternativeView extends GetView<CarpentryController> {
           icon: const Icon(Icons.chevron_left, color: Colors.white, size: 30),
           onPressed: () => Get.back(),
         ),
-        title: const CustomText(
-          text: "Carpentry",
-          fontsize: 16,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
+        title: Obx(
+          () => CustomText(
+            text: controller.topicName.value,
+            fontsize: 16,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -33,18 +36,62 @@ class CarpentryAlternativeView extends GetView<CarpentryController> {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-        itemCount: 3,
-        separatorBuilder: (context, index) => SizedBox(height: 12.h),
-        itemBuilder: (context, index) {
-          return _buildQuizCard(index + 1);
-        },
-      ),
+      body: Obx(() {
+        if (controller.isLoading.value && controller.quizzes.isEmpty) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xff19D160)),
+          );
+        }
+
+        if (controller.quizzes.isEmpty) {
+          return const Center(
+            child: CustomText(
+              text: "No quizzes available",
+              color: Colors.white,
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: controller.refreshQuizzes,
+          color: const Color(0xff19D160),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.pixels ==
+                  scrollInfo.metrics.maxScrollExtent) {
+                controller.loadMore();
+              }
+              return false;
+            },
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+              itemCount:
+                  controller.quizzes.length +
+                  (controller.hasMore.value ? 1 : 0),
+              separatorBuilder: (context, index) => SizedBox(height: 12.h),
+              itemBuilder: (context, index) {
+                if (index == controller.quizzes.length) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        color: Color(0xff19D160),
+                      ),
+                    ),
+                  );
+                }
+                return _buildQuizCard(controller.quizzes[index]);
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildQuizCard(int quizNumber) {
+  Widget _buildQuizCard(TestExamCarpentryModel quiz) {
+    final difficultyCounts = quiz.templateId?.difficultyCounts;
+
     return Container(
       width: 346.w,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
@@ -56,14 +103,14 @@ class CarpentryAlternativeView extends GetView<CarpentryController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
-            text: "Quiz - $quizNumber",
+            text: quiz.title ?? "Quiz",
             fontsize: 16,
             fontWeight: FontWeight.w500,
             color: const Color(0xffD7D4D4),
           ),
           SizedBox(height: 4.h),
           CustomText(
-            text: "We shop and deliver your essentials quickly and reliably",
+            text: "Quiz Code: ${quiz.quizCode ?? "N/A"}",
             fontsize: 10,
             fontWeight: FontWeight.w400,
             color: const Color(0xffD7D4D4),
@@ -71,24 +118,43 @@ class CarpentryAlternativeView extends GetView<CarpentryController> {
             maxline: 2,
           ),
           SizedBox(height: 12.h),
-          const CustomText(
-            text: "Total quiz : 25",
-            fontsize: 8,
-            color: Color(0xffD7D4D4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(
+                text: "Total quiz : ${quiz.questionCount ?? 0}",
+                fontsize: 8,
+                color: const Color(0xffD7D4D4),
+              ),
+              CustomText(
+                text: "Time: ${(quiz.timeLimitSec ?? 0) ~/ 60} min",
+                fontsize: 8,
+                color: const Color(0xffD7D4D4),
+              ),
+            ],
           ),
           SizedBox(height: 8.h),
           Row(
             children: [
-              _buildStatusChip("Easy : 10"),
+              _buildStatusChip("Easy : ${difficultyCounts?.easy ?? 0}"),
               SizedBox(width: 8.w),
-              _buildStatusChip("Medium : 10"),
+              _buildStatusChip("Medium : ${difficultyCounts?.moderate ?? 0}"),
               SizedBox(width: 8.w),
-              _buildStatusChip("Hard : 5"),
+              _buildStatusChip("Hard : ${difficultyCounts?.hard ?? 0}"),
             ],
           ),
           SizedBox(height: 15.h),
           GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.quizInfo),
+            onTap: () => Get.toNamed(
+              AppRoutes.quizInfo,
+              arguments: {
+                "id": quiz.id,
+                "quizId": quiz.id,
+                "topicId": quiz.topicId,
+                "timeLimitSec": quiz.timeLimitSec,
+                "title": quiz.title,
+              },
+            ),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 12.h),

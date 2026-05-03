@@ -30,6 +30,11 @@ class ApiConstants {
   static const String notification = "/notification";
   static const int learningTopicsPageLimit = 10;
   static const String learningTopicsEndPoint = "/learning-topics";
+  static const String quizzesEndPoint = "/quizzes";
+  static String quizQuestionsEndPoint(String quizId) =>
+      "$quizzesEndPoint/$quizId/questions";
+  static String quizAttemptsEndPoint(String quizId) =>
+      "$quizzesEndPoint/$quizId/attempts";
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
