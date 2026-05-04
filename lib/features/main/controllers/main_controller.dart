@@ -70,8 +70,7 @@ class MainController extends GetxController {
           return;
         }
 
-        // Instead of automatic redirect, show error state with options
-        _learningAccessError.value = 'Click "View Plans" to subscribe or use the free plan for free.';
+        _redirectToSubscriptionList();
         return;
       }
 

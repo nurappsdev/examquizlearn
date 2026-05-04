@@ -69,7 +69,16 @@ class SigninController extends GetxController {
               : 'Login successful',
         );
 
-        Get.offAllNamed(AppRoutes.main);
+        // Check if user has an active subscription by trying to fetch progress
+        final accessResponse = await ApiClient.getData(ApiConstants.topicProgressEndPoint);
+        
+        if (accessResponse.statusCode == 403) {
+          // User is not subscribed, go to subscription screen
+          Get.offAllNamed(AppRoutes.subscriptionScreen);
+        } else {
+          // User is subscribed or has access, go to main
+          Get.offAllNamed(AppRoutes.main);
+        }
       } else if (response.statusCode == 1) {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? 'Server error. Please try later',
