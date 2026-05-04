@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/routes/app_routes.dart';
 import '../controllers/main_controller.dart';
 import '../../home/views/home_view.dart';
 import '../../educational_content/views/educational_content_view.dart';
@@ -78,20 +79,45 @@ class _LearningAccessError extends StatelessWidget {
             SizedBox(height: 20.h),
             SizedBox(
               height: 46.h,
-              child: ElevatedButton(
-                onPressed: onRetry,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff17A15D),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24.r),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onRetry,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff17A15D),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                      ),
+                      child: CustomText(
+                        text: 'Try again',
+                        color: Colors.white,
+                        fontsize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
-                child: CustomText(
-                  text: 'Try again',
-                  color: Colors.white,
-                  fontsize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.toNamed(AppRoutes.subscriptionScreen),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xff17A15D)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      child: CustomText(
+                        text: 'View Plans',
+                        color: const Color(0xff17A15D),
+                        fontsize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

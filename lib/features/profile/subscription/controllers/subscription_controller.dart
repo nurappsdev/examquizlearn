@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+
 import 'package:get/get.dart';
 
+import '../../../../core/helpers/helpers.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/service/api_client.dart';
 import '../../../../core/service/api_constants.dart';
 import '../../../../core/widgets/payment_webview.dart';
@@ -207,8 +210,17 @@ class SubscriptionController extends GetxController {
       final result = await Get.to(() => PaymentWebView(url: checkoutUrl));
 
       if (result == 'success') {
-        // Handle success (e.g., refresh user data, show success message)
-        fetchPlans(); // Refresh plans to see updated status if any
+        // Handle success
+        ToastMessageHelper.successMessageShowToster('Payment successful! Redirecting...');
+        
+        // Give the backend a moment to process the webhook/transaction
+        await Future.delayed(const Duration(seconds: 2));
+        
+        // Refresh plans to update local state
+        await fetchPlans();
+        
+        // Navigate to MainView and clear stack
+        Get.offAllNamed(AppRoutes.main);
       } else if (result == 'cancel') {
         _checkoutErrorMessage.value = 'Payment was cancelled.';
       }
