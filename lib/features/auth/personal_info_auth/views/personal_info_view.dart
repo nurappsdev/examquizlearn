@@ -116,17 +116,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16.h),
-                  Obx(
-                    () => _buildDropdown(
-                      key: 'gender',
-                      hintText: 'Gender',
-                      icon: Icons.male_outlined,
-                      value: controller.selectedGender.value,
-                      items: controller.genderOptions,
-                      onChanged: controller.selectGender,
-                    ),
-                  ),
+
                   SizedBox(height: 16.h),
                   CustomTextField(
                     controller: controller.employmentController,
@@ -150,6 +140,17 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       }
                       return null;
                     },
+                  ),
+                  SizedBox(height: 16.h),
+                  Obx(
+                        () => _buildDropdown(
+                      key: 'gender',
+                      hintText: 'Gender',
+                      icon: Icons.male_outlined,
+                      value: controller.selectedGender.value,
+                      items: controller.genderOptions,
+                      onChanged: controller.selectGender,
+                    ),
                   ),
                   SizedBox(height: 16.h),
                   Obx(

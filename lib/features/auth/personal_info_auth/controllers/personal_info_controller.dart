@@ -91,7 +91,7 @@ class PersonalInfoController extends GetxController {
 
       final response = await ApiClient.postData(
         ApiConstants.signUpEndPoint,
-        jsonEncode(body),
+        body,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

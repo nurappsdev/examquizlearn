@@ -45,7 +45,7 @@ class SigninController extends GetxController {
     try {
       final response = await ApiClient.postData(
         ApiConstants.signInEndPoint,
-        jsonEncode(body),
+        body,
         headers: headers,
       );
 

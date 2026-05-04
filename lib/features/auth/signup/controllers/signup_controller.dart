@@ -79,7 +79,7 @@ class SignupController extends GetxController {
 
     var response = await ApiClient.postData(
       ApiConstants.signUpEndPoint,
-      jsonEncode(body),
+      body,
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {

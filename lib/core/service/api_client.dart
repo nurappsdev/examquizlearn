@@ -59,24 +59,24 @@ class ApiClient extends GetxService {
     };
 
     try {
-      print('====> API Call: $uri\nHeader: $mainHeaders');
-      print('====> API Body: $body');
+      debugPrint('====> API Call: $uri\nHeader: $mainHeaders');
+      debugPrint('====> API Body: $body');
 
       http.Response response = await client
           .post(
             Uri.parse(ApiConstants.baseUrl + uri),
-            body: jsonEncode(body),
+            body: body is String ? body : jsonEncode(body),
             headers: headers ?? mainHeaders,
           )
           .timeout(const Duration(seconds: timeoutInSeconds));
 
-      print(
+      debugPrint(
         "==========> Response Post Method : ${response.statusCode} \n*********${response.body}",
       );
       return handleResponse(response, uri);
     } catch (e, s) {
-      print("===> Error in postData: $e");
-      print("===> Error in postData: $s");
+      debugPrint("===> Error in postData: $e");
+      debugPrint("===> Error in postData: $s");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -84,7 +84,7 @@ class ApiClient extends GetxService {
   //==========================================> patch<======================================
   static Future<Response> patch(
     String uri,
-    var body, {
+    dynamic body, {
     Map<String, String>? headers,
   }) async {
     bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
@@ -100,17 +100,17 @@ class ApiClient extends GetxService {
       http.Response response = await client
           .patch(
             Uri.parse(ApiConstants.baseUrl + uri),
-            body: body,
+            body: body is String ? body : jsonEncode(body),
             headers: headers ?? mainHeaders,
           )
           .timeout(const Duration(seconds: timeoutInSeconds));
       debugPrint(
-        "==========> Response Post Method :------ : ${response.statusCode}",
+        "==========> Response Patch Method : ${response.statusCode} \n*********${response.body}",
       );
       return handleResponse(response, uri);
     } catch (e, s) {
-      print("===> $e");
-      print("===> $s");
+      debugPrint("===> Error in patch: $e");
+      debugPrint("===> Error in patch: $s");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -170,12 +170,16 @@ class ApiClient extends GetxService {
       http.Response response = await http
           .put(
             Uri.parse(ApiConstants.baseUrl + uri),
-            body: jsonEncode(body),
+            body: body is String ? body : jsonEncode(body),
             headers: headers ?? mainHeaders,
           )
           .timeout(const Duration(seconds: timeoutInSeconds));
+      debugPrint(
+        "==========> Response Put Method : ${response.statusCode} \n*********${response.body}",
+      );
       return handleResponse(response, uri);
     } catch (e) {
+      debugPrint("===> Error in putData: $e");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
@@ -309,17 +313,21 @@ class ApiClient extends GetxService {
     };
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Call: $uri\n Body: $body');
+      debugPrint('====> API Body: $body');
 
       http.Response response = await http
           .delete(
             Uri.parse(ApiConstants.baseUrl + uri),
             headers: headers ?? mainHeaders,
-            body: body,
+            body: body is String ? body : jsonEncode(body),
           )
           .timeout(const Duration(seconds: timeoutInSeconds));
+      debugPrint(
+        "==========> Response Delete Method : ${response.statusCode} \n*********${response.body}",
+      );
       return handleResponse(response, uri);
     } catch (e) {
+      debugPrint("===> Error in deleteData: $e");
       return const Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
