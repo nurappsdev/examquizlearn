@@ -109,6 +109,7 @@ class EditProfileController extends GetxController {
 
           if (uploadResponse.statusCode == 200 || uploadResponse.statusCode == 204) {
             body['avatarUrl'] = s3Key;
+            Get.back();
           } else {
             isLoading.value = false;
             ToastMessageHelper.errorMessageShowToster('Failed to upload image to S3');
