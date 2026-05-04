@@ -60,11 +60,11 @@ class ProfileView extends StatelessWidget {
                 title: 'Profile Information',
                 onTap: () => Get.toNamed(AppRoutes.profileInfo),
               ),
-              _buildMenuItem(
-                icon: Icons.badge_outlined,
-                title: 'Personal Information',
-                onTap: () => Get.toNamed(AppRoutes.profileInfoProfile),
-              ),
+              // _buildMenuItem(
+              //   icon: Icons.badge_outlined,
+              //   title: 'Personal Information',
+              //   onTap: () => Get.toNamed(AppRoutes.profileInfoProfile),
+              // ),
               _buildMenuItem(
                 icon: Icons.workspace_premium_outlined,
                 title: 'Subscription',

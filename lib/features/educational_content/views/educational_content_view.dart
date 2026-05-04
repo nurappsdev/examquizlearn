@@ -28,68 +28,68 @@ class EducationalContentView extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 20.h),
+          // SizedBox(height: 20.h),
           // Custom Toggle/Tab Bar
-          Container(
-            height: 56.h,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30.r),
-            ),
-            child: Obx(() => Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.changeTab(0),
-                        child: Container(
-                          margin: EdgeInsets.all(4.r),
-                          decoration: BoxDecoration(
-                            color: controller.selectedTab.value == 0
-                                ? const Color(0xff204F9D)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(26.r),
-                          ),
-                          child: Center(
-                            child: CustomText(
-                              text: "Tutorial",
-                              fontsize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: controller.selectedTab.value == 0
-                                  ? Colors.white
-                                  : const Color(0xff204F9D),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.changeTab(1),
-                        child: Container(
-                          margin: EdgeInsets.all(4.r),
-                          decoration: BoxDecoration(
-                            color: controller.selectedTab.value == 1
-                                ? const Color(0xff204F9D)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(26.r),
-                          ),
-                          child: Center(
-                            child: CustomText(
-                              text: "Text content",
-                              fontsize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: controller.selectedTab.value == 1
-                                  ? Colors.white
-                                  : const Color(0xff204F9D),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-          ),
+          // Container(
+          //   height: 56.h,
+          //   width: double.infinity,
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     borderRadius: BorderRadius.circular(30.r),
+          //   ),
+          //   child: Obx(() => Row(
+          //         children: [
+          //           Expanded(
+          //             child: GestureDetector(
+          //               onTap: () => controller.changeTab(0),
+          //               child: Container(
+          //                 margin: EdgeInsets.all(4.r),
+          //                 decoration: BoxDecoration(
+          //                   color: controller.selectedTab.value == 0
+          //                       ? const Color(0xff204F9D)
+          //                       : Colors.transparent,
+          //                   borderRadius: BorderRadius.circular(26.r),
+          //                 ),
+          //                 child: Center(
+          //                   child: CustomText(
+          //                     text: "Tutorial",
+          //                     fontsize: 16,
+          //                     fontWeight: FontWeight.w500,
+          //                     color: controller.selectedTab.value == 0
+          //                         ? Colors.white
+          //                         : const Color(0xff204F9D),
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //           Expanded(
+          //             child: GestureDetector(
+          //               onTap: () => controller.changeTab(1),
+          //               child: Container(
+          //                 margin: EdgeInsets.all(4.r),
+          //                 decoration: BoxDecoration(
+          //                   color: controller.selectedTab.value == 1
+          //                       ? const Color(0xff204F9D)
+          //                       : Colors.transparent,
+          //                   borderRadius: BorderRadius.circular(26.r),
+          //                 ),
+          //                 child: Center(
+          //                   child: CustomText(
+          //                     text: "Text content",
+          //                     fontsize: 16,
+          //                     fontWeight: FontWeight.w500,
+          //                     color: controller.selectedTab.value == 1
+          //                         ? Colors.white
+          //                         : const Color(0xff204F9D),
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       )),
+          // ),
           SizedBox(height: 30.h),
           // Content List
           Expanded(

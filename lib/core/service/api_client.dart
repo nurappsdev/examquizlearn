@@ -332,6 +332,29 @@ class ApiClient extends GetxService {
     }
   }
 
+  //==========================================> Put Binary Data <======================================
+  static Future<http.Response> putBinaryData(
+    String url,
+    File file, {
+    Map<String, String>? headers,
+  }) async {
+    try {
+      debugPrint('====> S3 PUT Call: $url');
+      var bytes = await file.readAsBytes();
+      http.Response response = await http.put(
+        Uri.parse(url),
+        body: bytes,
+        headers: headers ?? {'Content-Type': 'application/octet-stream'},
+      ).timeout(const Duration(seconds: timeoutInSeconds));
+      
+      debugPrint("==========> Response S3 PUT : ${response.statusCode}");
+      return response;
+    } catch (e) {
+      debugPrint("===> Error in putBinaryData: $e");
+      return http.Response(noInternetMessage, 1);
+    }
+  }
+
   //==========================================> Handle Response <======================================
   static Response handleResponse(http.Response response, String uri) {
     dynamic body;

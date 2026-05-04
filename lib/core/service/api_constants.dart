@@ -43,6 +43,8 @@ class ApiConstants {
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
+  static const String profileEndPoint = "/users/me";
+  static const String s3PreSignedUrlEndPoint = "/s3/pre-signed-url";
 
 
   static String startLearningMaterialEndPoint(String materialId) =>
