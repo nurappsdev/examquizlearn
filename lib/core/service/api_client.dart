@@ -341,17 +341,18 @@ class ApiClient extends GetxService {
     try {
       debugPrint('====> S3 PUT Call: $url');
       var bytes = await file.readAsBytes();
-      http.Response response = await http.put(
+      String? mimeType = mime(file.path);
+      http.Response response = await client.put(
         Uri.parse(url),
         body: bytes,
-        headers: headers ?? {'Content-Type': 'application/octet-stream'},
+        headers: headers ?? {'Content-Type': mimeType ?? 'application/octet-stream'},
       ).timeout(const Duration(seconds: timeoutInSeconds));
       
       debugPrint("==========> Response S3 PUT : ${response.statusCode}");
       return response;
     } catch (e) {
       debugPrint("===> Error in putBinaryData: $e");
-      return http.Response(noInternetMessage, 1);
+      return http.Response(noInternetMessage, 500);
     }
   }
 

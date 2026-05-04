@@ -104,6 +104,7 @@ class EditProfileController extends GetxController {
           var uploadResponse = await ApiClient.putBinaryData(
             uploadUrl,
             File(imagePath.value),
+            headers: data['headers'] != null ? Map<String, String>.from(data['headers']) : null,
           );
 
           if (uploadResponse.statusCode == 200 || uploadResponse.statusCode == 204) {
