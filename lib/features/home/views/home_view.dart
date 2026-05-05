@@ -399,7 +399,7 @@ class HomeView extends GetView<HomeController> {
   }) {
     final title = topic.displayTitle;
     final subtitle = topic.displayDescription;
-    final progress = topic.progress;
+    final progress = isLearning ? topic.progress : topic.quizCompletionProgress;
     final imageUrl = topic.displayIconUrl;
     final progressValue = progress.clamp(0.0, 1.0).toDouble();
 
@@ -454,7 +454,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     SizedBox(height: 5.h),
                     CustomText(
-                      text: "Complete ${(progressValue * 100).toInt()} %",
+                      text: "Complete ${(progressValue * 100).round()} %",
                       fontsize: 10,
                       color: Colors.white.withValues(alpha: 0.5),
                     ),
@@ -482,9 +482,11 @@ class HomeView extends GetView<HomeController> {
                 color: AppColors.greenColor,
                 borderRadius: BorderRadius.circular(25.r),
               ),
-              child:  Center(
+              child: Center(
                 child: CustomText(
-                  text: controller.selectedCategoryIndex == 0? "Play Quiz": "Details",
+                  text: controller.selectedCategoryIndex == 0
+                      ? "Play Quiz"
+                      : "Details",
                   fontsize: 14,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

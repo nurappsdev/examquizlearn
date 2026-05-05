@@ -62,10 +62,14 @@ class ProfileView extends StatelessWidget {
               }
               return false;
             },
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
+            child: RefreshIndicator(
+              color: AppColors.greenColor,
+              backgroundColor: const Color(0xff1C1C1C),
+              onRefresh: controller.refreshProfile,
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
                 _buildMenuItem(
                   icon: Icons.person_outline,
                   title: 'Profile Information',
@@ -103,6 +107,7 @@ class ProfileView extends StatelessWidget {
                 _buildQuizActivity(controller),
                 SizedBox(height: 24.h),
               ],
+              ),
             ),
           ),
         ),

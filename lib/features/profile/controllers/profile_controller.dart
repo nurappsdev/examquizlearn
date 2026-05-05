@@ -89,6 +89,13 @@ class ProfileController extends GetxController {
     await loadQuizAttempts();
   }
 
+  Future<void> refreshProfile() async {
+    await Future.wait<dynamic>([
+      getProfile(),
+      loadQuizAttempts(),
+    ]);
+  }
+
   Future<void> _fetchAttemptsPage({
     required int page,
     required bool replace,

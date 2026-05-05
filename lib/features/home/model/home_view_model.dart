@@ -92,6 +92,16 @@ class HomeViewModel {
 
   String get displayIconUrl => iconUrl?.trim() ?? '';
 
+  double get quizCompletionProgress {
+    final totalQuizzes = quizCount ?? 0;
+    if (totalQuizzes <= 0) {
+      return 0;
+    }
+
+    final attempts = quizAttemptCount ?? 0;
+    return (attempts / totalQuizzes).clamp(0.0, 1.0).toDouble();
+  }
+
   Map<String, dynamic> toJson() => {
     "_id": id,
     "isActive": isActive,
