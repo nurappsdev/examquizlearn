@@ -4,12 +4,15 @@ import 'package:examtest/core/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../controllers/settings_controller.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SettingsController controller = Get.put(SettingsController());
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -56,9 +59,9 @@ class SettingsView extends StatelessWidget {
             ),
             const Spacer(),
             // Delete Account Button
-            GestureDetector(
-              onTap: () {
-                _showDeleteDialog(context);
+            Obx(() => GestureDetector(
+              onTap: controller.isLoading.value ? null : () {
+                _showDeleteDialog(context, controller);
               },
               child: Container(
                 width: double.infinity,
@@ -67,21 +70,25 @@ class SettingsView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.r),
                   border: Border.all(color: Colors.red.withOpacity(0.5)),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.delete_outline, color: Colors.red, size: 24.sp),
-                    SizedBox(width: 10.w),
-                    CustomText(
-                      text: 'Delete Account',
-                      color: Colors.red,
-                      fontsize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ],
+                child: Center(
+                  child: controller.isLoading.value 
+                    ? const CircularProgressIndicator(color: Colors.red)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete_outline, color: Colors.red, size: 24.sp),
+                          SizedBox(width: 10.w),
+                          CustomText(
+                            text: 'Delete Account',
+                            color: Colors.red,
+                            fontsize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
                 ),
               ),
-            ),
+            )),
             SizedBox(height: 40.h),
           ],
         ),
@@ -114,7 +121,7 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context) {
+  void _showDeleteDialog(BuildContext context, SettingsController controller) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -123,6 +130,8 @@ class SettingsView extends StatelessWidget {
         content: const CustomText(
           text: 'Are you sure you want to delete your account? This action cannot be undone.',
           color: Colors.white70,
+          textAlign: TextAlign.start,
+          maxline: 3,
         ),
         actions: [
           TextButton(
@@ -131,8 +140,8 @@ class SettingsView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              // Handle delete logic
               Get.back();
+              // controller.deleteAccount();
             },
             child: const CustomText(text: 'Delete', color: Colors.red),
           ),

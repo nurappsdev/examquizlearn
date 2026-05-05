@@ -7,6 +7,7 @@ import '../../../core/service/api_constants.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../../main/controllers/main_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../controllers/home_controller.dart';
 import '../model/home_view_model.dart';
 
@@ -17,6 +18,7 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final HomeController controller = Get.find<HomeController>();
     final MainController mainController = Get.find<MainController>();
+    final ProfileController profileController = Get.find<ProfileController>();
 
     return Obx(() {
       final topics = mainController.learningTopics;
@@ -40,7 +42,7 @@ class HomeView extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20.h),
-              _buildHeader(),
+              _buildHeader(profileController),
               SizedBox(height: 30.h),
               _buildProgressCard(progress),
               SizedBox(height: 30.h),
@@ -83,37 +85,53 @@ class HomeView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ProfileController profileController) {
+    final user = profileController.rxUserModel.value;
+    final name = user.fullName ?? "User";
+    final avatar = user.avatarUrl ?? "";
+
     return Row(
       children: [
         CircleAvatar(
           radius: 25.r,
           backgroundColor: Colors.grey[800],
-          child: Icon(Icons.person, color: Colors.white, size: 30.r),
+          backgroundImage: avatar.isNotEmpty
+              ? NetworkImage(_resolveImageUrl(avatar))
+              : null,
+          child: avatar.isEmpty
+              ? Icon(Icons.person, color: Colors.white, size: 30.r)
+              : null,
         ),
         SizedBox(width: 12.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomText(
-              text: "David !",
+            CustomText(
+              text: "$name !",
               fontsize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
             CustomText(
-              text: "welcome to app name",
+              text: "welcome to Nailed It!",
               fontsize: 12,
               color: Colors.white.withValues(alpha: 0.7),
             ),
           ],
         ),
         const Spacer(),
-        _buildIconWithBadge(Icons.access_time, "1"),
         SizedBox(width: 15.w),
-        _buildIconWithBadge(Icons.notifications_none, "0"),
+        GestureDetector(
+          onTap: () => Get.toNamed(AppRoutes.notifications),
+          child: _buildIconWithBadge(Icons.notifications_none, "0"),
+        ),
       ],
     );
+  }
+
+  String _resolveImageUrl(String url) {
+    if (url.startsWith('http')) return url;
+    return "${ApiConstants.imageBaseUrl}$url";
   }
 
   Widget _buildIconWithBadge(IconData icon, String badgeCount) {

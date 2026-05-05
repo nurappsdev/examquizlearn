@@ -1,5 +1,6 @@
 import 'package:examtest/features/auth/reset_password/views/reset_password_view.dart';
 import 'package:get/get.dart';
+import '../../core/service/api_constants.dart';
 import '../../features/auth/personal_info_auth/bindings/personal_info_binding.dart';
 import '../../features/auth/personal_info_auth/views/personal_info_view.dart';
 import '../../features/educational_content/bindings/educational_content_binding.dart';
@@ -47,6 +48,10 @@ import '../../features/profile/views/profile_view.dart';
 import '../../features/profile/views/profile_info_view.dart';
 import '../../features/profile/edit_profile/bindings/edit_profile_binding.dart';
 import '../../features/profile/edit_profile/views/edit_profile_view.dart';
+import '../../features/notifications/bindings/notification_binding.dart';
+import '../../features/notifications/views/notifications_view.dart';
+import '../../features/leaderboard/bindings/leaderboard_binding.dart';
+import '../../features/leaderboard/views/leaderboard_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -219,7 +224,7 @@ class AppPages {
       name: AppRoutes.aboutUs,
       page: () => const HtmlContentView(
         title: 'About us',
-        htmlContent: 'Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.<br><br>Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.<br><br>Lorem ipsum dolor sit amet consectetur. Enim massa aenean ac odio leo habitasse tortor tempor. Ut id urna odio dui leo congue. Ultrices pharetra ornare nam faucibus. Integer id varius consectetur non.',
+        endpoint: ApiConstants.aboutUsEndPoint,
       ),
       transition: Transition.topLevel,
     ),
@@ -227,7 +232,7 @@ class AppPages {
       name: AppRoutes.privacyPolicy,
       page: () => const HtmlContentView(
         title: 'Privacy Policy',
-        htmlContent: '<h1>Privacy Policy</h1><p>Your privacy is important to us...</p>',
+        endpoint: ApiConstants.privacyPolicyEndPoint,
       ),
       transition: Transition.topLevel,
     ),
@@ -235,7 +240,7 @@ class AppPages {
       name: AppRoutes.termsOfService,
       page: () => const HtmlContentView(
         title: 'Terms of service',
-        htmlContent: '<h1>Terms of Service</h1><p>By using our app, you agree to...</p>',
+        endpoint: ApiConstants.termsAndConditionsEndPoint,
       ),
       transition: Transition.topLevel,
     ),
@@ -254,5 +259,17 @@ class AppPages {
       page: () => const AddEducationView(),
       transition: Transition.topLevel,
     ),
-    ];
-    }
+    GetPage(
+      name: AppRoutes.notifications,
+      page: () => const NotificationsView(),
+      transition: Transition.topLevel,
+      binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.leaderboard,
+      page: () => const LeaderboardView(showBackButton: true),
+      transition: Transition.topLevel,
+      binding: LeaderboardBinding(),
+    ),
+  ];
+}

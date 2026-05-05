@@ -106,7 +106,7 @@ class EditProfileController extends GetxController {
             File(imagePath.value),
             headers: data['headers'] != null ? Map<String, String>.from(data['headers']) : null,
           );
-
+          Get.back();
           if (uploadResponse.statusCode == 200 || uploadResponse.statusCode == 204) {
             body['avatarUrl'] = s3Key;
             Get.back();

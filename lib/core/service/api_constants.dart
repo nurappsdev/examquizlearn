@@ -27,7 +27,8 @@ class ApiConstants {
       "/employee/update-employee-profile";
   static const String forgotPasswordPoint = "/auth/forgot-password";
   static const String resetPasswordEndPoint = "/auth/reset-password";
-  static const String notification = "/notification";
+  static const String changePasswordEndPoint = "/auth/change-password";
+  static const String notification = "/notifications";
   static const int learningTopicsPageLimit = 10;
   static const String learningTopicsEndPoint = "/learning-topics";
   static const String learningMaterialsEndPoint = "/learning-materials";
@@ -45,6 +46,14 @@ class ApiConstants {
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
   static const String profileEndPoint = "/users/me";
   static const String s3PreSignedUrlEndPoint = "/s3/pre-signed-url";
+
+  static const String leaderboardGlobalEndPoint = "/leaderboard/global";
+  static const String leaderboardMeEndPoint = "/leaderboard/me";
+  static const int leaderboardPageLimit = 10;
+
+  static const String aboutUsEndPoint = "/settings/about-us";
+  static const String privacyPolicyEndPoint = "/settings/privacy-policy";
+  static const String termsAndConditionsEndPoint = "/settings/terms-and-conditions";
 
 
   static String startLearningMaterialEndPoint(String materialId) =>

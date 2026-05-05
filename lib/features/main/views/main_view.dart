@@ -5,6 +5,7 @@ import '../../../core/routes/app_routes.dart';
 import '../controllers/main_controller.dart';
 import '../../home/views/home_view.dart';
 import '../../educational_content/views/educational_content_view.dart';
+import '../../leaderboard/views/leaderboard_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../../../core/widgets/custom_bottom_bar.dart';
 import '../../../core/widgets/custom_loader.dart';
@@ -35,6 +36,7 @@ class MainView extends GetView<MainController> {
             children: const [
               HomeView(),
               EducationalContentView(),
+              LeaderboardView(),
               ProfileView(),
             ],
           );
@@ -101,7 +103,7 @@ class _LearningAccessError extends StatelessWidget {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => Get.toNamed(AppRoutes.subscriptionScreen),
+                      onPressed: () => Get.toNamed(AppRoutes.signin),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xff17A15D)),
                         shape: RoundedRectangleBorder(
@@ -110,7 +112,7 @@ class _LearningAccessError extends StatelessWidget {
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
                       child: CustomText(
-                        text: 'View Plans',
+                        text: 'Start again',
                         color: const Color(0xff17A15D),
                         fontsize: 14.sp,
                         fontWeight: FontWeight.w600,

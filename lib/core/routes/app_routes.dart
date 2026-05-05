@@ -29,6 +29,8 @@ class AppRoutes {
   static const String aboutUs = '/about-us';
   static const String privacyPolicy = '/privacy-policy';
   static const String termsOfService = '/terms-of-service';
+  static const String notifications = '/notifications';
+  static const String leaderboard = '/leaderboard';
   static const String addBio = '/add-bio';
   static const String addContactInfo = '/add-contact-info';
   static const String addEducation = '/add-education';
