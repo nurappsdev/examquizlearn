@@ -23,6 +23,7 @@ class AppRoutes {
   static const String editProfile = '/edit-profile';
   static const String subscriptionScreen = '/subscriptionScreen';
   static const String manageSubscription = '/manageSubscription';
+  static const String yourPlan = '/your-plan';
   static const String adminSupport = '/admin-support';
   static const String settings = '/settings';
   static const String changePassword = '/change-password';

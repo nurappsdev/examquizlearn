@@ -55,10 +55,10 @@ class HomeView extends GetView<HomeController> {
               SizedBox(height: 15.h),
               _buildCategorySelector(controller),
               SizedBox(height: 20.h),
-              if (isLearningSelected) ...[
-                _buildTopicSearchField(controller),
-                SizedBox(height: 20.h),
-              ],
+              // if (isLearningSelected) ...[
+              //   _buildTopicSearchField(controller),
+              //   SizedBox(height: 20.h),
+              // ],
               if (isRefreshingTopics)
                 _buildTopicsLoader()
               else if (topics.isEmpty)

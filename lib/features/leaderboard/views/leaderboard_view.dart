@@ -69,13 +69,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
                         isLoading: controller.isMyStatusLoading.value,
                       )),
                   SizedBox(height: 22.h),
-                  CustomText(
-                    text: 'Global Leaderboard',
-                    color: Colors.white,
-                    fontsize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.start,
-                  ),
+                  _buildSectionHeader('Global Leaderboard'),
                   SizedBox(height: 12.h),
                   _buildList(),
                   SizedBox(height: 30.h),
@@ -95,16 +89,20 @@ class LeaderboardView extends GetView<LeaderboardController> {
       children: [
         MyStatusCard(entry: null, isLoading: true),
         SizedBox(height: 22.h),
-        CustomText(
-          text: 'Global Leaderboard',
-          color: Colors.white,
-          fontsize: 16.sp,
-          fontWeight: FontWeight.w600,
-          textAlign: TextAlign.start,
-        ),
+        _buildSectionHeader('Global Leaderboard'),
         SizedBox(height: 12.h),
         const LeaderboardSkeleton(),
       ],
+    );
+  }
+
+  Widget _buildSectionHeader(String text) {
+    return CustomText(
+      text: text,
+      color: Colors.white,
+      fontsize: 16.sp,
+      fontWeight: FontWeight.w600,
+      textAlign: TextAlign.start,
     );
   }
 
@@ -184,7 +182,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                color: Colors.redAccent, size: 48.r),
+                color: AppColors.redColor, size: 48.r),
             SizedBox(height: 16.h),
             CustomText(
               text: controller.errorMessage.value,

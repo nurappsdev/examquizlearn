@@ -44,12 +44,15 @@ class ApiConstants {
   static const String topicProgressEndPoint = "/learning/progress";
   static const String subscriptionPlansEndPoint = "/subscriptions/plans";
   static const String subscriptionCheckoutEndPoint = "/subscriptions/checkout";
+  static const String subscriptionMeEndPoint = "/subscriptions/me";
   static const String profileEndPoint = "/users/me";
   static const String s3PreSignedUrlEndPoint = "/s3/pre-signed-url";
 
   static const String leaderboardGlobalEndPoint = "/leaderboard/global";
   static const String leaderboardMeEndPoint = "/leaderboard/me";
+  static const String userQuizAttemptsEndPoint = "/users/me/quiz-attempts";
   static const int leaderboardPageLimit = 10;
+  static const int quizAttemptsPageLimit = 10;
 
   static const String aboutUsEndPoint = "/settings/about-us";
   static const String privacyPolicyEndPoint = "/settings/privacy-policy";

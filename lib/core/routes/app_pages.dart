@@ -52,6 +52,8 @@ import '../../features/notifications/bindings/notification_binding.dart';
 import '../../features/notifications/views/notifications_view.dart';
 import '../../features/leaderboard/bindings/leaderboard_binding.dart';
 import '../../features/leaderboard/views/leaderboard_view.dart';
+import '../../features/profile/your_plan/bindings/your_plan_binding.dart';
+import '../../features/profile/your_plan/views/your_plan_view.dart';
 
 class AppPages {
   static const String initial = AppRoutes.splash;
@@ -270,6 +272,12 @@ class AppPages {
       page: () => const LeaderboardView(showBackButton: true),
       transition: Transition.topLevel,
       binding: LeaderboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.yourPlan,
+      page: () => const YourPlanView(),
+      transition: Transition.topLevel,
+      binding: YourPlanBinding(),
     ),
   ];
 }
