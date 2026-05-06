@@ -38,11 +38,29 @@ class QuizController extends GetxController {
   final initialSeconds = (10 * 60).obs;
   Timer? _timer;
   bool _hasOpenedResult = false;
+  final Map<int, int> _serverSavedAnswers = {};
+  bool _resumeMode = false;
+  DateTime? _expiresAt;
 
   @override
   void onInit() {
     super.onInit();
     _readArguments();
+    if (!isLearningQuiz.value &&
+        quizId.value.isNotEmpty &&
+        questions.isEmpty) {
+      _resumeMode = attemptId.value.isNotEmpty;
+      _resumeOrLoadQuiz();
+    }
+  }
+
+  Future<void> _resumeOrLoadQuiz() async {
+    await getQuestions();
+    if (attemptId.value.isNotEmpty && questions.isNotEmpty) {
+      await _restoreAttemptProgress();
+    } else if (questions.isNotEmpty) {
+      startTimer();
+    }
   }
 
   void _readArguments() {
@@ -57,6 +75,13 @@ class QuizController extends GetxController {
           arguments["topicName"]?.toString() ??
           "Quiz";
       attemptId.value = arguments["attemptId"]?.toString() ?? "";
+
+      final argExpiresAt = arguments["expiresAt"];
+      if (argExpiresAt is DateTime) {
+        _expiresAt = argExpiresAt;
+      } else if (argExpiresAt is String && argExpiresAt.isNotEmpty) {
+        _expiresAt = DateTime.tryParse(argExpiresAt);
+      }
 
       if (arguments.containsKey("questions")) {
         isLearningQuiz.value = true;
@@ -139,7 +164,9 @@ class QuizController extends GetxController {
         _updateCurrentOptions();
 
         if (questions.isNotEmpty) {
-          startTimer();
+          if (!_resumeMode) {
+            startTimer();
+          }
         } else {
           errorMessage.value = "No questions found for this quiz.";
         }
@@ -155,9 +182,11 @@ class QuizController extends GetxController {
     }
   }
 
-  void startTimer() {
+  void startTimer({bool resume = false}) {
     _timer?.cancel();
-    remainingSeconds.value = initialSeconds.value;
+    if (!resume) {
+      remainingSeconds.value = initialSeconds.value;
+    }
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
@@ -232,17 +261,20 @@ class QuizController extends GetxController {
           selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
           _updateDifficulty();
           _updateCurrentOptions();
+
         } else {
           await submitLearningQuiz();
+          // debugPrint("test and quiz");
         }
     } else {
       await submitAnswer();
-
+       debugPrint("test and quifgdfgdfdfz");
       if (currentStep.value < totalSteps.value) {
         currentStep.value++;
         selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
         _updateDifficulty();
         _updateCurrentOptions();
+        // debugPrint("test and quiz");
       } else {
         await finishQuiz();
       }
@@ -509,6 +541,13 @@ class QuizController extends GetxController {
 
   Future<void> submitAnswer() async {
     if (attemptId.value.isEmpty || currentQuestion == null || selectedAnswerIndex.value == -1) {
+      debugPrint("test and quiz..............");
+      debugPrint("attemptId.value isEmpty-------------${attemptId.value}");
+      return;
+    }
+
+    final questionIndex = currentStep.value - 1;
+    if (_serverSavedAnswers[questionIndex] == selectedAnswerIndex.value) {
       return;
     }
 
@@ -516,7 +555,7 @@ class QuizController extends GetxController {
     final options = currentOptions;
     final selectedOptionId = options[selectedAnswerIndex.value].id;
 
-    if (questionIdValue == null || selectedOptionId == null) return;
+     if (questionIdValue == null || selectedOptionId == null) return;
 
     isSubmittingAnswer.value = true;
     try {
@@ -529,8 +568,11 @@ class QuizController extends GetxController {
         ApiConstants.submitAnswerEndPoint(attemptId.value),
         body,
       );
-
-      if (response.statusCode != 200 && response.statusCode != 201) {
+      debugPrint("attemptId.value---------${attemptId.value}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _serverSavedAnswers[questionIndex] = selectedAnswerIndex.value;
+        debugPrint("attemptId.value---------${_serverSavedAnswers[questionIndex]}");
+      } else {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? "Failed to submit answer",
         );
@@ -540,6 +582,246 @@ class QuizController extends GetxController {
     } finally {
       isSubmittingAnswer.value = false;
     }
+  }
+
+  Future<void> _restoreAttemptProgress() async {
+    try {
+      final response = await ApiClient.getData(
+        ApiConstants.quizAttemptDetailsEndPoint(attemptId.value),
+      );
+      if (response.statusCode != 200) {
+        _applyResumeTiming();
+        return;
+      }
+
+      final body = response.body;
+      final dynamic root = body is Map ? (body['data'] ?? body) : body;
+      if (root is! Map) {
+        _applyResumeTiming();
+        return;
+      }
+
+      debugPrint(
+        "[QuizResume] attempt details keys: ${root.keys.toList()}",
+      );
+
+      final responseExpiresAt = _parseDateField(root['expiresAt']);
+      if (responseExpiresAt != null) {
+        _expiresAt = responseExpiresAt;
+      }
+      final responseStartedAt = _parseDateField(root['startedAt']);
+      final responseTimeLimit = _parseIntField(
+        root['timeLimit'] ?? root['timeLimitSec'] ?? root['durationSec'],
+      );
+
+      int? totalDuration = responseTimeLimit;
+      if (totalDuration == null &&
+          responseStartedAt != null &&
+          _expiresAt != null) {
+        totalDuration = _expiresAt!.difference(responseStartedAt).inSeconds;
+      }
+      if (totalDuration != null && totalDuration > 0) {
+        initialSeconds.value = totalDuration;
+      }
+
+      List<dynamic>? answers = _findAnswersList(root);
+
+      if (answers == null || answers.isEmpty) {
+        debugPrint(
+          "[QuizResume] no embedded answers found — fetching dedicated answers endpoint",
+        );
+        final altResponse = await ApiClient.getData(
+          ApiConstants.submitAnswerEndPoint(attemptId.value),
+        );
+        if (altResponse.statusCode == 200) {
+          final altBody = altResponse.body;
+          if (altBody is List) {
+            answers = altBody;
+          } else if (altBody is Map) {
+            final altRoot = altBody['data'] ?? altBody;
+            if (altRoot is List) {
+              answers = altRoot;
+            } else if (altRoot is Map) {
+              answers = _findAnswersList(altRoot);
+            }
+          }
+        }
+      }
+
+      int restoredCount = 0;
+      if (answers != null && answers.isNotEmpty) {
+        for (final entry in answers) {
+          if (entry is! Map) continue;
+          if (_restoreSingleAnswer(entry)) {
+            restoredCount++;
+          }
+        }
+      }
+
+      debugPrint(
+        "[QuizResume] restored $restoredCount answer(s) of ${questions.length}",
+      );
+
+      int targetIndex = userAnswers.indexWhere((a) => a == -1);
+
+      if (targetIndex == -1 || restoredCount == 0) {
+        final hintIndex = _parseIntField(
+              root['currentQuestionIndex'] ??
+                  root['nextQuestionIndex'] ??
+                  root['lastQuestionIndex'] ??
+                  root['answeredCount'] ??
+                  root['questionsAnswered'],
+            ) ??
+            (root['progress'] is Map
+                ? _parseIntField(
+                    (root['progress'] as Map)['answeredCount'] ??
+                        (root['progress'] as Map)['currentQuestionIndex'],
+                  )
+                : null);
+        if (hintIndex != null && hintIndex >= 0 && hintIndex < questions.length) {
+          targetIndex = hintIndex;
+        }
+      }
+
+      if (targetIndex == -1) {
+        targetIndex = questions.length - 1;
+      }
+      if (targetIndex < 0) targetIndex = 0;
+
+      currentStep.value = targetIndex + 1;
+      selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
+      _updateDifficulty();
+      _updateCurrentOptions();
+
+      _applyResumeTiming();
+    } catch (e) {
+      debugPrint("Failed to restore attempt progress: $e");
+      _applyResumeTiming();
+    }
+  }
+
+  List<dynamic>? _findAnswersList(Map root) {
+    const candidates = [
+      'answers',
+      'submittedAnswers',
+      'responses',
+      'userAnswers',
+      'attemptAnswers',
+      'answeredQuestions',
+      'submitted',
+      'userResponses',
+    ];
+    for (final key in candidates) {
+      final value = root[key];
+      if (value is List) return value;
+      if (value is Map) {
+        for (final nestedKey in const ['data', 'docs', 'items']) {
+          final nested = value[nestedKey];
+          if (nested is List) return nested;
+        }
+      }
+    }
+    final progress = root['progress'];
+    if (progress is Map) {
+      return _findAnswersList(progress);
+    }
+    return null;
+  }
+
+  bool _restoreSingleAnswer(Map entry) {
+    final questionField = entry['questionId'] ??
+        entry['question'] ??
+        entry['quizQuestionId'] ??
+        entry['questionRef'];
+    String? questionId;
+    if (questionField is Map) {
+      questionId = questionField['_id']?.toString() ??
+          questionField['id']?.toString() ??
+          questionField['questionId']?.toString();
+    } else if (questionField != null) {
+      questionId = questionField.toString();
+    }
+
+    final dynamic selected = entry['selectedOptionIds'] ??
+        entry['selectedOptionId'] ??
+        entry['optionIds'] ??
+        entry['optionId'] ??
+        entry['selectedOptions'] ??
+        entry['selectedOption'] ??
+        entry['answer'] ??
+        entry['answerId'];
+    String? optionId;
+    if (selected is List && selected.isNotEmpty) {
+      final first = selected.first;
+      optionId = first is Map
+          ? (first['_id']?.toString() ?? first['id']?.toString())
+          : first?.toString();
+    } else if (selected is Map) {
+      optionId = selected['_id']?.toString() ?? selected['id']?.toString();
+    } else if (selected != null) {
+      optionId = selected.toString();
+    }
+
+    if (questionId == null) return false;
+
+    final qIndex = questions.indexWhere(
+      (q) =>
+          (q.question?.id ?? q.questionId) == questionId ||
+          q.id == questionId,
+    );
+    if (qIndex == -1 || qIndex >= userAnswers.length) return false;
+
+    int oIndex = -1;
+    if (optionId != null) {
+      final qOptions = List<quiz_model.Option>.from(
+        questions[qIndex].question?.options ?? const [],
+      );
+      qOptions
+          .sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
+      oIndex = qOptions.indexWhere((o) => o.id == optionId);
+    }
+
+    // Even if the option can't be matched, we still mark this question as
+    // answered so the resume position skips past it.
+    final markIndex = oIndex == -1 ? 0 : oIndex;
+    userAnswers[qIndex] = markIndex;
+    if (oIndex != -1) {
+      _serverSavedAnswers[qIndex] = oIndex;
+    }
+    return true;
+  }
+
+  void _applyResumeTiming() {
+    if (_expiresAt != null) {
+      final remaining =
+          _expiresAt!.difference(DateTime.now()).inSeconds;
+      if (remaining <= 0) {
+        remainingSeconds.value = 0;
+        finishQuiz();
+        return;
+      }
+      remainingSeconds.value = remaining;
+      startTimer(resume: true);
+    } else {
+      startTimer();
+    }
+  }
+
+  DateTime? _parseDateField(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String && value.isNotEmpty) {
+      return DateTime.tryParse(value);
+    }
+    return null;
+  }
+
+  int? _parseIntField(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   int _correctAnswerIndexForQuestion(int questionIndex) {

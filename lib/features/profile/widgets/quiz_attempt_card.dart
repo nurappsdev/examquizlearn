@@ -210,6 +210,8 @@ class QuizAttemptCard extends StatelessWidget {
       if (quizId.isNotEmpty) 'id': quizId,
       if (attemptId.isNotEmpty) 'attemptId': attemptId,
       if (attempt.quizTitle != null) 'title': attempt.quizTitle,
+      if (attempt.expiresAt != null)
+        'expiresAt': attempt.expiresAt!.toIso8601String(),
     });
   }
 }
