@@ -46,7 +46,8 @@ class QuizController extends GetxController {
   void onInit() {
     super.onInit();
     _readArguments();
-    if (!isLearningQuiz.value &&
+    if (Get.currentRoute == AppRoutes.quiz &&
+        !isLearningQuiz.value &&
         quizId.value.isNotEmpty &&
         questions.isEmpty) {
       _resumeMode = attemptId.value.isNotEmpty;
@@ -86,7 +87,7 @@ class QuizController extends GetxController {
       if (arguments.containsKey("questions")) {
         isLearningQuiz.value = true;
         final dynamic questionList = arguments["questions"];
-        
+
         if (questionList is List) {
           final List<quiz_model.TestExamQuizModel> parsedQuestions = [];
           for (var e in questionList) {
@@ -96,24 +97,26 @@ class QuizController extends GetxController {
                 parsedQuestions.add(quiz_model.TestExamQuizModel.fromJson(e));
               } else {
                 // Raw question format
-                parsedQuestions.add(quiz_model.TestExamQuizModel(
-                  id: e['_id']?.toString() ?? e['id']?.toString(),
-                  questionId: e['_id']?.toString() ?? e['id']?.toString(),
-                  question: quiz_model.Question.fromJson(e),
-                ));
+                parsedQuestions.add(
+                  quiz_model.TestExamQuizModel(
+                    id: e['_id']?.toString() ?? e['id']?.toString(),
+                    questionId: e['_id']?.toString() ?? e['id']?.toString(),
+                    question: quiz_model.Question.fromJson(e),
+                  ),
+                );
               }
             }
           }
           questions.assignAll(parsedQuestions);
         }
-        
+
         totalSteps.value = questions.length;
         currentStep.value = questions.isEmpty ? 0 : 1;
         selectedAnswerIndex.value = -1;
         userAnswers.assignAll(List.filled(questions.length, -1));
         _updateDifficulty();
         _updateCurrentOptions();
-        
+
         if (questions.isNotEmpty) {
           startTimer();
         }
@@ -254,21 +257,20 @@ class QuizController extends GetxController {
     }
 
     _saveCurrentAnswer();
-    
-    if (isLearningQuiz.value) {
-       if (currentStep.value < totalSteps.value) {
-          currentStep.value++;
-          selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
-          _updateDifficulty();
-          _updateCurrentOptions();
 
-        } else {
-          await submitLearningQuiz();
-          // debugPrint("test and quiz");
-        }
+    if (isLearningQuiz.value) {
+      if (currentStep.value < totalSteps.value) {
+        currentStep.value++;
+        selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
+        _updateDifficulty();
+        _updateCurrentOptions();
+      } else {
+        await submitLearningQuiz();
+        // debugPrint("test and quiz");
+      }
     } else {
       await submitAnswer();
-       debugPrint("test and quifgdfgdfdfz");
+      debugPrint("test and quifgdfgdfdfz");
       if (currentStep.value < totalSteps.value) {
         currentStep.value++;
         selectedAnswerIndex.value = userAnswers[currentStep.value - 1];
@@ -293,13 +295,15 @@ class QuizController extends GetxController {
         final options = List<quiz_model.Option>.from(
           question.question?.options ?? const [],
         );
-        options.sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
-        
+        options.sort(
+          (a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0),
+        );
+
         if (answerIndex < options.length) {
           final selectedOptionId = options[answerIndex].id;
           answers.add({
             "questionId": question.question?.id ?? question.id,
-            "selectedOptionIds": [selectedOptionId]
+            "selectedOptionIds": [selectedOptionId],
           });
         }
       }
@@ -345,7 +349,9 @@ class QuizController extends GetxController {
     _saveCurrentAnswer();
 
     if (isLearningQuiz.value && index != -1) {
-      final correctIndex = _correctAnswerIndexForQuestion(currentStep.value - 1);
+      final correctIndex = _correctAnswerIndexForQuestion(
+        currentStep.value - 1,
+      );
       if (index != correctIndex) {
         _showExplanationDialog();
       }
@@ -359,8 +365,9 @@ class QuizController extends GetxController {
     Get.dialog(
       Dialog(
         backgroundColor: const Color(0xff1A1A1A),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
         child: Padding(
           padding: EdgeInsets.all(24.w),
           child: SingleChildScrollView(
@@ -370,8 +377,11 @@ class QuizController extends GetxController {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.error_outline,
-                        color: const Color(0xffBD0000), size: 28.r),
+                    Icon(
+                      Icons.error_outline,
+                      color: const Color(0xffBD0000),
+                      size: 28.r,
+                    ),
                     SizedBox(width: 12.w),
                     const CustomText(
                       text: "Incorrect Answer",
@@ -445,7 +455,7 @@ class QuizController extends GetxController {
     if (selectedAnswerIndex.value != -1 && questions.isNotEmpty) {
       _saveCurrentAnswer();
     }
-    
+
     _hasOpenedResult = true;
     Get.toNamed(AppRoutes.quizResult);
   }
@@ -510,7 +520,7 @@ class QuizController extends GetxController {
   }
 
   Future<void> startQuizAttempt() async {
-    if (quizId.value.isEmpty) return;
+    if (quizId.value.isEmpty || isLoading.value) return;
 
     isLoading.value = true;
     try {
@@ -519,28 +529,112 @@ class QuizController extends GetxController {
         jsonEncode({}),
       );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        // Save attemptId from response
-        if (response.body != null && response.body['data'] != null) {
-          attemptId.value = response.body['data']['attemptId']?.toString() ?? "";
-        }
-        
-        getQuestions();
-        Get.toNamed(AppRoutes.quiz, arguments: Get.arguments);
-      } else {
+      final statusCode = response.statusCode ?? 0;
+      final isSuccess = statusCode >= 200 && statusCode < 300;
+      final newAttemptId = _extractAttemptId(response.body);
+      print("newAttemptId--------------${newAttemptId}");
+      if (!isSuccess || newAttemptId.isEmpty) {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? "Failed to start quiz attempt",
         );
+        isLoading.value = false;
+
+        return;
       }
+
+      isLoading.value = false;
+      Get.offNamed(
+        AppRoutes.quiz,
+        arguments: _quizRouteArguments(newAttemptId),
+      );
     } catch (e) {
       ToastMessageHelper.errorMessageShowToster("An error occurred: $e");
-    } finally {
       isLoading.value = false;
     }
   }
 
+  String _extractAttemptId(dynamic body) {
+    dynamic decodedBody = body;
+    if (body is String && body.isNotEmpty) {
+      try {
+        decodedBody = jsonDecode(body);
+      } catch (_) {
+        return body;
+      }
+    }
+
+    final data = decodedBody is Map
+        ? (decodedBody['data'] ?? decodedBody)
+        : decodedBody;
+    return _attemptIdFromValue(data);
+  }
+
+  String _attemptIdFromValue(dynamic value) {
+    if (value == null) return "";
+    if (value is String) return value;
+    if (value is num) return value.toString();
+
+    if (value is List) {
+      for (final item in value) {
+        final nestedId = _attemptIdFromValue(item);
+        if (nestedId.isNotEmpty) return nestedId;
+      }
+      return "";
+    }
+
+    if (value is! Map) return "";
+
+    final directId =
+        value['attemptId']?.toString() ??
+        value['attempt_id']?.toString() ??
+        value['quizAttemptId']?.toString() ??
+        value['quiz_attempt_id']?.toString() ??
+        value['_id']?.toString() ??
+        value['id']?.toString();
+    if (directId != null && directId.isNotEmpty) return directId;
+
+    for (final key in const [
+      'attempt',
+      'quizAttempt',
+      'quiz_attempt',
+      'result',
+      'item',
+    ]) {
+      final nestedId = _attemptIdFromValue(value[key]);
+      if (nestedId.isNotEmpty) return nestedId;
+    }
+
+    return "";
+  }
+
+  Map<String, dynamic> _quizRouteArguments(String newAttemptId) {
+    final currentArguments = Get.arguments;
+    final arguments = <String, dynamic>{};
+    if (currentArguments is Map) {
+      currentArguments.forEach((key, value) {
+        arguments[key.toString()] = value;
+      });
+    }
+
+    arguments['attemptId'] = newAttemptId;
+    if (quizId.value.isNotEmpty) {
+      arguments['quizId'] = quizId.value;
+      arguments['id'] = quizId.value;
+    }
+    if (topicId.value.isNotEmpty) {
+      arguments['topicId'] = topicId.value;
+    }
+    if (quizTitle.value.isNotEmpty) {
+      arguments['title'] = quizTitle.value;
+    }
+
+    return arguments;
+  }
+
   Future<void> submitAnswer() async {
-    if (attemptId.value.isEmpty || currentQuestion == null || selectedAnswerIndex.value == -1) {
+    if (attemptId.value.isEmpty ||
+        currentQuestion == null ||
+        selectedAnswerIndex.value == -1) {
       debugPrint("test and quiz..............");
       debugPrint("attemptId.value isEmpty-------------${attemptId.value}");
       return;
@@ -555,13 +649,13 @@ class QuizController extends GetxController {
     final options = currentOptions;
     final selectedOptionId = options[selectedAnswerIndex.value].id;
 
-     if (questionIdValue == null || selectedOptionId == null) return;
+    if (questionIdValue == null || selectedOptionId == null) return;
 
     isSubmittingAnswer.value = true;
     try {
       final body = jsonEncode({
         "questionId": questionIdValue,
-        "selectedOptionIds": [selectedOptionId]
+        "selectedOptionIds": [selectedOptionId],
       });
 
       final response = await ApiClient.postData(
@@ -571,7 +665,9 @@ class QuizController extends GetxController {
       debugPrint("attemptId.value---------${attemptId.value}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         _serverSavedAnswers[questionIndex] = selectedAnswerIndex.value;
-        debugPrint("attemptId.value---------${_serverSavedAnswers[questionIndex]}");
+        debugPrint(
+          "attemptId.value---------${_serverSavedAnswers[questionIndex]}",
+        );
       } else {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? "Failed to submit answer",
@@ -601,9 +697,7 @@ class QuizController extends GetxController {
         return;
       }
 
-      debugPrint(
-        "[QuizResume] attempt details keys: ${root.keys.toList()}",
-      );
+      debugPrint("[QuizResume] attempt details keys: ${root.keys.toList()}");
 
       final responseExpiresAt = _parseDateField(root['expiresAt']);
       if (responseExpiresAt != null) {
@@ -665,7 +759,8 @@ class QuizController extends GetxController {
       int targetIndex = userAnswers.indexWhere((a) => a == -1);
 
       if (targetIndex == -1 || restoredCount == 0) {
-        final hintIndex = _parseIntField(
+        final hintIndex =
+            _parseIntField(
               root['currentQuestionIndex'] ??
                   root['nextQuestionIndex'] ??
                   root['lastQuestionIndex'] ??
@@ -678,7 +773,9 @@ class QuizController extends GetxController {
                         (root['progress'] as Map)['currentQuestionIndex'],
                   )
                 : null);
-        if (hintIndex != null && hintIndex >= 0 && hintIndex < questions.length) {
+        if (hintIndex != null &&
+            hintIndex >= 0 &&
+            hintIndex < questions.length) {
           targetIndex = hintIndex;
         }
       }
@@ -729,20 +826,23 @@ class QuizController extends GetxController {
   }
 
   bool _restoreSingleAnswer(Map entry) {
-    final questionField = entry['questionId'] ??
+    final questionField =
+        entry['questionId'] ??
         entry['question'] ??
         entry['quizQuestionId'] ??
         entry['questionRef'];
     String? questionId;
     if (questionField is Map) {
-      questionId = questionField['_id']?.toString() ??
+      questionId =
+          questionField['_id']?.toString() ??
           questionField['id']?.toString() ??
           questionField['questionId']?.toString();
     } else if (questionField != null) {
       questionId = questionField.toString();
     }
 
-    final dynamic selected = entry['selectedOptionIds'] ??
+    final dynamic selected =
+        entry['selectedOptionIds'] ??
         entry['selectedOptionId'] ??
         entry['optionIds'] ??
         entry['optionId'] ??
@@ -766,8 +866,7 @@ class QuizController extends GetxController {
 
     final qIndex = questions.indexWhere(
       (q) =>
-          (q.question?.id ?? q.questionId) == questionId ||
-          q.id == questionId,
+          (q.question?.id ?? q.questionId) == questionId || q.id == questionId,
     );
     if (qIndex == -1 || qIndex >= userAnswers.length) return false;
 
@@ -776,8 +875,7 @@ class QuizController extends GetxController {
       final qOptions = List<quiz_model.Option>.from(
         questions[qIndex].question?.options ?? const [],
       );
-      qOptions
-          .sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
+      qOptions.sort((a, b) => (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0));
       oIndex = qOptions.indexWhere((o) => o.id == optionId);
     }
 
@@ -793,8 +891,7 @@ class QuizController extends GetxController {
 
   void _applyResumeTiming() {
     if (_expiresAt != null) {
-      final remaining =
-          _expiresAt!.difference(DateTime.now()).inSeconds;
+      final remaining = _expiresAt!.difference(DateTime.now()).inSeconds;
       if (remaining <= 0) {
         remainingSeconds.value = 0;
         finishQuiz();

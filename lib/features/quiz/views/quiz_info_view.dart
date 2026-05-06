@@ -97,9 +97,9 @@ class QuizInfoView extends GetView<QuizController> {
             Obx(
               () => CustomButton(
                 title: controller.isLoading.value ? "Starting..." : "Start exam",
-                onpress: controller.isLoading.value
-                    ? () {}
-                    : () => controller.startQuizAttempt(),
+                onpress: (){
+                  controller.startQuizAttempt();
+                },
                 color: AppColors.greenColor,
                 titlecolor: Colors.white,
                 bordercolor: Colors.transparent,
