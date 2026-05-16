@@ -1,5 +1,5 @@
-import 'package:examtest/features/quiz/controllers/quiz_controller.dart';
-import 'package:examtest/features/quiz/model/quiz_question_model.dart'
+import 'package:nailed_quiz_app/features/quiz/controllers/quiz_controller.dart';
+import 'package:nailed_quiz_app/features/quiz/model/quiz_question_model.dart'
     as quiz_model;
 import 'package:flutter_test/flutter_test.dart';
 

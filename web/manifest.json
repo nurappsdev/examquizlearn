@@ -1,6 +1,6 @@
 {
-    "name": "examtest",
-    "short_name": "examtest",
+    "name": "Nailed Quiz App",
+    "short_name": "Nailed Quiz App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

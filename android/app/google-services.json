@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654616877794",
+    "project_id": "quizapp-2b00f",
+    "storage_bucket": "quizapp-2b00f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654616877794:android:82f64165be94d29d37dcbb",
+        "android_client_info": {
+          "package_name": "com.nailedquiz.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSJWL_sx9hCtW6NyXl9FmA2tWPrPqRJlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

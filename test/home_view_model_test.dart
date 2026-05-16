@@ -1,4 +1,4 @@
-import 'package:examtest/features/home/model/home_view_model.dart';
+import 'package:nailed_quiz_app/features/home/model/home_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

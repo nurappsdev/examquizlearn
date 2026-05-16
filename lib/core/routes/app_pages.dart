@@ -1,4 +1,4 @@
-import 'package:examtest/features/auth/reset_password/views/reset_password_view.dart';
+import 'package:nailed_quiz_app/features/auth/reset_password/views/reset_password_view.dart';
 import 'package:get/get.dart';
 import '../../core/service/api_constants.dart';
 import '../../features/auth/personal_info_auth/bindings/personal_info_binding.dart';
