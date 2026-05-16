@@ -28,57 +28,62 @@ class HomeView extends GetView<HomeController> {
       final isLoadingMoreTopics = mainController.isLoadingMoreLearningTopics;
       final isLearningSelected = controller.selectedCategoryIndex == 0;
 
-      return NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
-          final metrics = notification.metrics;
-          if (metrics.pixels >= metrics.maxScrollExtent - 240.h) {
-            mainController.loadNextLearningTopicsPage();
-          }
-          return false;
-        },
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h),
-              _buildHeader(profileController),
-              SizedBox(height: 30.h),
-              _buildProgressCard(progress),
-              SizedBox(height: 30.h),
-              const CustomText(
-                text: "Select a category",
-                fontsize: 18,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-              SizedBox(height: 15.h),
-              _buildCategorySelector(controller),
-              SizedBox(height: 20.h),
-              // if (isLearningSelected) ...[
-              //   _buildTopicSearchField(controller),
-              //   SizedBox(height: 20.h),
-              // ],
-              if (isRefreshingTopics)
-                _buildTopicsLoader()
-              else if (topics.isEmpty)
-                _buildEmptyTopicsCard(
-                  isLearning: isLearningSelected,
-                  isSearching: isLearningSelected && isSearching,
-                )
-              else
-                ...topics.map((topic) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 15.h),
-                    child: _buildCategoryCard(
-                      topic: topic,
-                      isLearning: isLearningSelected,
-                    ),
-                  );
-                }),
-              if (isLoadingMoreTopics) _buildLoadMoreIndicator(),
-              SizedBox(height: 100.h),
-            ],
+      return RefreshIndicator(
+        color: AppColors.greenColor,
+        onRefresh: mainController.refreshLearningTopics,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (notification) {
+            final metrics = notification.metrics;
+            if (metrics.pixels >= metrics.maxScrollExtent - 240.h) {
+              mainController.loadNextLearningTopicsPage();
+            }
+            return false;
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.h),
+                _buildHeader(profileController),
+                SizedBox(height: 30.h),
+                _buildProgressCard(progress),
+                SizedBox(height: 30.h),
+                const CustomText(
+                  text: "Select a category",
+                  fontsize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+                SizedBox(height: 15.h),
+                _buildCategorySelector(controller),
+                SizedBox(height: 20.h),
+                // if (isLearningSelected) ...[
+                //   _buildTopicSearchField(controller),
+                //   SizedBox(height: 20.h),
+                // ],
+                if (isRefreshingTopics)
+                  _buildTopicsLoader()
+                else if (topics.isEmpty)
+                  _buildEmptyTopicsCard(
+                    isLearning: isLearningSelected,
+                    isSearching: isLearningSelected && isSearching,
+                  )
+                else
+                  ...topics.map((topic) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 15.h),
+                      child: _buildCategoryCard(
+                        topic: topic,
+                        isLearning: isLearningSelected,
+                      ),
+                    );
+                  }),
+                if (isLoadingMoreTopics) _buildLoadMoreIndicator(),
+                SizedBox(height: 100.h),
+              ],
+            ),
           ),
         ),
       );

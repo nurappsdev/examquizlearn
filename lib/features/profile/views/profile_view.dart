@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_text.dart';
+import '../../../core/service/api_constants.dart';
+import '../../../core/widgets/widgets.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/quiz_attempt_card.dart';
 import '../widgets/quiz_attempt_skeleton.dart';
@@ -21,18 +23,34 @@ class ProfileView extends StatelessWidget {
         Center(
           child: Column(
             children: [
-              Container(
-                width: 100.r,
-                height: 100.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1),
-                ),
-                child: Icon(
-                  Icons.person_outline,
-                  size: 60.r,
-                  color: Colors.white,
-                ),
+              Center(
+                child: Obx(() {
+                  final user = controller.rxUserModel.value;
+                  return Container(
+                    width: 100.r,
+                    height: 100.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border:
+                      Border.all(color: Colors.white, width: 1),
+                    ),
+                    child: user.avatarUrl != null &&
+                        user.avatarUrl!.isNotEmpty
+                        ? CustomNetworkImage(
+                      imageUrl: user.avatarUrl!.contains('http')
+                          ? user.avatarUrl!
+                          : "${ApiConstants.imageBaseUrl}${user.avatarUrl}",
+                      height: 100.r,
+                      width: 100.r,
+                      boxShape: BoxShape.circle,
+                    )
+                        : Icon(
+                      Icons.person_outline,
+                      size: 60.r,
+                      color: Colors.white,
+                    ),
+                  );
+                }),
               ),
               SizedBox(height: 16.h),
               Obx(() => Text(
