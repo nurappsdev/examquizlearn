@@ -1,6 +1,6 @@
-import 'package:examtest/core/utils/app_colors.dart';
-import 'package:examtest/core/utils/app_image.dart';
-import 'package:examtest/core/widgets/custom_text.dart';
+import 'package:nailed_quiz_app/core/utils/app_colors.dart';
+import 'package:nailed_quiz_app/core/utils/app_image.dart';
+import 'package:nailed_quiz_app/core/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -89,7 +89,7 @@ class AdminSupportView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24.r),
                   ),
                   child: CustomText(
-                    text: 'If you have any questions, need assistance, or want to discuss your progress, feel free to reach out to your coach. We’re here to help you achieve your fitness goals!',
+                    text: 'If you have any questions, need assistance, or want to discuss your progress, feel free to reach out to your coach. Weâ€™re here to help you achieve your fitness goals!',
                     color: AppColors.greenColor,
                     fontsize: 14.sp,
                     maxline: 5,

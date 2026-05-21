@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../../core/helpers/time_format.dart';
+import '../../../../core/service/api_constants.dart';
 import '../../../../core/utils/utils.dart';
+import '../../../../core/widgets/cachanetwork_image.dart';
 import '../../../../core/widgets/custom_button_common.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../controllers/edit_profile_controller.dart';
@@ -42,7 +45,8 @@ class _EditProfileViewState extends State<EditProfileView> {
           backgroundColor: Colors.black,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+            icon:
+                const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
             onPressed: () => Get.back(),
           ),
           title: Text(
@@ -70,26 +74,39 @@ class _EditProfileViewState extends State<EditProfileView> {
                     alignment: Alignment.bottomCenter,
                     children: [
                       Obx(() => Container(
-                        width: 100.r,
-                        height: 100.r,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
-                          image: controller.imagePath.value.isNotEmpty
-                              ? DecorationImage(
-                                  image: FileImage(File(controller.imagePath.value)),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child: controller.imagePath.value.isEmpty
-                            ? Icon(
-                                Icons.person_outline,
-                                size: 60.r,
-                                color: Colors.white,
-                              )
-                            : null,
-                      )),
+                            width: 100.r,
+                            height: 100.r,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.5),
+                                  width: 1),
+                              image: controller.imagePath.value.isNotEmpty
+                                  ? DecorationImage(
+                                      image: FileImage(
+                                          File(controller.imagePath.value)),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                            child: controller.imagePath.value.isEmpty
+                                ? controller.avatarUrl.value.isNotEmpty
+                                    ? CustomNetworkImage(
+                                        imageUrl: controller.avatarUrl.value
+                                                .contains('http')
+                                            ? controller.avatarUrl.value
+                                            : "${ApiConstants.imageBaseUrl}${controller.avatarUrl.value}",
+                                        height: 100.r,
+                                        width: 100.r,
+                                        boxShape: BoxShape.circle,
+                                      )
+                                    : Icon(
+                                        Icons.person_outline,
+                                        size: 60.r,
+                                        color: Colors.white,
+                                      )
+                                : null,
+                          )),
                       Positioned(
                         bottom: 0,
                         child: GestureDetector(
@@ -99,7 +116,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                             decoration: BoxDecoration(
                               color: const Color(0xFF1E1E1E),
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.2),
+                                  width: 1),
                             ),
                             child: Icon(
                               Icons.camera_alt_outlined,
@@ -200,8 +219,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                         },
                       );
                       if (picked != null) {
+                        controller.selectedDate = picked;
                         controller.dateOfBirthController.text =
-                            '${picked.day}/${picked.month}/${picked.year}';
+                            TimeFormatHelper.formatDate(picked);
                       }
                     },
                     filColor: Colors.transparent,
@@ -246,6 +266,24 @@ class _EditProfileViewState extends State<EditProfileView> {
                     hinTextColor: AppColors.whiteColor.withOpacity(0.5),
                     borderRadio: 12,
                   ),
+                  SizedBox(height: 16.h),
+                  CustomTextField(
+                    controller: controller.linkedinController,
+                    hintText: 'Linkedin link',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(12.r),
+                      child: Icon(
+                        Icons.link,
+                        color: AppColors.whiteColor.withOpacity(0.7),
+                        size: 20.sp,
+                      ),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                  ),
                   SizedBox(height: 60.h),
                   Obx(() => CustomButtonCommon(
                         title: 'Save changes',
@@ -255,6 +293,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                         onpress: () {
                           _closeDropdowns();
                           controller.saveChanges(_formKey);
+
                         },
                       )),
                   SizedBox(height: 30.h),

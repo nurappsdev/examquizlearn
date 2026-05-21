@@ -77,7 +77,7 @@ class VerificationView extends GetView<VerificationController> {
                       color: AppColors.greenColor,
                       allBorderRadius: BorderRadius.circular(30.r),
                       loading: controller.isLoading.value,
-                      onpress: () => controller.sendOTP(),
+                      onpress: () => controller.forgot(),
                     )),
               ],
             ),

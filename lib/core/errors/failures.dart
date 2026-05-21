@@ -1,16 +1,13 @@
-abstract class Failure {
-  final String message;
-  const Failure(this.message);
-}
+class ErrorResponse {
+  final String? status;
+  final int? statusCode;
+  final String? message;
 
-class ServerFailure extends Failure {
-  const ServerFailure(super.message);
-}
+  ErrorResponse({this.status, this.statusCode, this.message});
 
-class CacheFailure extends Failure {
-  const CacheFailure(super.message);
-}
-
-class NetworkFailure extends Failure {
-  const NetworkFailure(super.message);
+  factory ErrorResponse.fromJson(Map<String, dynamic> json) => ErrorResponse(
+    status: json["status"]?.toString(),
+    statusCode: json["statusCode"] is int ? json["statusCode"] : null,
+    message: json["message"]?.toString(),
+  );
 }

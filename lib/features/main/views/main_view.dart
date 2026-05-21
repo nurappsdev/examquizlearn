@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/routes/app_routes.dart';
 import '../controllers/main_controller.dart';
 import '../../home/views/home_view.dart';
 import '../../educational_content/views/educational_content_view.dart';
+import '../../leaderboard/views/leaderboard_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../../../core/widgets/custom_bottom_bar.dart';
+import '../../../core/widgets/custom_loader.dart';
+import '../../../core/widgets/custom_text.dart';
 
 class MainView extends GetView<MainController> {
   const MainView({super.key});
@@ -15,19 +20,111 @@ class MainView extends GetView<MainController> {
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Obx(() {
-          switch (controller.currentIndex) {
-            case 0:
-              return const HomeView();
-            case 1:
-              return const EducationalContentView();
-            case 2:
-              return const ProfileView();
-            default:
-              return const HomeView();
+          if (controller.isCheckingLearningAccess) {
+            return const Center(child: CustomLoader());
           }
+
+          if (controller.learningAccessError.isNotEmpty) {
+            return _LearningAccessError(
+              message: controller.learningAccessError,
+              onRetry: controller.checkLearningAccess,
+            );
+          }
+
+          return IndexedStack(
+            index: controller.currentIndex,
+            children: const [
+              HomeView(),
+              EducationalContentView(),
+              LeaderboardView(),
+              ProfileView(),
+            ],
+          );
         }),
       ),
-      bottomNavigationBar: const CustomBottomBar(),
+      bottomNavigationBar: Obx(() {
+        if (controller.isCheckingLearningAccess ||
+            controller.learningAccessError.isNotEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return const CustomBottomBar();
+      }),
+    );
+  }
+}
+
+class _LearningAccessError extends StatelessWidget {
+  const _LearningAccessError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 28.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, color: Colors.redAccent, size: 48.r),
+            SizedBox(height: 16.h),
+            CustomText(
+              text: message,
+              color: Colors.white,
+              fontsize: 15.sp,
+              fontWeight: FontWeight.w500,
+              maxline: 4,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20.h),
+            SizedBox(
+              height: 46.h,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onRetry,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff17A15D),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                      ),
+                      child: CustomText(
+                        text: 'Try again',
+                        color: Colors.white,
+                        fontsize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.toNamed(AppRoutes.signin),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xff17A15D)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      child: CustomText(
+                        text: 'Start again',
+                        color: const Color(0xff17A15D),
+                        fontsize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
