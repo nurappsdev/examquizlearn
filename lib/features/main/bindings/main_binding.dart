@@ -2,14 +2,16 @@ import 'package:get/get.dart';
 import '../controllers/main_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../educational_content/controllers/educational_content_controller.dart';
+import '../../leaderboard/controllers/leaderboard_controller.dart';
 import '../../profile/controllers/profile_controller.dart';
 
 class MainBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<MainController>(() => MainController());
-    Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<EducationalContentController>(() => EducationalContentController());
-    Get.lazyPut<ProfileController>(() => ProfileController());
+    Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
+    Get.lazyPut<EducationalContentController>(() => EducationalContentController(), fenix: true);
+    Get.lazyPut<ProfileController>(() => ProfileController(), fenix: true);
+    Get.lazyPut<LeaderboardController>(() => LeaderboardController(), fenix: true);
   }
 }

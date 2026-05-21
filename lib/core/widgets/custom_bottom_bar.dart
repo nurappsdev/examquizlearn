@@ -29,7 +29,8 @@ class CustomBottomBar extends StatelessWidget {
           children: [
             _buildNavItem(controller, 0, Icons.home_outlined, 'Home'),
             _buildNavItem(controller, 1, Icons.psychology_outlined, 'Learning'),
-            _buildNavItem(controller, 2, Icons.person_outline, 'Profile'),
+            _buildNavItem(controller, 2, Icons.emoji_events_outlined, 'Leaderboard'),
+            _buildNavItem(controller, 3, Icons.person_outline, 'Profile'),
           ],
         ),
       );

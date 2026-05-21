@@ -23,12 +23,15 @@ class AppRoutes {
   static const String editProfile = '/edit-profile';
   static const String subscriptionScreen = '/subscriptionScreen';
   static const String manageSubscription = '/manageSubscription';
+  static const String yourPlan = '/your-plan';
   static const String adminSupport = '/admin-support';
   static const String settings = '/settings';
   static const String changePassword = '/change-password';
   static const String aboutUs = '/about-us';
   static const String privacyPolicy = '/privacy-policy';
   static const String termsOfService = '/terms-of-service';
+  static const String notifications = '/notifications';
+  static const String leaderboard = '/leaderboard';
   static const String addBio = '/add-bio';
   static const String addContactInfo = '/add-contact-info';
   static const String addEducation = '/add-education';

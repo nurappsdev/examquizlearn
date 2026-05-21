@@ -1,19 +1,22 @@
-import 'package:examtest/core/utils/app_colors.dart';
-import 'package:examtest/core/widgets/custom_button.dart';
-import 'package:examtest/core/widgets/custom_text.dart';
-import 'package:examtest/core/widgets/custom_text_field.dart';
+import 'package:nailed_quiz_app/core/utils/app_colors.dart';
+import 'package:nailed_quiz_app/core/widgets/custom_button.dart';
+import 'package:nailed_quiz_app/core/widgets/custom_text.dart';
+import 'package:nailed_quiz_app/core/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../core/routes/app_routes.dart';
+import '../controllers/change_password_controller.dart';
 
 class ChangePasswordView extends StatelessWidget {
   const ChangePasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController oldPassController = TextEditingController();
-    final TextEditingController newPassController = TextEditingController();
-    final TextEditingController confirmPassController = TextEditingController();
+    final ChangePasswordController controller = Get.put(
+      ChangePasswordController(),
+    );
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -36,73 +39,75 @@ class ChangePasswordView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 30.h),
-            _buildLabel('Current Password'),
-            CustomTextField(
-              controller: oldPassController,
-              hintText: 'Enter old password',
-              isPassword: true,
-              filColor: Colors.transparent,
-              borderColor: const Color(0xffA1A1A1),
-              textColor: Colors.white,
-              hinTextColor: Colors.grey.shade600,
-            ),
-            SizedBox(height: 20.h),
-            _buildLabel('New Password'),
-            CustomTextField(
-              controller: newPassController,
-              hintText: 'Enter new password',
-              isPassword: true,
-              filColor: Colors.transparent,
-              borderColor: const Color(0xffA1A1A1),
-              textColor: Colors.white,
-              hinTextColor: Colors.grey.shade600,
-            ),
-            SizedBox(height: 20.h),
-            _buildLabel('Confirm Password'),
-            CustomTextField(
-              controller: confirmPassController,
-              hintText: 'Re-enter new password',
-              isPassword: true,
-              filColor: Colors.transparent,
-              borderColor: const Color(0xffA1A1A1),
-              textColor: Colors.white,
-              hinTextColor: Colors.grey.shade600,
-            ),
-            SizedBox(height: 12.h),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  // Handle forget password
-                },
-                child: CustomText(
-                  text: 'Forget Password?',
-                  color: Colors.red,
-                  fontsize: 14.sp,
-                  fontWeight: FontWeight.w400,
+        child: Form(
+          key: controller.formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 30.h),
+              _buildLabel('Current Password'),
+              CustomTextField(
+                controller: controller.oldPasswordController,
+                hintText: 'Enter old password',
+                isPassword: true,
+                filColor: Colors.transparent,
+                borderColor: const Color(0xffA1A1A1),
+                textColor: Colors.white,
+                hinTextColor: Colors.grey.shade600,
+              ),
+              SizedBox(height: 20.h),
+              _buildLabel('New Password'),
+              CustomTextField(
+                controller: controller.newPasswordController,
+                hintText: 'Enter new password',
+                isPassword: true,
+                filColor: Colors.transparent,
+                borderColor: const Color(0xffA1A1A1),
+                textColor: Colors.white,
+                hinTextColor: Colors.grey.shade600,
+              ),
+              SizedBox(height: 20.h),
+              _buildLabel('Confirm Password'),
+              CustomTextField(
+                controller: controller.confirmPasswordController,
+                hintText: 'Re-enter new password',
+                isPassword: true,
+                filColor: Colors.transparent,
+                borderColor: const Color(0xffA1A1A1),
+                textColor: Colors.white,
+                hinTextColor: Colors.grey.shade600,
+              ),
+              SizedBox(height: 12.h),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.verification),
+                  child: CustomText(
+                    text: 'Forget Password?',
+                    color: Colors.red,
+                    fontsize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 40.h),
-          ],
+              SizedBox(height: 40.h),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
-        child: CustomButton(
-          title: 'Update password',
-          onpress: () {
-            // Handle update password logic
-          },
-          color: AppColors.greenColor,
-          titlecolor: Colors.white,
-          width: double.infinity,
-          height: 56.h,
-          bordercolor: AppColors.greenColor,
+        child: Obx(
+          () => CustomButton(
+            title: 'Update password',
+            loading: controller.isLoading.value,
+            onpress: controller.changePassword,
+            color: AppColors.greenColor,
+            titlecolor: Colors.white,
+            width: double.infinity,
+            height: 56.h,
+            bordercolor: AppColors.greenColor,
+          ),
         ),
       ),
     );

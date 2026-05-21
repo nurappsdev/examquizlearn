@@ -1,4 +1,4 @@
-package com.example.examtest
+package com.nailedquiz.app
 
 import io.flutter.embedding.android.FlutterActivity
 

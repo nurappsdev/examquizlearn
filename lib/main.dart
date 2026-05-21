@@ -1,4 +1,6 @@
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart' hide FirebaseService;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,11 +8,26 @@ import 'package:get/get.dart';
 
 import 'core/helpers/dependency_injection.dart';
 import 'core/routes/app_pages.dart';
+import 'core/service/firebase_option.dart';
+import 'core/service/firebase_service.dart';
 import 'core/themes/light_theme.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
 
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Wire up FCM listeners + local-notification channel BEFORE runApp,
+  // otherwise foreground messages and data-only payloads silently drop.
+  final firebaseService = FirebaseService();
+  await firebaseService.initializeNotifications();
+  await firebaseService.setupFirebaseMessaging();
+
+  FirebaseApp app = Firebase.app();
+  print('Firebase initialized-------------------: ${app.name}');
   // Initialization logic
   DependencyInjection di = DependencyInjection();
   di.dependencies();
