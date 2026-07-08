@@ -8,8 +8,22 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../controllers/verification_controller.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class VerificationView extends GetView<VerificationController> {
+class VerificationView extends StatefulWidget {
   const VerificationView({super.key});
+
+  @override
+  State<VerificationView> createState() => _VerificationViewState();
+}
+
+class _VerificationViewState extends State<VerificationView> {
+  final _formKey = GlobalKey<FormState>();
+  late final VerificationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<VerificationController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +48,7 @@ class VerificationView extends GetView<VerificationController> {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: controller.formKey,
+            key: _formKey,
             child: Column(
               children: [
                 SizedBox(height: 20.h),
@@ -77,7 +91,7 @@ class VerificationView extends GetView<VerificationController> {
                       color: AppColors.greenColor,
                       allBorderRadius: BorderRadius.circular(30.r),
                       loading: controller.isLoading.value,
-                      onpress: () => controller.forgot(),
+                      onpress: () => controller.forgot(_formKey),
                     )),
               ],
             ),

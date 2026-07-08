@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,16 +11,16 @@ import '../../../../core/utils/app_constant.dart';
 class SigninController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
 
   final isLoading = false.obs;
 
   Future<void> signIn({
     String? email,
     String? password,
+    GlobalKey<FormState>? formKey,
   }) async {
     if (email == null || password == null) {
-      if (!(formKey.currentState?.validate() ?? false)) {
+      if (!(formKey?.currentState?.validate() ?? false)) {
         return;
       }
 

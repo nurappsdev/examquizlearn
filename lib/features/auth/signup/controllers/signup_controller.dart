@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,8 +14,6 @@ class SignupController extends GetxController {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-
   var isAgree = false.obs;
   var isLoading = false.obs;
 
@@ -25,7 +21,7 @@ class SignupController extends GetxController {
     isAgree.value = value ?? false;
   }
 
-  void signup() {
+  void signup(GlobalKey<FormState> formKey) {
     if (formKey.currentState?.validate() ?? false) {
       if (!isAgree.value) {
         Get.snackbar(

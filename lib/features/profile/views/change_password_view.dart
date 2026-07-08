@@ -9,15 +9,25 @@ import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
 import '../controllers/change_password_controller.dart';
 
-class ChangePasswordView extends StatelessWidget {
+class ChangePasswordView extends StatefulWidget {
   const ChangePasswordView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final ChangePasswordController controller = Get.put(
-      ChangePasswordController(),
-    );
+  State<ChangePasswordView> createState() => _ChangePasswordViewState();
+}
 
+class _ChangePasswordViewState extends State<ChangePasswordView> {
+  final _formKey = GlobalKey<FormState>();
+  late final ChangePasswordController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ChangePasswordController());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -40,7 +50,7 @@ class ChangePasswordView extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Form(
-          key: controller.formKey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -101,7 +111,7 @@ class ChangePasswordView extends StatelessWidget {
           () => CustomButton(
             title: 'Update password',
             loading: controller.isLoading.value,
-            onpress: controller.changePassword,
+            onpress: () => controller.changePassword(_formKey),
             color: AppColors.greenColor,
             titlecolor: Colors.white,
             width: double.infinity,

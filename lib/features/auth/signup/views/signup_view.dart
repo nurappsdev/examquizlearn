@@ -9,8 +9,22 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../controllers/signup_controller.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class SignupView extends GetView<SignupController> {
+class SignupView extends StatefulWidget {
   const SignupView({super.key});
+
+  @override
+  State<SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<SignupView> {
+  final _formKey = GlobalKey<FormState>();
+  late final SignupController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<SignupController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +34,7 @@ class SignupView extends GetView<SignupController> {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: controller.formKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -196,7 +210,7 @@ class SignupView extends GetView<SignupController> {
                   color: AppColors.greenColor,
                   allBorderRadius: BorderRadius.circular(30.r),
                   loading: controller.isLoading.value,
-                  onpress: () => controller.signup(),
+                  onpress: () => controller.signup(_formKey),
                 )),
                 SizedBox(height: 30.h),
                 // Footer

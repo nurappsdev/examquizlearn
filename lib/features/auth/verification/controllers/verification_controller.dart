@@ -12,11 +12,10 @@ import '../../../../core/utils/app_constant.dart';
 
 class VerificationController extends GetxController {
   final emailController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
 
   var isLoading = false.obs;
 
-  Future<void> forgot() async {
+  Future<void> forgot(GlobalKey<FormState> formKey) async {
     if (!(formKey.currentState?.validate() ?? false)) {
       return;
     }

@@ -6,19 +6,31 @@ import '../../../../core/widgets/custom_button_common.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../controllers/reset_password_controller.dart';
 
-class ResetPasswordView extends GetView<ResetPasswordController> {
+class ResetPasswordView extends StatefulWidget {
   const ResetPasswordView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  State<ResetPasswordView> createState() => _ResetPasswordViewState();
+}
 
+class _ResetPasswordViewState extends State<ResetPasswordView> {
+  final _formKey = GlobalKey<FormState>();
+  late final ResetPasswordController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ResetPasswordController>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: formKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -136,7 +148,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                     allBorderRadius: BorderRadius.circular(30.r),
                     loading: controller.isLoading.value,
                     onpress: () {
-                      controller.resetPassword(formKey);
+                      controller.resetPassword(_formKey);
                     },
                   ),
                 ),

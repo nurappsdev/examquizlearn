@@ -12,10 +12,9 @@ class ChangePasswordController extends GetxController {
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  final formKey = GlobalKey<FormState>();
   final isLoading = false.obs;
 
-  Future<void> changePassword() async {
+  Future<void> changePassword(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return;
 
     if (newPasswordController.text != confirmPasswordController.text) {

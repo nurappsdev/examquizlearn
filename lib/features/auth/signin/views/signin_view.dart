@@ -8,8 +8,22 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../controllers/signin_controller.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class SigninView extends GetView<SigninController> {
+class SigninView extends StatefulWidget {
   const SigninView({super.key});
+
+  @override
+  State<SigninView> createState() => _SigninViewState();
+}
+
+class _SigninViewState extends State<SigninView> {
+  final _formKey = GlobalKey<FormState>();
+  late final SigninController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<SigninController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,23 +32,23 @@ class SigninView extends GetView<SigninController> {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Form(
-            key: controller.formKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: AppColors.whiteColor,
-                      size: 20.sp,
-                    ),
-                    onPressed: () => Get.back(),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.topLeft,
+                //   child: IconButton(
+                //     padding: EdgeInsets.zero,
+                //     constraints: const BoxConstraints(),
+                //     icon: Icon(
+                //       Icons.arrow_back_ios,
+                //       color: AppColors.whiteColor,
+                //       size: 20.sp,
+                //     ),
+                //     onPressed: () => Get.back(),
+                //   ),
+                // ),
                 SizedBox(height: 20.h),
                 Center(
                   child: Image.asset(
@@ -114,7 +128,7 @@ class SigninView extends GetView<SigninController> {
                       color: AppColors.greenColor,
                       allBorderRadius: BorderRadius.circular(30.r),
                       loading: controller.isLoading.value,
-                      onpress: () => controller.signIn(),
+                      onpress: () => controller.signIn(formKey: _formKey),
                     )),
                 SizedBox(height: 30.h),
                 Row(
