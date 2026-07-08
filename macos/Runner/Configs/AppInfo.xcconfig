@@ -8,7 +8,7 @@
 PRODUCT_NAME = nailed_quiz_app
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.nailedquiz.nailedQuizApp
+PRODUCT_BUNDLE_IDENTIFIER = com.naileditexamprep.nailedQuizApp
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.nailedquiz. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.naileditexamprep. All rights reserved.
