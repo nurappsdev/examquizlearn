@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBttQaMzE63P_A8V56qpsxtPj4Zb1Qv5Fs',
-    appId: '1:681323071456:ios:bbf973770a92bd04ce4d85',
-    messagingSenderId: '681323071456',
-    projectId: 'pricelyapp-4b186',
-    storageBucket: 'pricelyapp-4b186.firebasestorage.app',
-    iosBundleId: 'com.example.pricely',
+    apiKey: 'AIzaSyCrT2kamj6BWiPRK--fj7j1RUQwDlC5bDs',
+    appId: '1:654616877794:ios:b3ac8478d6e541c937dcbb',
+    messagingSenderId: '654616877794',
+    projectId: 'quizapp-2b00f',
+    storageBucket: 'quizapp-2b00f.firebasestorage.app',
+    iosBundleId: 'com.naileditexamprep.app',
   );
 }

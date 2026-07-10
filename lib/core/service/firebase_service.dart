@@ -1,9 +1,13 @@
 
 
 
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import 'firebase_option.dart';
 
 const AndroidNotificationChannel _highImportanceChannel = AndroidNotificationChannel(
   'high_importance_channel',
@@ -15,7 +19,7 @@ const AndroidNotificationChannel _highImportanceChannel = AndroidNotificationCha
 // MUST be top-level function
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   print('Handling a background message: ${message.messageId}');
 }
 
@@ -31,6 +35,19 @@ class FirebaseService {
   String? get fcmToken => _fcmToken;
   Future<String?> getFCMToken() async {
     try {
+      // On iOS the APNS token arrives asynchronously after app launch;
+      // getToken() throws if it isn't set yet, so wait for it first.
+      if (Platform.isIOS) {
+        String? apnsToken = await _firebaseMessaging.getAPNSToken();
+        for (var i = 0; apnsToken == null && i < 10; i++) {
+          await Future.delayed(const Duration(seconds: 1));
+          apnsToken = await _firebaseMessaging.getAPNSToken();
+        }
+        if (apnsToken == null) {
+          print('APNS token still unavailable — cannot get FCM token');
+          return null;
+        }
+      }
       String? fcmToken = await _firebaseMessaging.getToken();
       print('FCM Token: $fcmToken');
       return fcmToken;
