@@ -11,7 +11,13 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+# iOS build files
+ios/build/
 
+# Xcode
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
 # IntelliJ related
 *.iml
 *.ipr
