@@ -1,4 +1,4 @@
-package com.naileditexamprep.app
+package com.naileditexamprepgc.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -64,6 +64,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '654616877794',
     projectId: 'quizapp-2b00f',
     storageBucket: 'quizapp-2b00f.firebasestorage.app',
-    iosBundleId: 'com.naileditexamprep.app',
+    iosBundleId: 'com.naileditexamprepgc.app',
   );
 }

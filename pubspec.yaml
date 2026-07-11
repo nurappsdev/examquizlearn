@@ -29,8 +29,8 @@ dependencies:
   webview_flutter: ^4.10.0
   video_player: ^2.11.1
   chewie: ^1.14.0
-  firebase_core: ^4.4.0
-  firebase_messaging: ^16.1.1
+  firebase_core: ^4.3.0
+  firebase_messaging: ^16.0.4
   flutter_local_notifications: 19.3.0
 
 dev_dependencies:
