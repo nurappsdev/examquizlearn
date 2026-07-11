@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           initialBinding: ControllerBinder(),
           debugShowCheckedModeBanner: false,
-          title: 'NAILEDit! General Contractor Exam Prep',
+          title: 'NAILEDit! NASCLA Exam Prep',
           initialRoute: AppPages.initial,
           getPages: AppPages.routes,
           theme: light(),
