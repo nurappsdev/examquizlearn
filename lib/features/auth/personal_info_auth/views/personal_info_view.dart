@@ -65,60 +65,6 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   Center(child: Image.asset(AppImages.logo, height: 180.h)),
                   SizedBox(height: 40.h),
                   CustomTextField(
-                    controller: controller.dateOfBirthController,
-                    hintText: 'Date of Birth',
-                    readOnly: true,
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
-                      child: Icon(
-                        Icons.calendar_today_outlined,
-                        color: AppColors.whiteColor.withValues(alpha: 0.7),
-                        size: 20.sp,
-                      ),
-                    ),
-                    onTap: () async {
-                      _closeDropdowns();
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.dark(
-                                primary: AppColors.greenColor,
-                                onPrimary: Colors.white,
-                                surface: Colors.black,
-                                onSurface: Colors.white,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        final month = picked.month.toString().padLeft(2, '0');
-                        final day = picked.day.toString().padLeft(2, '0');
-                        controller.dateOfBirthController.text =
-                            '${picked.year}-$month-$day';
-                      }
-                    },
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withValues(alpha: 0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withValues(alpha: 0.5),
-                    borderRadio: 12,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Date of birth is required';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  SizedBox(height: 16.h),
-                  CustomTextField(
                     controller: controller.employmentController,
                     hintText: 'Employment',
                     prefixIcon: Padding(
@@ -140,17 +86,6 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                       }
                       return null;
                     },
-                  ),
-                  SizedBox(height: 16.h),
-                  Obx(
-                        () => _buildDropdown(
-                      key: 'gender',
-                      hintText: 'Gender',
-                      icon: Icons.male_outlined,
-                      value: controller.selectedGender.value,
-                      items: controller.genderOptions,
-                      onChanged: controller.selectGender,
-                    ),
                   ),
                   SizedBox(height: 16.h),
                   Obx(

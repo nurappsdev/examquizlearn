@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,18 +9,15 @@ import '../../../../core/service/api_constants.dart';
 import '../../../../core/utils/app_constant.dart';
 
 class PersonalInfoController extends GetxController {
-  final dateOfBirthController = TextEditingController();
   final employmentController = TextEditingController();
   final universityNameController = TextEditingController();
   final linkedinProfileController = TextEditingController();
 
-  final selectedGender = ''.obs;
   final selectedEducation = ''.obs;
   Map<String, dynamic> signupData = {};
 
   var isLoading = false.obs;
 
-  final genderOptions = ['Male', 'Female', 'Other'];
   final educationOptions = [
     'High School',
     'Associate',
@@ -41,21 +36,12 @@ class PersonalInfoController extends GetxController {
     }
   }
 
-  void selectGender(String value) {
-    selectedGender.value = value;
-  }
-
   void selectEducation(String value) {
     selectedEducation.value = value;
   }
 
   Future<void> saveAndContinue(GlobalKey<FormState> formKey) async {
     if (!(formKey.currentState?.validate() ?? false)) {
-      return;
-    }
-
-    if (selectedGender.value.isEmpty) {
-      ToastMessageHelper.errorMessageShowToster('Gender is required');
       return;
     }
 
@@ -81,8 +67,8 @@ class PersonalInfoController extends GetxController {
         "phoneNumber": signupData["phoneNumber"],
         "password": signupData["password"],
         "isTcPpAccepted": signupData["isTcPpAccepted"] ?? false,
-        "dateOfBirth": dateOfBirthController.text.trim(),
-        "gender": selectedGender.value,
+        "dateOfBirth": signupData["dateOfBirth"],
+        "gender": signupData["gender"],
         "employment": employmentController.text.trim(),
         "education": selectedEducation.value,
         "university": universityNameController.text.trim(),
@@ -135,7 +121,6 @@ class PersonalInfoController extends GetxController {
 
   @override
   void onClose() {
-    dateOfBirthController.dispose();
     employmentController.dispose();
     universityNameController.dispose();
     linkedinProfileController.dispose();
