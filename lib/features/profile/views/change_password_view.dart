@@ -113,7 +113,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
             loading: controller.isLoading.value,
             onpress: () => controller.changePassword(_formKey),
             color: AppColors.greenColor,
-            titlecolor: Colors.white,
+            titlecolor: AppColors.blackColor,
             width: double.infinity,
             height: 56.h,
             bordercolor: AppColors.greenColor,

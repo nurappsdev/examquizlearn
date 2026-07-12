@@ -101,7 +101,7 @@ class QuizInfoView extends GetView<QuizController> {
                   controller.startQuizAttempt();
                 },
                 color: AppColors.greenColor,
-                titlecolor: Colors.white,
+                titlecolor: AppColors.blackColor,
                 bordercolor: Colors.transparent,
                 height: 50.h,
               ),

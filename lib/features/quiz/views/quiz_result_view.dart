@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../controllers/quiz_controller.dart';
@@ -418,8 +419,8 @@ class QuizResultView extends GetView<QuizController> {
               title: "Continue to next",
               loading: controller.isSubmittingQuiz.value,
               onpress: () => controller.submitQuiz(),
-              color: const Color(0xff19D160),
-              titlecolor: Colors.white,
+              color: AppColors.greenColor,
+              titlecolor: AppColors.blackColor,
               height: 50.h,
             ),
           ),
@@ -430,9 +431,9 @@ class QuizResultView extends GetView<QuizController> {
               controller.retryQuiz();
               Get.back();
             },
-            color: Colors.transparent,
-            titlecolor: const Color(0xff19D160),
-            bordercolor: const Color(0xff19D160),
+            color: AppColors.greenColor,
+            titlecolor: AppColors.blackColor,
+            bordercolor: AppColors.greenColor,
             height: 50.h,
           ),
         ],

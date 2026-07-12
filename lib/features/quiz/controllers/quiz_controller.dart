@@ -9,6 +9,7 @@ import '../../../core/helpers/toast_message_helper.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/service/api_client.dart';
 import '../../../core/service/api_constants.dart';
+import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../model/quiz_question_model.dart' as quiz_model;
@@ -433,8 +434,8 @@ class QuizController extends GetxController {
                   child: CustomButton(
                     title: "Got it",
                     onpress: () => Get.back(),
-                    color: const Color(0xff17BE57),
-                    titlecolor: Colors.white,
+                    color: AppColors.greenColor,
+                    titlecolor: AppColors.blackColor,
                     height: 45.h,
                   ),
                 ),

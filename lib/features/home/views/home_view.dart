@@ -118,7 +118,7 @@ class HomeView extends GetView<HomeController> {
               color: Colors.white,
             ),
             CustomText(
-              text: "welcome to Nailed It!",
+              text: "welcome to NAILEDit!",
               fontsize: 12,
               color: Colors.white.withValues(alpha: 0.7),
             ),
@@ -176,11 +176,11 @@ class HomeView extends GetView<HomeController> {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(25.w),
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30.r),
-        gradient: const LinearGradient(
-          colors: [Color(0xff058240), Color(0xff17A15D)],
+        gradient:  LinearGradient(
+          colors: [AppColors.greenColor, Color(0xff0D6B31), Color(0xff0D6C31)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -189,29 +189,29 @@ class HomeView extends GetView<HomeController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CustomText(
-            text: "Overall progress",
+            text: "Builder Success Tracker",
             fontsize: 16,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 6.h),
           CustomText(
             text: "${progressPct.toStringAsFixed(0)}%",
             fontsize: 36,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: 15.h),
+          SizedBox(height: 12.h),
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
             child: LinearProgressIndicator(
               value: progressValue,
               minHeight: 10.h,
-              backgroundColor: Colors.white.withValues(alpha: 0.3),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+              backgroundColor: Colors.white,
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff19D160),),
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 18.h),
           CustomText(
             text:
                 "Completed $completedMaterials lessons of $totalMaterials lessons",
@@ -242,7 +242,7 @@ class HomeView extends GetView<HomeController> {
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
                     color: controller.selectedCategoryIndex == 0
-                        ? const Color(0xff224B97)
+                        ?  AppColors.greenColor
                         : Colors.white,
                     borderRadius: BorderRadius.circular(30.r),
                   ),
@@ -251,8 +251,8 @@ class HomeView extends GetView<HomeController> {
                       text: "Learning",
                       fontsize: 16,
                       color: controller.selectedCategoryIndex == 0
-                          ? Colors.white
-                          : const Color(0xff224B97),
+                          ? AppColors.blackColor
+                          : AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -266,17 +266,17 @@ class HomeView extends GetView<HomeController> {
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
                     color: controller.selectedCategoryIndex == 1
-                        ? const Color(0xff224B97)
+                        ? AppColors.greenColor
                         : Colors.white,
                     borderRadius: BorderRadius.circular(30.r),
                   ),
                   child: Center(
                     child: CustomText(
-                      text: "Test or exam",
+                      text: "Quiz or exam",
                       fontsize: 16,
                       color: controller.selectedCategoryIndex == 1
-                          ? Colors.white
-                          : const Color(0xff224B97),
+                          ? AppColors.blackColor
+                          : AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -493,7 +493,7 @@ class HomeView extends GetView<HomeController> {
                       ? "Play Quiz"
                       : "Details",
                   fontsize: 14,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_loader.dart';
 import '../../../core/widgets/custom_text.dart';
 import '../../../core/widgets/custom_button.dart';
@@ -219,8 +220,8 @@ class _VideoPlayViewState extends State<VideoPlayView> {
           final isProcessing = controller.isCompleting.value;
           final enabled = _canProceed.value && !isProcessing;
           final color = enabled
-              ? const Color(0xff19D160)
-              : const Color(0xff19D160).withOpacity(0.35);
+              ? AppColors.greenColor
+              : AppColors.greenColor.withOpacity(0.35);
           return Opacity(
             opacity: enabled ? 1.0 : 0.6,
             child: IgnorePointer(
@@ -228,8 +229,8 @@ class _VideoPlayViewState extends State<VideoPlayView> {
               child: CustomButton(
                 title: isProcessing ? "Processing..." : "Next",
                 onpress: () => controller.completeAndNext(),
-                color: Colors.transparent,
-                titlecolor: color,
+                color: color,
+                titlecolor: AppColors.blackColor,
                 bordercolor: color,
                 height: 56.h,
               ),

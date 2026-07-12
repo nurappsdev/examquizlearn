@@ -36,7 +36,7 @@ class QuizView extends GetView<QuizController> {
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: Color(0xff19D160)),
+            child: CircularProgressIndicator(color: AppColors.greenColor),
           );
         }
 
@@ -128,7 +128,7 @@ class QuizView extends GetView<QuizController> {
                         child: Container(
                           height: 10.h,
                           decoration: BoxDecoration(
-                            color: const Color(0xff19D160),
+                            color: AppColors.greenColor,
                             borderRadius: BorderRadius.circular(5.r),
                           ),
                         ),
@@ -254,9 +254,9 @@ class QuizView extends GetView<QuizController> {
                         child: CustomButton(
                           title: "Previous",
                           onpress: () => controller.previousStep(),
-                          color: Colors.transparent,
-                          titlecolor: const Color(0xff17BE57),
-                          bordercolor: const Color(0xff17BE57),
+                          color: AppColors.greenColor,
+                          titlecolor: AppColors.blackColor,
+                          bordercolor: AppColors.greenColor,
                           height: 50.h,
                         ),
                       ),
@@ -276,7 +276,7 @@ class QuizView extends GetView<QuizController> {
                             color: controller.selectedAnswerIndex.value != -1
                                 ? AppColors.greenColor
                                 : const Color(0xffB0B0B0),
-                            titlecolor: Colors.white,
+                            titlecolor: AppColors.blackColor,
                             bordercolor: Colors.transparent,
                             height: 50.h,
                           ),
@@ -377,7 +377,7 @@ class QuizView extends GetView<QuizController> {
                       child: Container(
                         height: 10.h,
                         decoration: BoxDecoration(
-                          color: const Color(0xff19D160),
+                          color: AppColors.greenColor,
                           borderRadius: BorderRadius.circular(5.r),
                         ),
                       ),
@@ -490,9 +490,9 @@ class QuizView extends GetView<QuizController> {
                       child: CustomButton(
                         title: "Previous",
                         onpress: () => controller.previousStep(),
-                        color: Colors.transparent,
-                        titlecolor: const Color(0xff17BE57),
-                        bordercolor: const Color(0xff17BE57),
+                        color: AppColors.greenColor,
+                        titlecolor: AppColors.blackColor,
+                        bordercolor: AppColors.greenColor,
                         height: 50.h,
                       ),
                     ),
@@ -512,7 +512,7 @@ class QuizView extends GetView<QuizController> {
                           color: controller.selectedAnswerIndex.value != -1
                               ? AppColors.greenColor
                               : const Color(0xffB0B0B0),
-                          titlecolor: Colors.white,
+                          titlecolor: AppColors.blackColor,
                           bordercolor: Colors.transparent,
                           height: 50.h,
                         ),

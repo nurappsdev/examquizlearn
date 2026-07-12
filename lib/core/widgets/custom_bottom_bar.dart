@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../features/main/controllers/main_controller.dart';
+import '../utils/app_colors.dart';
 
 class CustomBottomBar extends StatelessWidget {
   const CustomBottomBar({super.key});
@@ -14,7 +15,7 @@ class CustomBottomBar extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         padding: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
-          color: const Color(0xff17A15D),
+          color: AppColors.greenColor,
           borderRadius: BorderRadius.circular(32.r),
           boxShadow: [
             BoxShadow(
@@ -56,7 +57,9 @@ class CustomBottomBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+              color: isSelected
+                  ? Colors.white
+                  : AppColors.blackColor.withOpacity(0.6),
               size: 24.r,
             ),
             if (isSelected) ...[

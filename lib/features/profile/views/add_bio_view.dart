@@ -77,7 +77,7 @@ class AddBioView extends StatelessWidget {
                 Get.back();
               },
               color: AppColors.greenColor,
-              titlecolor: Colors.white,
+              titlecolor: AppColors.blackColor,
               width: double.infinity,
               height: 56.h,
               bordercolor: AppColors.greenColor,

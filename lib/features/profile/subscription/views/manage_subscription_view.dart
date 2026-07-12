@@ -133,7 +133,7 @@ class ManageSubscriptionView extends StatelessWidget {
             title: 'Upgrade',
             onpress: () {},
             color: AppColors.greenColor,
-            titlecolor: Colors.white,
+            titlecolor: AppColors.blackColor,
             width: double.infinity,
             height: 52.h,
             bordercolor: AppColors.greenColor,
