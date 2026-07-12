@@ -96,9 +96,6 @@ class ProfileInfoView extends GetView<ProfileController> {
                               'Phone no',
                               'Date of birth',
                               'Gender',
-                              'Education',
-                              'University name',
-                              'Linkedin link',
                             ];
                             return Column(
                               children: keys.map((key) {

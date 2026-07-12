@@ -151,7 +151,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                   SizedBox(height: 16.h),
                   CustomTextField(
                     controller: controller.emailController,
-                    hintText: 'Enter E-mail',
+                    hintText: 'Enter Email',
+                    readOnly: true,
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(12.r),
                       child: Icon(
@@ -239,51 +240,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                         items: controller.genderOptions,
                         onChanged: controller.selectGender,
                       )),
-                  SizedBox(height: 16.h),
-                  Obx(() => _buildDropdown(
-                        key: 'education',
-                        hintText: 'Education',
-                        icon: Icons.book_outlined,
-                        value: controller.selectedEducation.value,
-                        items: controller.educationOptions,
-                        onChanged: controller.selectEducation,
-                      )),
-                  SizedBox(height: 16.h),
-                  CustomTextField(
-                    controller: controller.universityNameController,
-                    hintText: 'University name',
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(12.r),
-                      child: Icon(
-                        Icons.school_outlined,
-                        color: AppColors.whiteColor.withOpacity(0.7),
-                        size: 20.sp,
-                      ),
-                    ),
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
-                    borderRadio: 12,
-                  ),
-                  SizedBox(height: 16.h),
-                  CustomTextField(
-                    controller: controller.linkedinController,
-                    hintText: 'Linkedin link',
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(12.r),
-                      child: Icon(
-                        Icons.link,
-                        color: AppColors.whiteColor.withOpacity(0.7),
-                        size: 20.sp,
-                      ),
-                    ),
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
-                    borderRadio: 12,
-                  ),
                   SizedBox(height: 60.h),
                   Obx(() => CustomButtonCommon(
                         title: 'Save changes',

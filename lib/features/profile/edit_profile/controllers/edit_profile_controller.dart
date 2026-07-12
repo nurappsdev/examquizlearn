@@ -80,9 +80,6 @@ class EditProfileController extends GetxController {
         'email': emailController.text,
         'phoneNumber': phoneController.text,
         'gender': selectedGender.value,
-        'education': selectedEducation.value,
-        'university': universityNameController.text,
-        'linkedinUrl': linkedinController.text,
       };
 
       if (selectedDate != null) {
