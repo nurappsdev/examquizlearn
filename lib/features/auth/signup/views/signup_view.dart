@@ -140,44 +140,6 @@ class _SignupViewState extends State<SignupView> {
                     validator: (value) => value == null || value.isEmpty ? "Phone number is required" : null,
                   ),
                   SizedBox(height: 16.h),
-                  // Password
-                  CustomTextField(
-                    controller: controller.passwordController,
-                    hintText: AppString.enterYourPass,
-                    isPassword: true,
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
-                      child: Icon(Icons.vpn_key_outlined, color: AppColors.whiteColor.withOpacity(0.7), size: 20.sp),
-                    ),
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
-                    borderRadio: 12,
-                    validator: (value) => value == null || value.isEmpty ? "Password is required" : null,
-                  ),
-                  SizedBox(height: 16.h),
-                  // Confirm Password
-                  CustomTextField(
-                    controller: controller.confirmPasswordController,
-                    hintText: AppString.enterYourPassCon,
-                    isPassword: true,
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.r),
-                      child: Icon(Icons.vpn_key_outlined, color: AppColors.whiteColor.withOpacity(0.7), size: 20.sp),
-                    ),
-                    filColor: Colors.transparent,
-                    borderColor: AppColors.whiteColor.withOpacity(0.3),
-                    textColor: AppColors.whiteColor,
-                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
-                    borderRadio: 12,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return "Confirm password is required";
-                      if (value != controller.passwordController.text) return "Passwords do not match";
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16.h),
                   // Date of Birth
                   CustomTextField(
                     controller: controller.dateOfBirthController,
@@ -216,7 +178,7 @@ class _SignupViewState extends State<SignupView> {
                         final month = picked.month.toString().padLeft(2, '0');
                         final day = picked.day.toString().padLeft(2, '0');
                         controller.dateOfBirthController.text =
-                            '${picked.year}-$month-$day';
+                        '${picked.year}-$month-$day';
                       }
                     },
                     filColor: Colors.transparent,
@@ -234,7 +196,7 @@ class _SignupViewState extends State<SignupView> {
                   SizedBox(height: 16.h),
                   // Gender
                   Obx(
-                    () => _buildDropdown(
+                        () => _buildDropdown(
                       key: 'gender',
                       hintText: 'Gender',
                       icon: Icons.male_outlined,
@@ -243,6 +205,45 @@ class _SignupViewState extends State<SignupView> {
                       onChanged: controller.selectGender,
                     ),
                   ),
+                  SizedBox(height: 16.h),
+                  // Password
+                  CustomTextField(
+                    controller: controller.passwordController,
+                    hintText: AppString.enterYourPass,
+                    isPassword: true,
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(Icons.vpn_key_outlined, color: AppColors.whiteColor.withOpacity(0.7), size: 20.sp),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                    validator: (value) => value == null || value.isEmpty ? "Password is required" : null,
+                  ),
+                  SizedBox(height: 16.h),
+                  // Confirm Password
+                  CustomTextField(
+                    controller: controller.confirmPasswordController,
+                    hintText: AppString.enterYourPassCon,
+                    isPassword: true,
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(Icons.vpn_key_outlined, color: AppColors.whiteColor.withOpacity(0.7), size: 20.sp),
+                    ),
+                    filColor: Colors.transparent,
+                    borderColor: AppColors.whiteColor.withOpacity(0.3),
+                    textColor: AppColors.whiteColor,
+                    hinTextColor: AppColors.whiteColor.withOpacity(0.5),
+                    borderRadio: 12,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return "Confirm password is required";
+                      if (value != controller.passwordController.text) return "Passwords do not match";
+                      return null;
+                    },
+                  ),
+
                   SizedBox(height: 20.h),
                   // Agree Checkbox
                   Row(

@@ -28,10 +28,10 @@ class QuizView extends GetView<QuizController> {
           color: Colors.white,
         ),
         centerTitle: true,
-        actions: const [
-          Icon(Icons.menu, color: Colors.white),
-          SizedBox(width: 24),
-        ],
+        // actions: const [
+        //   Icon(Icons.menu, color: Colors.white),
+        //   SizedBox(width: 24),
+        // ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -51,7 +51,7 @@ class QuizView extends GetView<QuizController> {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 10.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xff129444),
+                    color: AppColors.greenColor,
                     borderRadius: BorderRadius.circular(32.r),
                   ),
                   child: Row(
@@ -59,7 +59,7 @@ class QuizView extends GetView<QuizController> {
                     children: [
                       Icon(
                         Icons.access_time_filled,
-                        color: Colors.white,
+                        color: Colors.black,
                         size: 24.r,
                       ),
                       SizedBox(width: 10.w),
@@ -67,7 +67,7 @@ class QuizView extends GetView<QuizController> {
                             () => CustomText(
                           text: controller.timerText,
                           fontsize: 14,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ],

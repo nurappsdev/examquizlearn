@@ -272,7 +272,7 @@ class HomeView extends GetView<HomeController> {
                   ),
                   child: Center(
                     child: CustomText(
-                      text: "Quiz or exam",
+                      text: "Quiz or Exam",
                       fontsize: 16,
                       color: controller.selectedCategoryIndex == 1
                           ? AppColors.blackColor

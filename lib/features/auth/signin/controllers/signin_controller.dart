@@ -71,8 +71,8 @@ class SigninController extends GetxController {
         final accessResponse = await ApiClient.getData(ApiConstants.topicProgressEndPoint);
         
         if (accessResponse.statusCode == 403) {
-          // User is not subscribed, go to subscription screen
-          Get.offAllNamed(AppRoutes.subscriptionScreen);
+          // User is not subscribed, show the free trial screen
+          Get.offAllNamed(AppRoutes.freeTrial, arguments: {'from': 'signin'});
         } else {
           // User is subscribed or has access, go to main
           Get.offAllNamed(AppRoutes.main);

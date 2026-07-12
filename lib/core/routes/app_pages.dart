@@ -29,6 +29,7 @@ import '../../features/auth/verification/views/verification_view.dart';
 import '../../features/auth/otp/bindings/otp_binding.dart';
 import '../../features/auth/otp/views/otp_view.dart';
 import '../../features/auth/reset_password/bindings/reset_password_binding.dart';
+import '../../features/auth/free_trial/views/free_trial_view.dart';
 import '../../features/profile/personal_info/bindings/personal_info_binding.dart';
 import '../../features/profile/personal_info/views/personal_info_view.dart';
 import '../../features/main/bindings/main_binding.dart';
@@ -94,6 +95,12 @@ class AppPages {
       page: () => const ResetPasswordView(),
       transition: Transition.topLevel,
       binding: ResetPasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.freeTrial,
+      page: () => const FreeTrialView(),
+      transition: Transition.topLevel,
+      binding: SubscriptionBinding(),
     ),
     GetPage(
       name: AppRoutes.personalInfo,

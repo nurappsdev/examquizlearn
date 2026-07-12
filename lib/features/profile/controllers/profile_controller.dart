@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/helpers/helpers.dart';
+import '../../../core/utils/app_colors.dart';
+import '../../../core/widgets/custom_button.dart';
 import '../../../core/helpers/time_format.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/service/api_client.dart';
 import '../../../core/service/api_constants.dart';
-import '../../../core/utils/app_constant.dart';
 import '../model/get_user_esponse_model.dart';
 import '../model/quiz_attempt_model.dart';
 
@@ -202,9 +205,79 @@ class ProfileController extends GetxController {
     return null;
   }
 
-  void logout() async {
-    // Implement logout logic
-    await PrefsHelper.remove(AppConstants.bearerToken);
+  void logout() {
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xff1C1C1C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(24.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.logout_outlined,
+                color: AppColors.greenColor,
+                size: 40.r,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'Are you sure you want to log out?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      title: 'Cancel',
+                      height: 44.h,
+                      fontSize: 14.sp,
+                      color: const Color(0xff333333),
+                      titlecolor: Colors.white,
+                      bordercolor: Colors.transparent,
+                      onpress: () => Get.back(),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: CustomButton(
+                      title: 'Logout',
+                      height: 44.h,
+                      fontSize: 14.sp,
+                      onpress: _performLogout,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _performLogout() async {
+    Get.back();
+    await PrefsHelper.clearAll();
     Get.offAllNamed(AppRoutes.signin);
   }
 }

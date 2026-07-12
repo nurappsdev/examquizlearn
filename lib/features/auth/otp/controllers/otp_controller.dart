@@ -109,7 +109,7 @@ class OtpController extends GetxController {
           arguments: {'resetPasswordToken': resetPasswordToken},
         );
       } else {
-        Get.offAllNamed(AppRoutes.signin);
+        Get.offAllNamed(AppRoutes.freeTrial);
       }
     } else if (response.statusCode == 1) {
       ToastMessageHelper.errorMessageShowToster(

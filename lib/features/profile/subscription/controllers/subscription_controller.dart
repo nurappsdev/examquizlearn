@@ -130,7 +130,15 @@ class SubscriptionController extends GetxController {
 
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
-  List<SubscriptionPlan> get plans => _plans.toList(growable: false);
+  List<SubscriptionPlan> get plans =>
+      _plans.where((plan) => plan.price > 0).toList(growable: false);
+
+  SubscriptionPlan? get freePlan =>
+      _plans.firstWhereOrNull((plan) => plan.price <= 0);
+
+  bool get isStartingFreeTrial =>
+      _isLoading.value ||
+      (freePlan != null && _checkoutLoadingPlanId.value == freePlan!.id);
   String get checkoutLoadingPlanId => _checkoutLoadingPlanId.value;
   String get checkoutErrorMessage => _checkoutErrorMessage.value;
   String get checkoutUrl => _checkoutUrl.value;
@@ -165,6 +173,26 @@ class SubscriptionController extends GetxController {
           'Failed to load subscription plans. Please try again.';
     } finally {
       _isLoading.value = false;
+    }
+  }
+
+  Future<void> startFreeTrial() async {
+    if (_plans.isEmpty) {
+      await fetchPlans();
+    }
+
+    final plan = freePlan;
+    if (plan == null) {
+      ToastMessageHelper.errorMessageShowToster(
+        'Free trial plan is not available right now.',
+      );
+      return;
+    }
+
+    await createCheckoutSession(plan);
+
+    if (_checkoutErrorMessage.value.isNotEmpty) {
+      ToastMessageHelper.errorMessageShowToster(_checkoutErrorMessage.value);
     }
   }
 
