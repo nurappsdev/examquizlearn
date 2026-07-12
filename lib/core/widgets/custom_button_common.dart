@@ -54,7 +54,7 @@ class CustomButtonCommon extends StatelessWidget {
                 : CustomText(
                     text: title,
                     fontsize: fontSize ?? 20.sp,
-                    color: titlecolor ?? Colors.white,
+                    color: titlecolor ?? Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
           ],

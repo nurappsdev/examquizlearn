@@ -55,8 +55,8 @@ class AppString {
 
   static const String createAccount = "Create Account";
   static const String signupSubTitle = "Enter this information properly and get excited\nservice properly !!!";
-  static const String enterEmail = "Enter E-mail";
-  static const String phoneNumber = "Phone number";
+  static const String enterEmail = "Enter Email";
+  static const String phoneNumber = "Phone Number";
   static const String agreeWith = "Agree with ";
   static const String termsOfServices = "Terms of Services";
   static const String privacyPolicyText = "Privacy Policy";

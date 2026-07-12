@@ -66,7 +66,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   SizedBox(height: 40.h),
                   CustomTextField(
                     controller: controller.dateOfBirthController,
-                    hintText: 'Date of birth',
+                    hintText: 'Date of Birth',
                     readOnly: true,
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(8.r),
