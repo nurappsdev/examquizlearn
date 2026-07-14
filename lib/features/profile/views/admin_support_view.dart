@@ -15,7 +15,10 @@ class AdminSupportView extends StatelessWidget {
       path: phoneNumber,
     );
     try {
-      await launchUrl(launchUri);
+      final launched = await launchUrl(launchUri);
+      if (!launched) {
+        _showRestartNotice();
+      }
     } catch (e) {
       _showRestartNotice();
     }
@@ -27,7 +30,10 @@ class AdminSupportView extends StatelessWidget {
       path: email,
     );
     try {
-      await launchUrl(launchUri);
+      final launched = await launchUrl(launchUri);
+      if (!launched) {
+        _showRestartNotice();
+      }
     } catch (e) {
       _showRestartNotice();
     }
@@ -152,14 +158,14 @@ class AdminSupportView extends StatelessWidget {
                 children: [
                   _buildContactRow(
                     icon: Icons.phone_outlined,
-                    text: '(609)327-7992',
-                    onTap: () => _makePhoneCall('6093277992'),
+                    text: '1-936-866-8342',
+                    onTap: () => _makePhoneCall('1-936-866-8342'),
                   ),
                   SizedBox(height: 16.h),
                   _buildContactRow(
                     icon: Icons.email_outlined,
-                    text: 'abc@gmail.com',
-                    onTap: () => _sendEmail('abc@gmail.com'),
+                    text: 'info@naileditexamprep.com',
+                    onTap: () => _sendEmail('info@naileditexamprep.com'),
                   ),
                 ],
               ),
@@ -183,15 +189,15 @@ class AdminSupportView extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.r),
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: Colors.black,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Colors.grey.shade700, size: 20.r),
+            child: Icon(icon, color: AppColors.greenColor, size: 20.r),
           ),
           SizedBox(width: 16.w),
           CustomText(
             text: text,
-            color: Colors.white,
+            color: Colors.black,
             fontsize: 16.sp,
             fontWeight: FontWeight.w500,
           ),
