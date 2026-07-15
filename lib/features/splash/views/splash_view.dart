@@ -22,9 +22,9 @@ class SplashView extends GetView<SplashController> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 200.h,),
+              SizedBox(height: 150.h,),
               Image.asset(
-                AppImages.logo,
+                AppImages.finalLogo,
                 width: 250.w,
               ),
               SizedBox(height: 60.h),

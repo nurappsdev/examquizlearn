@@ -39,7 +39,7 @@ class OtpView extends GetView<OtpController> {
           child: Column(
             children: [
               SizedBox(height: 20.h),
-              Center(child: Image.asset(AppImages.logo, height: 180.h)),
+              Center(child: Image.asset(AppImages.finalLogo, height: 180.h)),
               SizedBox(height: 60.h),
               CustomPinCodeTextField(
                 textEditingController: controller.otpController,

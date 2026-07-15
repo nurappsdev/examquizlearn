@@ -49,7 +49,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-                Center(child: Image.asset(AppImages.logo, height: 180.h)),
+                Center(child: Image.asset(AppImages.finalLogo, height: 180.h)),
                 SizedBox(height: 50.h),
                 Obx(
                   () => CustomTextField(

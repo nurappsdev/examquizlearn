@@ -54,7 +54,7 @@ class _VerificationViewState extends State<VerificationView> {
                 SizedBox(height: 20.h),
                 Center(
                   child: Image.asset(
-                    AppImages.logo,
+                    AppImages.finalLogo,
                     height: 180.h,
                   ),
                 ),

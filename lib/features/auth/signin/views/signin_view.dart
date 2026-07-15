@@ -52,7 +52,7 @@ class _SigninViewState extends State<SigninView> {
                 SizedBox(height: 20.h),
                 Center(
                   child: Image.asset(
-                    AppImages.logo,
+                    AppImages.finalLogo,
                     height: 180.h,
                   ),
                 ),

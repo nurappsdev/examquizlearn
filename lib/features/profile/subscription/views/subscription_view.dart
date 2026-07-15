@@ -249,7 +249,7 @@ class _SubscribeButton extends StatelessWidget {
                 )
               : CustomText(
                   text: 'Subscribe Now',
-                  color: Colors.white,
+                  color: Colors.black,
                   fontsize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),

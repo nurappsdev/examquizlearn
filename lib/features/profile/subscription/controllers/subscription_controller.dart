@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helpers/helpers.dart';
@@ -168,6 +168,7 @@ class SubscriptionController extends GetxController {
       }
 
       _plans.assignAll(_extractPlans(response.body));
+      _printPlans();
     } catch (_) {
       _errorMessage.value =
           'Failed to load subscription plans. Please try again.';
@@ -258,6 +259,28 @@ class SubscriptionController extends GetxController {
     } finally {
       _checkoutLoadingPlanId.value = '';
     }
+  }
+
+  void _printPlans() {
+    debugPrint('===== Subscription Plans (total: ${_plans.length}) =====');
+    for (var i = 0; i < _plans.length; i++) {
+      final plan = _plans[i];
+      debugPrint(
+        'Plan ${i + 1}: '
+        'id=${plan.id}, '
+        'name=${plan.name}, '
+        'code=${plan.code}, '
+        'price=${plan.price}, '
+        'currency=${plan.currency}, '
+        'durationDays=${plan.durationDays}, '
+        'billingInterval=${plan.billingInterval}, '
+        'billingIntervalCount=${plan.billingIntervalCount}, '
+        'trialPeriodDays=${plan.trialPeriodDays}, '
+        'hasAllAccess=${plan.hasAllAccess}, '
+        'description=${plan.description}',
+      );
+    }
+    debugPrint('=================================================');
   }
 
   bool _isSuccess(Response response) {
