@@ -16,6 +16,7 @@ import '../../features/profile/views/add_contact_info_view.dart';
 import '../../features/profile/views/add_education_view.dart';
 import '../../features/profile/views/admin_support_view.dart';
 import '../../features/profile/views/change_password_view.dart';
+import '../../features/profile/views/delete_account_view.dart';
 import '../../features/profile/views/html_content_view.dart';
 import '../../features/profile/views/settings_view.dart';
 import '../../features/splash/bindings/splash_binding.dart';
@@ -227,6 +228,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.changePassword,
       page: () => const ChangePasswordView(),
+      transition: Transition.topLevel,
+    ),
+    GetPage(
+      name: AppRoutes.deleteAccount,
+      page: () => const DeleteAccountView(),
       transition: Transition.topLevel,
     ),
     GetPage(

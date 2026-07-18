@@ -28,6 +28,7 @@ class AppRoutes {
   static const String adminSupport = '/admin-support';
   static const String settings = '/settings';
   static const String changePassword = '/change-password';
+  static const String deleteAccount = '/delete-account';
   static const String aboutUs = '/about-us';
   static const String privacyPolicy = '/privacy-policy';
   static const String termsOfService = '/terms-of-service';

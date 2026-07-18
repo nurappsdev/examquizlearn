@@ -61,7 +61,7 @@ class SettingsView extends StatelessWidget {
             // Delete Account Button
             Obx(() => GestureDetector(
               onTap: controller.isLoading.value ? null : () {
-                _showDeleteDialog(context, controller);
+                Get.toNamed(AppRoutes.deleteAccount);
               },
               child: Container(
                 width: double.infinity,
@@ -118,35 +118,6 @@ class SettingsView extends StatelessWidget {
         ),
         Divider(color: Colors.white.withOpacity(0.2), height: 1),
       ],
-    );
-  }
-
-  void _showDeleteDialog(BuildContext context, SettingsController controller) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xff2A2A2A),
-        title: const CustomText(text: 'Delete Account', color: Colors.white, fontWeight: FontWeight.bold),
-        content: const CustomText(
-          text: 'Are you sure you want to delete your account? This action cannot be undone.',
-          color: Colors.white70,
-          textAlign: TextAlign.start,
-          maxline: 3,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const CustomText(text: 'Cancel', color: Colors.white),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              // controller.deleteAccount();
-            },
-            child: const CustomText(text: 'Delete', color: Colors.red),
-          ),
-        ],
-      ),
     );
   }
 }

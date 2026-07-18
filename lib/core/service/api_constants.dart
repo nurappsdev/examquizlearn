@@ -28,6 +28,7 @@ class ApiConstants {
   static const String forgotPasswordPoint = "/auth/forgot-password";
   static const String resetPasswordEndPoint = "/auth/reset-password";
   static const String changePasswordEndPoint = "/auth/change-password";
+  static const String deleteAccountEndPoint = "/auth/delete-account";
   static const String notification = "/notifications";
   static const int learningTopicsPageLimit = 10;
   static const String learningTopicsEndPoint = "/learning-topics";
