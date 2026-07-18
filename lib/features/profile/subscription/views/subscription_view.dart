@@ -89,6 +89,95 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
   }
 }
 
+enum SubscriptionPaymentMethod { stripe, apple }
+
+class SubscriptionPaymentMethodDialog extends StatelessWidget {
+  const SubscriptionPaymentMethodDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: const Color(0xff222222),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      child: Padding(
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CustomText(
+              text: 'Select payment method',
+              color: Colors.white,
+              fontsize: 18.sp,
+              fontWeight: FontWeight.w700,
+              textAlign: TextAlign.start,
+            ),
+
+            SizedBox(height: 12.h),
+            _PaymentMethodButton(
+              text: 'Apple pay',
+              icon: Icons.apple,
+              onTap: () =>
+                  Navigator.of(context).pop(SubscriptionPaymentMethod.apple),
+            ),
+            SizedBox(height: 18.h),
+            _PaymentMethodButton(
+              text: 'Stripe pay',
+              icon: Icons.credit_card,
+              onTap: () =>
+                  Navigator.of(context).pop(SubscriptionPaymentMethod.stripe),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentMethodButton extends StatelessWidget {
+  const _PaymentMethodButton({
+    required this.text,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String text;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14.r),
+      child: Container(
+        height: 48.h,
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.24),
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppColors.greenColor, size: 20.sp),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: CustomText(
+                text: text,
+                color: Colors.white,
+                fontsize: 14.sp,
+                fontWeight: FontWeight.w700,
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _PlanCard extends StatelessWidget {
   const _PlanCard({required this.plan, required this.controller});
 
@@ -192,7 +281,7 @@ class _PlanCard extends StatelessWidget {
           SizedBox(height: 18.h),
           _SubscribeButton(
             isLoading: controller.checkoutLoadingPlanId == plan.id,
-            onTap: () => controller.createCheckoutSession(plan),
+            onTap: () => _showPaymentMethodDialog(context),
           ),
           if (controller.selectedCheckoutPlanId == plan.id &&
               controller.checkoutErrorMessage.isNotEmpty) ...[
@@ -217,6 +306,17 @@ class _PlanCard extends StatelessWidget {
         ? plan.price.toInt().toString()
         : plan.price.toStringAsFixed(2);
     return '${plan.currency.toUpperCase()} $price';
+  }
+
+  Future<void> _showPaymentMethodDialog(BuildContext context) async {
+    final method = await showDialog<SubscriptionPaymentMethod>(
+      context: context,
+      builder: (_) => const SubscriptionPaymentMethodDialog(),
+    );
+
+    if (method == SubscriptionPaymentMethod.stripe) {
+      await controller.createCheckoutSession(plan);
+    }
   }
 }
 
