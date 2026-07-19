@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helpers/prefs_helper.dart';
+import '../../../../core/helpers/subscription_access_helper.dart';
 import '../../../../core/helpers/toast_message_helper.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/service/api_client.dart';
@@ -67,16 +68,14 @@ class SigninController extends GetxController {
               : 'Login successful',
         );
 
-        // Check if user has an active subscription by trying to fetch progress
-        final accessResponse = await ApiClient.getData(ApiConstants.topicProgressEndPoint);
-        
-        if (accessResponse.statusCode == 403) {
-          // User is not subscribed, show the free trial screen
-          Get.offAllNamed(AppRoutes.freeTrial, arguments: {'from': 'signin'});
-        } else {
-          // User is subscribed or has access, go to main
-          Get.offAllNamed(AppRoutes.main);
-        }
+        // Route based on access: main if subscribed, plans if the trial
+        // expired, free trial offer if they never had one.
+        final nextRoute = await SubscriptionAccessHelper.resolveStartRoute();
+        Get.offAllNamed(
+          nextRoute,
+          arguments:
+              nextRoute == AppRoutes.freeTrial ? {'from': 'signin'} : null,
+        );
       } else if (response.statusCode == 1) {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? 'Server error. Please try later',

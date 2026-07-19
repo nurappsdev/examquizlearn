@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../../core/helpers/prefs_helper.dart';
+import '../../../core/helpers/subscription_access_helper.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/app_constant.dart';
 
@@ -15,10 +16,14 @@ class SplashController extends GetxController {
 
     final token = await PrefsHelper.getString(AppConstants.bearerToken);
 
-    if (token.trim().isNotEmpty) {
-      Get.offAllNamed(AppRoutes.main);
-    } else {
+    if (token.trim().isEmpty) {
       Get.offAllNamed(AppRoutes.signin);
+      return;
     }
+
+    // Re-check access on every app open so an expired trial or
+    // subscription forces the user back to the paywall.
+    final nextRoute = await SubscriptionAccessHelper.resolveStartRoute();
+    Get.offAllNamed(nextRoute);
   }
 }
