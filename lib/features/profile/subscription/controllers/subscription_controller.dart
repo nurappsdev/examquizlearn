@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/routes/app_routes.dart';
@@ -22,6 +24,7 @@ class SubscriptionPlan {
     required this.trialPeriodDays,
     required this.description,
     required this.hasAllAccess,
+    required this.appStoreProductId,
   });
 
   final String id;
@@ -35,6 +38,7 @@ class SubscriptionPlan {
   final int trialPeriodDays;
   final String description;
   final bool hasAllAccess;
+  final String appStoreProductId;
 
   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) {
     return SubscriptionPlan(
@@ -54,6 +58,12 @@ class SubscriptionPlan {
       trialPeriodDays: _intValue(json['trialPeriodDays']),
       description: _stringValue(json, ['description']),
       hasAllAccess: json['hasAllAccess'] == true,
+      appStoreProductId: _stringValue(json, [
+        'appleProductId',
+        'iosProductId',
+        'appStoreProductId',
+        'storeKitProductId',
+      ], fallback: _stringValue(json, ['code', 'id', '_id'])),
     );
   }
 
@@ -119,6 +129,22 @@ class SubscriptionPlan {
   }
 }
 
+Map<String, dynamic> applePayCompletedPayload(PurchaseDetails purchase) {
+  return {
+    'paymentProvider': 'apple_pay',
+    'status': purchase.status.name,
+    'purchaseId': purchase.purchaseID,
+    'productId': purchase.productID,
+    'transactionDate': purchase.transactionDate,
+    'verificationData': {
+      'source': purchase.verificationData.source,
+      'localVerificationData': purchase.verificationData.localVerificationData,
+      'serverVerificationData':
+          purchase.verificationData.serverVerificationData,
+    },
+  };
+}
+
 class SubscriptionController extends GetxController {
   final _isLoading = false.obs;
   final _errorMessage = ''.obs;
@@ -127,6 +153,10 @@ class SubscriptionController extends GetxController {
   final _checkoutErrorMessage = ''.obs;
   final _checkoutUrl = ''.obs;
   final _selectedCheckoutPlanId = ''.obs;
+  final _applePayLoadingPlanId = ''.obs;
+  final _applePayErrorMessage = ''.obs;
+  final _pendingApplePayProductId = ''.obs;
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
@@ -143,11 +173,22 @@ class SubscriptionController extends GetxController {
   String get checkoutErrorMessage => _checkoutErrorMessage.value;
   String get checkoutUrl => _checkoutUrl.value;
   String get selectedCheckoutPlanId => _selectedCheckoutPlanId.value;
+  String get applePayLoadingPlanId => _applePayLoadingPlanId.value;
+  String get applePayErrorMessage => _applePayErrorMessage.value;
 
   @override
   void onInit() {
     super.onInit();
+    _purchaseSubscription = InAppPurchase.instance.purchaseStream.listen(
+      _handlePurchaseUpdates,
+    );
     fetchPlans();
+  }
+
+  @override
+  void onClose() {
+    _purchaseSubscription?.cancel();
+    super.onClose();
   }
 
   Future<void> fetchPlans() async {
@@ -240,14 +281,16 @@ class SubscriptionController extends GetxController {
 
       if (result == 'success') {
         // Handle success
-        ToastMessageHelper.successMessageShowToster('Payment successful! Redirecting...');
-        
+        ToastMessageHelper.successMessageShowToster(
+          'Payment successful! Redirecting...',
+        );
+
         // Give the backend a moment to process the webhook/transaction
         await Future.delayed(const Duration(seconds: 2));
-        
+
         // Refresh plans to update local state
         await fetchPlans();
-        
+
         // Navigate to MainView and clear stack
         Get.offAllNamed(AppRoutes.main);
       } else if (result == 'cancel') {
@@ -259,6 +302,135 @@ class SubscriptionController extends GetxController {
     } finally {
       _checkoutLoadingPlanId.value = '';
     }
+  }
+
+  Future<void> startApplePay(SubscriptionPlan plan) async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      _setApplePayError(plan, 'Apple pay is only available on iOS.');
+      return;
+    }
+
+    final productId = plan.appStoreProductId.trim();
+    if (productId.isEmpty) {
+      _setApplePayError(plan, 'This plan is missing an App Store product ID.');
+      return;
+    }
+
+    _selectedCheckoutPlanId.value = plan.id;
+    _applePayLoadingPlanId.value = plan.id;
+    _applePayErrorMessage.value = '';
+    _pendingApplePayProductId.value = productId;
+
+    try {
+      final isAvailable = await InAppPurchase.instance.isAvailable();
+      if (!isAvailable) {
+        _setApplePayError(
+          plan,
+          'Apple pay sandbox is not available on this device.',
+        );
+        return;
+      }
+
+      final response = await InAppPurchase.instance.queryProductDetails({
+        productId,
+      });
+      if (response.error != null) {
+        _setApplePayError(plan, response.error!.message);
+        return;
+      }
+
+      if (response.productDetails.isEmpty) {
+        _setApplePayError(
+          plan,
+          'App Store product "$productId" was not found. Check sandbox product setup.',
+        );
+        return;
+      }
+
+      final purchaseParam = PurchaseParam(
+        productDetails: response.productDetails.first,
+        applicationUserName: plan.id.isEmpty ? null : plan.id,
+      );
+      final didStart = await InAppPurchase.instance.buyNonConsumable(
+        purchaseParam: purchaseParam,
+      );
+
+      if (!didStart) {
+        _setApplePayError(
+          plan,
+          'Apple pay sandbox could not be opened. Please try again.',
+        );
+      }
+    } catch (_) {
+      _setApplePayError(
+        plan,
+        'Apple pay sandbox could not be opened. Please try again.',
+      );
+    }
+  }
+
+  Future<void> _handlePurchaseUpdates(List<PurchaseDetails> purchases) async {
+    for (final purchase in purchases) {
+      if (!_isPendingApplePayPurchase(purchase)) {
+        continue;
+      }
+
+      switch (purchase.status) {
+        case PurchaseStatus.pending:
+          _applePayErrorMessage.value = '';
+          break;
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          await _completeApplePayPurchase(purchase);
+          break;
+        case PurchaseStatus.error:
+          _applePayErrorMessage.value =
+              purchase.error?.message ?? 'Apple pay failed. Please try again.';
+          await _completePurchaseIfNeeded(purchase);
+          _clearApplePayLoading();
+          break;
+        case PurchaseStatus.canceled:
+          _applePayErrorMessage.value = 'Apple pay was cancelled.';
+          await _completePurchaseIfNeeded(purchase);
+          _clearApplePayLoading();
+          break;
+      }
+    }
+  }
+
+  bool _isPendingApplePayPurchase(PurchaseDetails purchase) {
+    final pendingProductId = _pendingApplePayProductId.value;
+    return pendingProductId.isNotEmpty &&
+        purchase.productID == pendingProductId;
+  }
+
+  Future<void> _completeApplePayPurchase(PurchaseDetails purchase) async {
+    debugPrint(
+      'Apple pay completed payload-----------------------------: ${jsonEncode(applePayCompletedPayload(purchase))}',
+    );
+    await _completePurchaseIfNeeded(purchase);
+    ToastMessageHelper.successMessageShowToster('Apple pay successful!');
+    await Future.delayed(const Duration(seconds: 2));
+    await fetchPlans();
+    _clearApplePayLoading();
+    Get.offAllNamed(AppRoutes.main);
+  }
+
+  Future<void> _completePurchaseIfNeeded(PurchaseDetails purchase) async {
+    if (purchase.pendingCompletePurchase) {
+      await InAppPurchase.instance.completePurchase(purchase);
+    }
+  }
+
+  void _setApplePayError(SubscriptionPlan plan, String message) {
+    _selectedCheckoutPlanId.value = plan.id;
+    _applePayErrorMessage.value = message;
+    _clearApplePayLoading();
+  }
+
+  void _clearApplePayLoading() {
+    _applePayLoadingPlanId.value = '';
+    _pendingApplePayProductId.value = '';
   }
 
   void _printPlans() {

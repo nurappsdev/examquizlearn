@@ -115,10 +115,14 @@ class SubscriptionPaymentMethodDialog extends StatelessWidget {
 
             SizedBox(height: 12.h),
             _PaymentMethodButton(
-              text: 'Apple pay',
+              text: 'Apple Subscription',
               icon: Icons.apple,
-              onTap: () =>
-                  Navigator.of(context).pop(SubscriptionPaymentMethod.apple),
+              onTap: () {
+                debugPrint(
+                  'SubscriptionPaymentMethod.apple selected: process=apple_pay',
+                );
+                Navigator.of(context).pop(SubscriptionPaymentMethod.apple);
+              },
             ),
             SizedBox(height: 18.h),
             _PaymentMethodButton(
@@ -280,15 +284,17 @@ class _PlanCard extends StatelessWidget {
           ),
           SizedBox(height: 18.h),
           _SubscribeButton(
-            isLoading: controller.checkoutLoadingPlanId == plan.id,
+            isLoading:
+                controller.checkoutLoadingPlanId == plan.id ||
+                controller.applePayLoadingPlanId == plan.id,
             onTap: () => _showPaymentMethodDialog(context),
           ),
           if (controller.selectedCheckoutPlanId == plan.id &&
-              controller.checkoutErrorMessage.isNotEmpty) ...[
+              _paymentErrorMessage.isNotEmpty) ...[
             SizedBox(height: 12.h),
             _CheckoutMessage(
               icon: Icons.error_outline,
-              text: controller.checkoutErrorMessage,
+              text: _paymentErrorMessage,
               color: Colors.redAccent,
             ),
           ],
@@ -308,6 +314,14 @@ class _PlanCard extends StatelessWidget {
     return '${plan.currency.toUpperCase()} $price';
   }
 
+  String get _paymentErrorMessage {
+    if (controller.checkoutErrorMessage.isNotEmpty) {
+      return controller.checkoutErrorMessage;
+    }
+
+    return controller.applePayErrorMessage;
+  }
+
   Future<void> _showPaymentMethodDialog(BuildContext context) async {
     final method = await showDialog<SubscriptionPaymentMethod>(
       context: context,
@@ -316,6 +330,19 @@ class _PlanCard extends StatelessWidget {
 
     if (method == SubscriptionPaymentMethod.stripe) {
       await controller.createCheckoutSession(plan);
+      return;
+    }
+// apple here-------------------------------------
+    if (method == SubscriptionPaymentMethod.apple) {
+      debugPrint(
+        'Subscription payment process: '
+        'type=$method, '
+        'process=apple_pay, '
+        'planId=${plan.id}, '
+        'planName=${plan.displayName}, '
+        'appStoreProductId=${plan.appStoreProductId}',
+      );
+      await controller.startApplePay(plan);
     }
   }
 }

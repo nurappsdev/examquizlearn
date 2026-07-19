@@ -47,4 +47,54 @@ void main() {
 
     expect(selectedMethod, SubscriptionPaymentMethod.stripe);
   });
+
+  testWidgets('payment method dialog prints apple selection', (tester) async {
+    final messages = <String>[];
+    final originalDebugPrint = debugPrint;
+    debugPrint = (message, {wrapWidth}) {
+      if (message != null) {
+        messages.add(message);
+      }
+    };
+    addTearDown(() => debugPrint = originalDebugPrint);
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(393, 852),
+        builder: (_, __) {
+          return MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await showDialog<SubscriptionPaymentMethod>(
+                          context: context,
+                          builder: (_) =>
+                              const SubscriptionPaymentMethodDialog(),
+                        );
+                      },
+                      child: const Text('Open'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Apple pay'));
+    await tester.pumpAndSettle();
+    debugPrint = originalDebugPrint;
+
+    expect(
+      messages,
+      contains('SubscriptionPaymentMethod.apple selected: process=apple_pay'),
+    );
+  });
 }
