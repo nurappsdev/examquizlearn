@@ -9,6 +9,7 @@ import '../../../../core/helpers/helpers.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/service/api_client.dart';
 import '../../../../core/service/api_constants.dart';
+import '../../../../core/utils/app_constant.dart';
 import '../../../../core/widgets/payment_webview.dart';
 
 class SubscriptionPlan {
@@ -143,6 +144,61 @@ Map<String, dynamic> applePayCompletedPayload(PurchaseDetails purchase) {
           purchase.verificationData.serverVerificationData,
     },
   };
+}
+
+String? applePayAppAccountTokenFromUserId(String userId) {
+  final normalizedUserId = userId.trim().toLowerCase();
+  if (normalizedUserId.isEmpty) {
+    return null;
+  }
+
+  final uuidPattern = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+  );
+  if (uuidPattern.hasMatch(normalizedUserId)) {
+    return normalizedUserId;
+  }
+
+  final hexUserId = normalizedUserId.replaceAll(RegExp(r'[^0-9a-f]'), '');
+  if (hexUserId.isEmpty || hexUserId.length > 32) {
+    return null;
+  }
+
+  final chars = hexUserId.padLeft(32, '0').split('');
+
+  return '${chars.sublist(0, 8).join()}-'
+      '${chars.sublist(8, 12).join()}-'
+      '${chars.sublist(12, 16).join()}-'
+      '${chars.sublist(16, 20).join()}-'
+      '${chars.sublist(20).join()}';
+}
+
+String _stringFromJwtPayload(String token, List<String> keys) {
+  final parts = token.split('.');
+  if (parts.length < 2) {
+    return '';
+  }
+
+  try {
+    final payload = utf8.decode(
+      base64Url.decode(base64Url.normalize(parts[1])),
+    );
+    final decoded = jsonDecode(payload);
+    if (decoded is! Map) {
+      return '';
+    }
+
+    for (final key in keys) {
+      final value = decoded[key];
+      if (value != null && value.toString().trim().isNotEmpty) {
+        return value.toString().trim();
+      }
+    }
+  } catch (_) {
+    return '';
+  }
+
+  return '';
 }
 
 class SubscriptionController extends GetxController {
@@ -347,9 +403,18 @@ class SubscriptionController extends GetxController {
         return;
       }
 
+      final appAccountToken = await _applePayAppAccountToken();
+      if (appAccountToken == null) {
+        _setApplePayError(
+          plan,
+          'Apple pay could not identify the current user. Please sign in again.',
+        );
+        return;
+      }
+
       final purchaseParam = PurchaseParam(
         productDetails: response.productDetails.first,
-        applicationUserName: plan.id.isEmpty ? null : plan.id,
+        applicationUserName: appAccountToken,
       );
       final didStart = await InAppPurchase.instance.buyNonConsumable(
         purchaseParam: purchaseParam,
@@ -367,6 +432,22 @@ class SubscriptionController extends GetxController {
         'Apple pay sandbox could not be opened. Please try again.',
       );
     }
+  }
+
+  Future<String?> _applePayAppAccountToken() async {
+    var userId = await PrefsHelper.getString(AppConstants.userId);
+    if (userId.trim().isEmpty) {
+      final bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
+      userId = _stringFromJwtPayload(bearerToken, [
+        'userId',
+        'user_id',
+        'sub',
+        'id',
+        '_id',
+      ]);
+    }
+
+    return applePayAppAccountTokenFromUserId(userId);
   }
 
   Future<void> _handlePurchaseUpdates(List<PurchaseDetails> purchases) async {

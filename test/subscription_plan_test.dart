@@ -55,4 +55,47 @@ void main() {
       },
     });
   });
+
+  test(
+    'applePayAppAccountTokenFromUserId pads hex user id into UUID without changing user id bytes',
+    () {
+      final token = applePayAppAccountTokenFromUserId(
+        '64b7f4e52f8f9f9d3c0a1234',
+      );
+
+      expect(token, '00000000-64b7-f4e5-2f8f-9f9d3c0a1234');
+      expect(
+        token,
+        matches(
+          RegExp(
+            r'^0[0-9a-f]{7}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+          ),
+        ),
+      );
+    },
+  );
+
+  test(
+    'applePayAppAccountTokenFromUserId preserves backend user id example',
+    () {
+      final token = applePayAppAccountTokenFromUserId(
+        '6a535a08a4f38d58d6732141',
+      );
+
+      expect(token, '00000000-6a53-5a08-a4f3-8d58d6732141');
+    },
+  );
+
+  test(
+    'applePayAppAccountTokenFromUserId returns existing UUID without changing version',
+    () {
+      const userId = '01234567-89ab-fdef-2123-456789abcdef';
+
+      expect(applePayAppAccountTokenFromUserId(userId), userId);
+    },
+  );
+
+  test('applePayAppAccountTokenFromUserId rejects missing user id', () {
+    expect(applePayAppAccountTokenFromUserId(''), isNull);
+  });
 }
