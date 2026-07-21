@@ -7,6 +7,7 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String personalInfo = '/personal-info';
   static const String freeTrial = '/free-trial';
+  static const String choosePlan = '/choose-plan';
   static const String home = '/home';
   static const String main = '/main';
   static const String carpentry = '/carpentry';
