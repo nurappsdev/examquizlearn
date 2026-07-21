@@ -97,15 +97,18 @@ class HomeView extends GetView<HomeController> {
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: 25.r,
-          backgroundColor: Colors.grey[800],
-          backgroundImage: avatar.isNotEmpty
-              ? NetworkImage(_resolveImageUrl(avatar))
-              : null,
-          child: avatar.isEmpty
-              ? Icon(Icons.person, color: Colors.white, size: 30.r)
-              : null,
+        GestureDetector(
+          onTap: () => Get.find<MainController>().changeIndex(3),
+          child: CircleAvatar(
+            radius: 25.r,
+            backgroundColor: Colors.grey[800],
+            backgroundImage: avatar.isNotEmpty
+                ? NetworkImage(_resolveImageUrl(avatar))
+                : null,
+            child: avatar.isEmpty
+                ? Icon(Icons.person, color: Colors.white, size: 30.r)
+                : null,
+          ),
         ),
         SizedBox(width: 12.w),
         Column(
