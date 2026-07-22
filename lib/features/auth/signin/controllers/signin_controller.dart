@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../../../core/helpers/prefs_helper.dart';
 import '../../../../core/helpers/subscription_access_helper.dart';
 import '../../../../core/helpers/toast_message_helper.dart';
-import '../../../../core/routes/app_routes.dart';
 import '../../../../core/service/api_client.dart';
 import '../../../../core/service/api_constants.dart';
 import '../../../../core/utils/app_constant.dart';
@@ -69,13 +68,9 @@ class SigninController extends GetxController {
         );
 
         // Route based on access: main if subscribed, plans if the trial
-        // expired, free trial offer if they never had one.
+        // expired, choose plan screen if they never picked one.
         final nextRoute = await SubscriptionAccessHelper.resolveStartRoute();
-        Get.offAllNamed(
-          nextRoute,
-          arguments:
-              nextRoute == AppRoutes.freeTrial ? {'from': 'signin'} : null,
-        );
+        Get.offAllNamed(nextRoute);
       } else if (response.statusCode == 1) {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? 'Server error. Please try later',

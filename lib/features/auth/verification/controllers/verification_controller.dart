@@ -64,7 +64,10 @@ class VerificationController extends GetxController {
               : 'OTP sent successfully',
         );
 
-        Get.toNamed(AppRoutes.otp, arguments: {'screenType': 'forgot'});
+        Get.toNamed(
+          AppRoutes.otp,
+          arguments: {'screenType': 'forgot', 'email': email},
+        );
       } else if (response.statusCode == 1) {
         ToastMessageHelper.errorMessageShowToster(
           response.statusText ?? 'Server error. Please try later',

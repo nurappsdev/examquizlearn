@@ -265,7 +265,7 @@ class _SignupViewState extends State<SignupView> {
                                 text: AppString.termsOfServices,
                                 style: TextStyle(color: AppColors.redColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
                                 recognizer: TapGestureRecognizer()..onTap = () {
-                                  // Navigate to terms
+                                  Get.toNamed(AppRoutes.termsOfService);
                                 },
                               ),
                               TextSpan(
@@ -276,7 +276,7 @@ class _SignupViewState extends State<SignupView> {
                                 text: AppString.privacyPolicyText,
                                 style: TextStyle(color: AppColors.redColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
                                 recognizer: TapGestureRecognizer()..onTap = () {
-                                  // Navigate to privacy policy
+                                  Get.toNamed(AppRoutes.privacyPolicy);
                                 },
                               ),
                             ],

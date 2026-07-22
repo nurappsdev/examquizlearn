@@ -123,8 +123,7 @@ class EditProfileController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.find<ProfileController>().getProfile();
-        ToastMessageHelper.successMessageShowToster(
-            'Profile updated successfully');
+        ToastMessageHelper.successMessageShowToster('Profile updated successfully');
         Get.back();
       } else {
         ToastMessageHelper.errorMessageShowToster(

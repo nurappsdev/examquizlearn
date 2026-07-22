@@ -24,17 +24,27 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
           fontsize: 18.sp,
           fontWeight: FontWeight.w500,
         ),
-        automaticallyImplyLeading: false,
-        leading: Navigator.of(context).canPop()
+        leading: Navigator.canPop(context)
             ? IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 20.sp,
-                ),
-                onPressed: Get.back,
-              )
-            : null,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+            size: 20.sp,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        )
+            : IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+            size: 20.sp,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
       ),
       body: SafeArea(
         child: Obx(() {

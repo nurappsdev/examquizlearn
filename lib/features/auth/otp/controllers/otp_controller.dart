@@ -16,13 +16,27 @@ class OtpController extends GetxController {
   var secondsRemaining = 83.obs; // 01:23 as in image
   Timer? _timer;
   String screenType = '';
+  String _email = '';
+  Map<String, dynamic>? _registerBody;
+
+  var isResending = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     final arguments = Get.arguments;
-    if (arguments is Map && arguments['screenType'] != null) {
-      screenType = arguments['screenType'].toString();
+    if (arguments is Map) {
+      if (arguments['screenType'] != null) {
+        screenType = arguments['screenType'].toString();
+      }
+      if (arguments['email'] != null) {
+        _email = arguments['email'].toString();
+      }
+      final registerBody = arguments['registerBody'];
+      if (registerBody is Map) {
+        _registerBody = Map<String, dynamic>.from(registerBody);
+        _email = _registerBody?['email']?.toString() ?? _email;
+      }
     }
     startTimer();
   }
@@ -59,10 +73,78 @@ class OtpController extends GetxController {
     await verfyEmail(otpCode, screenType: screenType);
   }
 
-  void resendCode() {
-    secondsRemaining.value = 83;
-    startTimer();
-    // Logic to resend OTP
+  Future<void> resendCode() async {
+    if (isResending.value) return;
+
+    isResending(true);
+    try {
+      final response = screenType == 'forgot'
+          ? await _resendForgotOtp()
+          : await _resendRegisterOtp();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final token = _tokenFromResponse(response.body);
+        if (token.isNotEmpty) {
+          await PrefsHelper.setString(AppConstants.bearerToken, token);
+        }
+        ToastMessageHelper.successMessageShowToster(
+          response.body is Map && response.body['message'] != null
+              ? response.body['message'].toString()
+              : 'OTP sent successfully',
+        );
+        secondsRemaining.value = 83;
+        startTimer();
+      } else if (response.statusCode == 1) {
+        ToastMessageHelper.errorMessageShowToster(
+          response.statusText ?? 'Server error. Please try later',
+        );
+      } else {
+        ToastMessageHelper.errorMessageShowToster(_errorMessage(response.body));
+      }
+    } finally {
+      isResending(false);
+    }
+  }
+
+  Future<Response> _resendRegisterOtp() {
+    final body = _registerBody;
+    if (body == null || body.isEmpty) {
+      return Future.value(
+        const Response(
+          statusCode: 0,
+          statusText: 'Missing signup details. Please sign up again.',
+        ),
+      );
+    }
+    return ApiClient.postData(ApiConstants.signUpEndPoint, body);
+  }
+
+  Future<Response> _resendForgotOtp() {
+    if (_email.isEmpty) {
+      return Future.value(
+        const Response(
+          statusCode: 0,
+          statusText: 'Missing email. Please go back and try again.',
+        ),
+      );
+    }
+    return ApiClient.postData(
+      ApiConstants.forgotPasswordPoint,
+      jsonEncode({'email': _email}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+  }
+
+  String _tokenFromResponse(dynamic body) {
+    if (body is! Map) return '';
+    final data = body['data'];
+    if (data is! Map) return '';
+    final token =
+        data['accessToken'] ?? data['verificationToken'] ?? data['token'];
+    return token?.toString().trim() ?? '';
   }
 
   @override

@@ -94,7 +94,10 @@ class SignupController extends GetxController {
               ? response.body['message'].toString()
               : 'Account created successfully',
         );
-        Get.offAllNamed(AppRoutes.otp, arguments: {'screenType': 'register'});
+        Get.offAllNamed(
+          AppRoutes.otp,
+          arguments: {'screenType': 'register', 'registerBody': body},
+        );
       } else {
         ToastMessageHelper.errorMessageShowToster(_errorMessage(response.body));
       }

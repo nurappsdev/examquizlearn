@@ -12,7 +12,8 @@ class SubscriptionAccessHelper {
   /// - Access granted -> main
   /// - Access denied and the user already used a trial/subscription
   ///   (e.g. expired trial) -> subscription plans, so they must purchase
-  /// - Access denied with no subscription history -> free trial offer
+  /// - Access denied with no subscription history -> choose plan screen,
+  ///   since they never finished picking free trial vs paid subscription
   /// - Invalid token -> signin
   static Future<String> resolveStartRoute() async {
     final accessResponse =
@@ -29,8 +30,8 @@ class SubscriptionAccessHelper {
     }
 
     return await _hasSubscriptionHistory()
-        ? AppRoutes.subscriptionScreen
-        : AppRoutes.freeTrial;
+        ? AppRoutes.choosePlan
+        : AppRoutes.subscriptionScreen;
   }
 
   static Future<bool> _hasSubscriptionHistory() async {

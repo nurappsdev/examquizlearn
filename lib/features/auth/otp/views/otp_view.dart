@@ -61,29 +61,46 @@ class OtpView extends GetView<OtpController> {
                     color: AppColors.whiteColor,
                   ),
                   Obx(
-                    () => GestureDetector(
-                      onTap: controller.secondsRemaining.value == 0
-                          ? controller.resendCode
-                          : null,
-                      child: RichText(
-                        text: TextSpan(
-                          text: "Resend in ",
-                          style: TextStyle(
-                            color: AppColors.redColor,
-                            fontSize: 14.sp,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: controller.timeString,
-                              style: TextStyle(
-                                color: AppColors.whiteColor,
-                                fontSize: 14.sp,
+                    () {
+                      final canResend =
+                          controller.secondsRemaining.value == 0 &&
+                          !controller.isResending.value;
+                      return GestureDetector(
+                        onTap: canResend ? controller.resendCode : null,
+                        child: controller.isResending.value
+                            ? SizedBox(
+                                height: 14.sp,
+                                width: 14.sp,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.redColor,
+                                ),
+                              )
+                            : RichText(
+                                text: TextSpan(
+                                  text: controller.secondsRemaining.value == 0
+                                      ? "Resend"
+                                      : "Resend in ",
+                                  style: TextStyle(
+                                    color: AppColors.redColor,
+                                    fontSize: 14.sp,
+                                  ),
+                                  children: controller.secondsRemaining.value ==
+                                          0
+                                      ? []
+                                      : [
+                                          TextSpan(
+                                            text: controller.timeString,
+                                            style: TextStyle(
+                                              color: AppColors.whiteColor,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
