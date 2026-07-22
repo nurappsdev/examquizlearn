@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:http/http.dart' as http;
@@ -8,7 +9,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
 import '../errors/failures.dart';
 import '../helpers/prefs_helper.dart';
+import '../routes/app_routes.dart';
 import '../utils/app_constant.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_text.dart';
 import 'api_constants.dart';
 
 class ApiClient extends GetxService {
@@ -397,7 +401,89 @@ class ApiClient extends GetxService {
     debugPrint(
       '====> API Response: [${response0.statusCode}] $uri\n${response0.body}',
     );
+
+    if (response0.statusCode == 401) {
+      _handleSessionExpired(response0.statusText);
+    }
+
     return response0;
+  }
+
+  //==========================================> Session Expired / Deactivated <======================================
+  static bool _isHandlingSessionExpiry = false;
+
+  static void _handleSessionExpired(String? message) {
+    if (_isHandlingSessionExpiry) return;
+    _isHandlingSessionExpiry = true;
+
+    Future.microtask(() async {
+      await PrefsHelper.clearAll();
+      bearerToken = "";
+
+      if (Get.isDialogOpen != true) {
+        await Get.dialog(
+          _SessionExpiredDialog(
+            message: (message == null || message.isEmpty)
+                ? 'Your session has expired. Please sign in again.'
+                : message,
+          ),
+          barrierDismissible: false,
+        );
+      }
+
+      Get.offAllNamed(AppRoutes.signin);
+      _isHandlingSessionExpiry = false;
+    });
+  }
+}
+
+class _SessionExpiredDialog extends StatelessWidget {
+  const _SessionExpiredDialog({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: const Color(0xff1C1C1C),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      child: Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.no_accounts_outlined,
+              color: Colors.redAccent,
+              size: 40.r,
+            ),
+            SizedBox(height: 16.h),
+            CustomText(
+              text: 'Session Expired',
+              color: Colors.white,
+              fontsize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            SizedBox(height: 8.h),
+            CustomText(
+              text: message,
+              color: Colors.white.withValues(alpha: 0.7),
+              fontsize: 14.sp,
+              fontWeight: FontWeight.w400,
+              maxline: 4,
+            ),
+            SizedBox(height: 24.h),
+            CustomButton(
+              title: 'Sign in again',
+              height: 44.h,
+              width: double.infinity,
+              fontSize: 14.sp,
+              onpress: () => Get.back(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -202,33 +202,64 @@ class QuizResultView extends GetView<QuizController> {
   }
 
   Widget _buildScoreCircle() {
-    return Container(
-      width: 180.w,
-      height: 180.w,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xff19D160), width: 10.w),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Obx(
-            () => CustomText(
-              text: "${controller.scorePercentage.toInt()} %",
-              fontsize: 48,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xff19D160),
+    return Obx(() {
+      final score = controller.scorePercentage;
+      final progress = (score / 100).clamp(0.0, 1.0);
+      final progressColor = controller.isPassed
+          ? const Color(0xff19D160)
+          : Colors.redAccent;
+
+      return SizedBox(
+        width: 180.w,
+        height: 180.w,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 180.w,
+              height: 180.w,
+              child: CircularProgressIndicator(
+                value: 1,
+                strokeWidth: 10.w,
+                strokeCap: StrokeCap.round,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.white.withValues(alpha: 0.08),
+                ),
+              ),
             ),
-          ),
-          const CustomText(
-            text: "Overall score",
-            fontsize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ],
-      ),
-    );
+            SizedBox(
+              width: 180.w,
+              height: 180.w,
+              child: CircularProgressIndicator(
+                value: progress,
+                strokeWidth: 10.w,
+                strokeCap: StrokeCap.round,
+                backgroundColor: Colors.transparent,
+                valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomText(
+                  text: "${score.toInt()} %",
+                  fontsize: 48,
+                  fontWeight: FontWeight.w700,
+                  color: progressColor,
+                ),
+                const CustomText(
+                  text: "Overall score",
+                  fontsize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildStatusBadge() {

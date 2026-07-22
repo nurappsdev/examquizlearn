@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_button_common.dart';
 import '../../../profile/subscription/controllers/subscription_controller.dart';
+import '../../choose_plan/views/choose_plan_view.dart';
 
 class FreeTrialView extends GetView<SubscriptionController> {
   const FreeTrialView({super.key});
@@ -18,16 +19,16 @@ class FreeTrialView extends GetView<SubscriptionController> {
         backgroundColor: Colors.black,
         elevation: 0,
         automaticallyImplyLeading: false,
-        leading: Navigator.of(context).canPop()
-            ? IconButton(
+        leading:  IconButton(
                 icon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
                   size: 20,
                 ),
-                onPressed: () => Get.back(),
+                onPressed: (){
+                  Get.off(() =>ChoosePlanView());
+                }
               )
-            : null,
       ),
       body: SafeArea(
         child: Padding(

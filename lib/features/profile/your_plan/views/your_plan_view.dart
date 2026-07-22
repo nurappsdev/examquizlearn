@@ -122,11 +122,11 @@ class _ActivePlanCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.verified_rounded,
-                        color: Colors.white, size: 14.r),
+                        color: Colors.black, size: 14.r),
                     SizedBox(width: 4.w),
                     CustomText(
                       text: 'Current Plan',
-                      color: Colors.white,
+                      color: Colors.black,
                       fontsize: 11.sp,
                       fontWeight: FontWeight.w700,
                     ),

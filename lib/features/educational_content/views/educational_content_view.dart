@@ -243,6 +243,7 @@ class EducationalContentView extends StatelessWidget {
   }) {
     final title = topic.displayTitle;
     final description = topic.displayDescription;
+    final learningMaterialCount = topic.learningMaterialCount ?? 0;
     final totalTutorials = topic.quizCount ?? 0;
     final iconUrl = topic.displayIconUrl;
     final progress = topic.quizCompletionProgress;
@@ -344,7 +345,7 @@ class EducationalContentView extends StatelessWidget {
                 children: [
                   _buildMetaChip(
                     icon: Icons.play_circle_fill_rounded,
-                    label: "$totalTutorials tutorials",
+                    label: "$learningMaterialCount tutorials",
                   ),
                   SizedBox(width: 8.w),
                   if (hasProgress)

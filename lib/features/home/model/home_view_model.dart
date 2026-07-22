@@ -12,6 +12,7 @@ class HomeViewModel {
   final int? orderIndex;
   final int? v;
   final String? iconUrl;
+  final int? learningMaterialCount;
   final int? questionCount;
   final int? quizTemplateCount;
   final int? quizCount;
@@ -35,6 +36,7 @@ class HomeViewModel {
     this.orderIndex,
     this.v,
     this.iconUrl,
+    this.learningMaterialCount,
     this.questionCount,
     this.quizTemplateCount,
     this.quizCount,
@@ -65,6 +67,7 @@ class HomeViewModel {
       iconUrl: _stringValue(
         json["iconUrl"] ?? json["imageUrl"] ?? json["image"],
       ),
+      learningMaterialCount: _intValue(json["learningMaterialCount"]),
       questionCount: _intValue(json["questionCount"]),
       quizTemplateCount: _intValue(json["quizTemplateCount"]),
       quizCount: _intValue(json["quizCount"]),
@@ -116,6 +119,7 @@ class HomeViewModel {
     "orderIndex": orderIndex,
     "__v": v,
     "iconUrl": iconUrl,
+    "learningMaterialCount": learningMaterialCount,
     "questionCount": questionCount,
     "quizTemplateCount": quizTemplateCount,
     "quizCount": quizCount,

@@ -3,6 +3,8 @@ import 'package:nailed_quiz_app/core/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:nailed_quiz_app/features/auth/choose_plan/views/choose_plan_view.dart';
+import 'package:nailed_quiz_app/features/auth/free_trial/views/free_trial_view.dart';
 
 import '../../../../core/widgets/custom_loader.dart';
 import '../controllers/subscription_controller.dart';
@@ -24,25 +26,10 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
           fontsize: 18.sp,
           fontWeight: FontWeight.w500,
         ),
-        leading: Navigator.canPop(context)
-            ? IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 20.sp,
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
           onPressed: () {
-            Get.back();
-          },
-        )
-            : IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 20.sp,
-          ),
-          onPressed: () {
-            Get.back();
+            Get.to(()=>ChoosePlanView());
           },
         ),
       ),
