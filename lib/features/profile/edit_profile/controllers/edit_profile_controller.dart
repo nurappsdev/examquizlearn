@@ -103,10 +103,8 @@ class EditProfileController extends GetxController {
             File(imagePath.value),
             headers: data['headers'] != null ? Map<String, String>.from(data['headers']) : null,
           );
-          Get.back();
           if (uploadResponse.statusCode == 200 || uploadResponse.statusCode == 204) {
             body['avatarUrl'] = s3Key;
-            Get.back();
           } else {
             isLoading.value = false;
             ToastMessageHelper.errorMessageShowToster('Failed to upload image to S3');
@@ -121,7 +119,9 @@ class EditProfileController extends GetxController {
 
       Response response = await ApiClient.patch(ApiConstants.profileEndPoint, body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
         Get.find<ProfileController>().getProfile();
         ToastMessageHelper.successMessageShowToster('Profile updated successfully');
         Get.back();

@@ -153,6 +153,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     controller: controller.emailController,
                     hintText: 'Enter Email',
                     readOnly: true,
+                    validator: (value) => null,
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(12.r),
                       child: Icon(
@@ -171,6 +172,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                   CustomTextField(
                     controller: controller.phoneController,
                     hintText: 'Phone number',
+                    validator: (value) => null,
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(12.r),
                       child: Icon(
@@ -190,6 +192,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     controller: controller.dateOfBirthController,
                     hintText: 'Date of birth',
                     readOnly: true,
+                    validator: (value) => null,
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(12.r),
                       child: Icon(

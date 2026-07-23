@@ -147,10 +147,10 @@ class QuizAttemptCard extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () => _continueQuiz(attempt),
-                icon: Icon(Icons.play_arrow_rounded, size: 18.r),
+                icon: Icon(Icons.play_arrow_rounded, color: Colors.black, size: 18.r),
                 label: CustomText(
                   text: 'Continue Quiz',
-                  color: Colors.white,
+                  color: Colors.black,
                   fontsize: 13.sp,
                   fontWeight: FontWeight.w600,
                 ),
