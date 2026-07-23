@@ -7,6 +7,7 @@ import '../../../../core/routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_loader.dart';
 import '../../../../core/widgets/custom_text.dart';
+import '../../subscription/views/subscription_view.dart';
 import '../controllers/your_plan_controller.dart';
 import '../model/my_subscription_model.dart';
 
@@ -488,7 +489,12 @@ class _BrowsePlansButton extends StatelessWidget {
       width: double.infinity,
       height: 50.h,
       child: OutlinedButton.icon(
-        onPressed: () => Get.toNamed(AppRoutes.subscriptionScreen),
+        onPressed: () => Get.toNamed(
+          AppRoutes.subscriptionScreen,
+          arguments: {
+            subscriptionScreenOriginKey: subscriptionScreenYourPlanOrigin,
+          },
+        ),
         icon: Icon(Icons.list_alt_rounded,
             color: AppColors.greenColor, size: 18.r),
         label: CustomText(
@@ -542,7 +548,12 @@ class _EmptyState extends StatelessWidget {
           SizedBox(
             height: 50.h,
             child: ElevatedButton(
-              onPressed: () => Get.toNamed(AppRoutes.subscriptionScreen),
+              onPressed: () => Get.toNamed(
+                AppRoutes.subscriptionScreen,
+                arguments: {
+                  subscriptionScreenOriginKey: subscriptionScreenYourPlanOrigin,
+                },
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.greenColor,
                 shape: RoundedRectangleBorder(

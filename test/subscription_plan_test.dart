@@ -1,8 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:nailed_quiz_app/features/profile/subscription/controllers/subscription_controller.dart';
+import 'package:nailed_quiz_app/features/profile/subscription/views/subscription_view.dart';
 
 void main() {
+  test('subscription screen detects YourPlan origin from route arguments', () {
+    expect(
+      subscriptionScreenOpenedFromYourPlan({
+        subscriptionScreenOriginKey: subscriptionScreenYourPlanOrigin,
+      }),
+      isTrue,
+    );
+    expect(subscriptionScreenOpenedFromYourPlan(null), isFalse);
+    expect(
+      subscriptionScreenOpenedFromYourPlan({
+        subscriptionScreenOriginKey: 'choose_plan',
+      }),
+      isFalse,
+    );
+  });
+
   test(
     'SubscriptionPlan reads App Store product id from subscription payload',
     () {

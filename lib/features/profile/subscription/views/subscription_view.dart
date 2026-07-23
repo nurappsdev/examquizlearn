@@ -4,10 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nailed_quiz_app/features/auth/choose_plan/views/choose_plan_view.dart';
-import 'package:nailed_quiz_app/features/auth/free_trial/views/free_trial_view.dart';
 
 import '../../../../core/widgets/custom_loader.dart';
 import '../controllers/subscription_controller.dart';
+
+const String subscriptionScreenOriginKey = 'origin';
+const String subscriptionScreenYourPlanOrigin = 'your_plan';
+
+bool subscriptionScreenOpenedFromYourPlan(dynamic arguments) {
+  return arguments is Map &&
+      arguments[subscriptionScreenOriginKey] == subscriptionScreenYourPlanOrigin;
+}
 
 class SubscriptionScreen extends GetView<SubscriptionController> {
   const SubscriptionScreen({super.key});
@@ -29,7 +36,12 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
           onPressed: () {
-            Get.to(()=>ChoosePlanView());
+            if (subscriptionScreenOpenedFromYourPlan(Get.arguments)) {
+              Get.back();
+              return;
+            }
+
+            Get.to(() => ChoosePlanView());
           },
         ),
       ),
